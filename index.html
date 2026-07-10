@@ -5,22 +5,33 @@
   <link rel="manifest" href="site.webmanifest"/>
   <meta name="theme-color" content="#0d0d0d"/>
   <!-- Favicons -->
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
+  <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Vedaversity</title>
+  <title>Kirtan</title>
   <meta name="author" content="Keshto" />
-  <meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self'; 
-                 script-src 'self' 'unsafe-inline'; 
-                 style-src 'self' 'unsafe-inline'; 
-                 img-src 'self' data: blob:; 
-                 connect-src 'self';">
+
+  <!-- 1. Stylesheets: Critical path for First Contentful Paint -->
+  <link rel="stylesheet" href="css/all_songs_page.css" />
+  <link rel="stylesheet" href="css/capacitor.css" />
+  <link rel="stylesheet" href="css/dark-theme.css" />
+  <link rel="stylesheet" href="css/home_content_page.css" />
+  <link rel="stylesheet" href="css/pronounce_page.css" />
+  <link rel="stylesheet" href="css/songView_page.css" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/dependencies/baloo-da-2-font/css/font.css" />
+  <link rel="stylesheet" href="css/dependencies/material-design-iconic-font/css/material-design-iconic-font.min.css" />
 
   <!-- Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .catch((err) => {
+            if (request.mode === "navigate") return caches.match("index.html");
+            throw err; // don't return undefined
+          });
+      });
     }
   </script>
 </head>

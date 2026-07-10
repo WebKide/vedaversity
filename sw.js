@@ -49,6 +49,7 @@ const PRECACHE_URLS = [
   "templates/sharedLists.html",
   "templates/settings.html",
   "fonts/Material-Design-Iconic-Font.woff",
+  "fonts/Material-Design-Iconic-Font.woff2",
   "fonts/baloo-da-2.woff",
   "img/home_default.png",
   "img/list_default.png",
