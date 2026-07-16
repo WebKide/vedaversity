@@ -361,6 +361,17 @@
 /* ============================================================
    CLASSES (.class-name)
    ============================================================ */
+.shell__content, .page {
+  /* Adds padding only if a notch/safe area exists */
+  padding-top: env(safe-area-inset-top);
+}
+
+.shell__content, .page {
+  /* Replaces static 20px-40px padding with the device's actual requirement */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+
 /* Fix for Onsen UI tabbar blocking content clicks */
 ons-tabbar.bottom-tabbar,
 .ons-swiper,
@@ -775,6 +786,7 @@ ons-list-item .list-item__subtitle span.no_right {
 .search-container {
   display: flex;
   padding: 0 12px;
+  margin-top: max(10px, env(safe-area-inset-top));
   margin: 24px 0;
   min-height: 58px;
   max-width: 90%;
