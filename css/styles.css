@@ -1,0 +1,1489 @@
+/**
+ * styles.css
+ * Single consolidated stylesheet for Kirtan SPA (index.html).
+ *
+ * Replaces the previous custom sheet stack:
+ *   capacitor.css (app-specific overrides only),
+ *   theme.css, dark-theme.css,
+ *   app.css, home_content_page.css,
+ *   songView_page.css, all_songs_page.css
+ *
+ * Base Onsen UI framework styles remain on CDN:
+ *   https://unpkg.com/onsenui/css/onsenui.css
+ *   https://unpkg.com/onsenui/css/dark-onsen-css-components.css
+ */
+
+/* ============================================================
+   CSS CUSTOM PROPERTIES (var(--x))
+   ============================================================ */
+
+/* ─── Ubuntu Sans (UI Components) ───────────────────────────────────────── */
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-600italic.woff2') format('woff2');
+}
+
+/* nunito-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/nunito-v32-latin-ext-regular.woff2') format('woff2');
+}
+
+/* nunito-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/nunito-v32-latin-ext-italic.woff2') format('woff2');
+}
+
+/* nunito-700 - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/nunito-v32-latin-ext-700.woff2') format('woff2');
+}
+
+/* nunito-700italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../fonts/nunito-v32-latin-ext-700italic.woff2') format('woff2');
+}
+
+/* gentium-plus-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/gentium-plus-v2-latin-ext-regular.woff2') format('woff2');
+}
+
+/* gentium-plus-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/gentium-plus-v2-latin-ext-italic.woff2') format('woff2');
+}
+
+/* gentium-plus-700 - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/gentium-plus-v2-latin-ext-700.woff2') format('woff2');
+}
+
+/* gentium-plus-700italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../fonts/gentium-plus-v2-latin-ext-700italic.woff2') format('woff2');
+}
+
+/*
+ * Default dark theme palette (from theme.css)
+ * plus Onsen UI component variable overrides (from capacitor.css)
+ * plus safe-area insets.
+ */
+:root {
+  font-family: 'Ubuntu Sans', sans-serif; /* 1. Base property */
+  --font-family: 'Nunito', sans-serif; /* 2. Standard components */
+  --material-font-family: 'Gentium Plus', serif; /* 3. Material components */
+  /* ---- App theme palette (dark) ---- */
+  --background-color: black;
+  --text-color: #e0e0e0;
+  --sub-text-color: #b0b0b0;
+  --highlight: rgba(254, 185, 19, 1);
+  --highlight-color: #feb913;
+  --second-highlight-color: #ed1b24;
+  --border-color: rgba(255, 255, 255, 0.25);
+  --active-overlay: rgba(255, 255, 255, 0.1);
+  --gray-lighter: #808080;
+  --gray-light: #707070;
+  --gray-dark: #606060;
+  --gray-darker: #505050;
+  --outer-shadow: -5px 0 10px rgba(255, 255, 255, 0.2),
+                   5px 0 10px rgba(255, 255, 255, 0.2);
+  --thumbnail-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.7);
+  --glass-gradient: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.08) 30%,
+    rgba(255, 255, 255, 0.04) 70%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  --glass-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                        inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  --separator-gradient: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  --sortable-chosen-bg: rgba(189, 189, 189, 0.2);
+  --sortable-ghost-bg: rgba(189, 189, 189, 0.3);
+
+  /* ---- App-specific layout vars ---- */
+  --kirtan-accent: #ff8a3d;
+  --kirtan-bg: #0d0d0d;
+  --kirtan-tabbar-bg: #161616;
+
+  /* ---- Safe-area insets ---- */
+  --inset-top: env(safe-area-inset-top, 0px);
+  --inset-bottom: env(safe-area-inset-bottom, 0px);
+  --inset-left: env(safe-area-inset-left, 0px);
+  --inset-right: env(safe-area-inset-right, 0px);
+
+  /* ---- Onsen UI component overrides ---- */
+  --button-background-color: transparent;
+  --button-cta-background-color: transparent;
+  --toolbar-background-color: transparent;
+  --toolbar-button-color: var(--highlight-color);
+  --toolbar-text-color: var(--text-color);
+  --toolbar-border-color: var(--border-color);
+  --button-bar-color: var(--highlight-color);
+  --button-bar-active-text-color: var(--text-color);
+  --button-bar-active-background-color: transparent;
+  --button-light-color: var(--text-color);
+  --segment-color: var(--highlight-color);
+  --segment-active-text-color: var(--text-color);
+  --segment-active-background-color: transparent;
+  --list-background-color: transparent;
+  --list-header-background-color: transparent;
+  --list-tap-active-background-color: var(--active-overlay);
+  --list-item-chevron-color: var(--sub-text-color);
+  --progress-bar-color: var(--highlight-color);
+  --progress-bar-secondary-color: var(--second-highlight-color);
+  --progress-bar-background-color: transparent;
+  --progress-circle-primary-color: var(--highlight-color);
+  --progress-circle-secondary-color: var(--second-highlight-color);
+  --progress-circle-background-color: transparent;
+  --tabbar-background-color: transparent;
+  --tabbar-text-color: var(--gray-lighter);
+  --tabbar-highlight-text-color: var(--highlight-color);
+  --tabbar-border-color: var(--border-color);
+  --switch-highlight-color: var(--highlight-color);
+  --switch-border-color: var(--border-color);
+  --switch-background-color: transparent;
+  --range-track-background-color: var(--gray-dark);
+  --range-track-background-color-active: var(--highlight-color);
+  --range-thumb-background-color: var(--highlight-color);
+  --modal-background-color: transparent;
+  --modal-text-color: var(--text-color);
+  --alert-dialog-background-color: transparent;
+  --alert-dialog-text-color: var(--text-color);
+  --alert-dialog-button-color: var(--highlight-color);
+  --alert-dialog-separator-color: var(--border-color);
+  --dialog-background-color: transparent;
+  --dialog-text-color: var(--text-color);
+  --popover-background-color: transparent;
+  --popover-text-color: var(--text-color);
+  --action-sheet-title-color: var(--sub-text-color);
+  --action-sheet-button-separator-color: var(--border-color);
+  --action-sheet-button-color: var(--highlight-color);
+  --action-sheet-button-destructive-color: var(--second-highlight-color);
+  --action-sheet-button-background-color: transparent;
+  --action-sheet-button-active-background-color: var(--active-overlay);
+  --action-sheet-cancel-button-background-color: transparent;
+  --notification-background-color: var(--second-highlight-color);
+  --notification-color: var(--text-color);
+  --search-input-background-color: transparent;
+  --fab-text-color: var(--background-color);
+  --fab-background-color: var(--highlight-color);
+  --fab-active-background-color: transparent;
+  --card-background-color: transparent;
+  --card-text-color: var(--text-color);
+  --toast-background-color: var(--background-color);
+  --toast-text-color: var(--text-color);
+  --toast-button-text-color: var(--highlight-color);
+  --select-input-color: var(--text-color);
+  --select-input-border-color: var(--border-color);
+  --material-background-color: var(--background-color);
+  --material-text-color: var(--text-color);
+  --material-notification-background-color: var(--second-highlight-color);
+  --material-notification-color: var(--text-color);
+  --material-switch-active-thumb-color: var(--highlight-color);
+  --material-switch-active-background-color: transparent;
+  --material-switch-inactive-thumb-color: var(--gray-light);
+  --material-switch-inactive-background-color: transparent;
+  --material-range-track-color: var(--range-track-background-color);
+  --material-range-thumb-color: var(--highlight-color);
+  --material-range-disabled-thumb-color: var(--gray-darker);
+  --material-range-disabled-thumb-border-color: var(--material-range-disabled-thumb-color);
+  --material-range-zero-thumb-color: var(--background-color);
+  --material-toolbar-background-color: transparent;
+  --material-toolbar-text-color: var(--text-color);
+  --material-toolbar-button-color: var(--highlight-color);
+  --material-segment-background-color: transparent;
+  --material-segment-active-background-color: transparent;
+  --material-segment-text-color: var(--sub-text-color);
+  --material-segment-active-text-color: var(--text-color);
+  --material-button-background-color: var(--highlight-color);
+  --material-button-text-color: var(--background-color);
+  --material-button-disabled-background-color: transparent;
+  --material-button-disabled-color: var(--material-range-disabled-thumb-color);
+  --material-flat-button-active-background-color: var(--active-overlay);
+  --material-list-background-color: transparent;
+  --material-list-item-separator-color: var(--border-color);
+  --material-list-header-text-color: var(--sub-text-color);
+  --material-checkbox-active-color: var(--highlight-color);
+  --material-checkbox-inactive-color: var(--material-switch-inactive-thumb-color);
+  --material-checkbox-checkmark-color: var(--background-color);
+  --material-radio-button-active-color: var(--highlight-color);
+  --material-radio-button-inactive-color: var(--material-switch-inactive-thumb-color);
+  --material-radio-button-disabled-color: var(--material-range-disabled-thumb-color);
+  --material-text-input-text-color: var(--text-color);
+  --material-text-input-active-color: var(--highlight-color);
+  --material-text-input-inactive-color: var(--gray-lighter);
+  --material-search-background-color: transparent;
+  --material-dialog-background-color: transparent;
+  --material-dialog-text-color: var(--material-text-color);
+  --material-alert-dialog-background-color: transparent;
+  --material-alert-dialog-title-color: var(--text-color);
+  --material-alert-dialog-content-color: var(--sub-text-color);
+  --material-alert-dialog-button-color: var(--highlight-color);
+  --material-progress-bar-primary-color: var(--highlight-color);
+  --material-progress-bar-secondary-color: var(--second-highlight-color);
+  --material-progress-bar-background-color: transparent;
+  --material-progress-circle-primary-color: var(--highlight-color);
+  --material-progress-circle-secondary-color: var(--second-highlight-color);
+  --material-progress-circle-background-color: transparent;
+  --material-tabbar-background-color: transparent;
+  --material-tabbar-text-color: var(--tabbar-text-color);
+  --material-tabbar-highlight-text-color: var(--highlight-color);
+  --material-tabbar-highlight-color: transparent;
+  --material-fab-text-color: var(--background-color);
+  --material-fab-background-color: var(--highlight-color);
+  --material-fab-active-background-color: transparent;
+  --material-card-background-color: transparent;
+  --material-card-text-color: var(--text-color);
+  --material-toast-background-color: transparent;
+  --material-toast-text-color: var(--text-color);
+  --material-toast-button-text-color: var(--highlight-color);
+  --material-select-input-color: var(--text-color);
+  --material-select-input-active-color: var(--highlight-color);
+  --material-select-input-inactive-color: var(--gray-lighter);
+  --material-select-border-color: var(--border-color);
+  --material-popover-background-color: transparent;
+  --material-popover-text-color: var(--text-color);
+  --material-action-sheet-text-color: var(--text-color);
+  --tap-highlight-color: transparent;
+}
+
+/* Light theme overrides (from dark-theme.css) */
+:root.theme-light {
+  --background-color: #f1d0c2;
+  --text-color: #1f1f21;
+  --sub-text-color: #444;
+  --highlight-color: #0077b6;
+  --second-highlight-color: #25a6d9;
+  --border-color: #ccc;
+  --active-overlay: #d9d9d9;
+  --gray-lighter: #757575;
+  --gray-light: #777;
+  --gray-dark: #555;
+  --gray-darker: #31313a;
+  --outer-shadow: -5px 0 20px rgba(45, 4, 6, 0.08),
+                   5px 0 20px rgba(45, 4, 6, 0.08);
+  --thumbnail-shadow: 0px 4px 12px rgba(45, 4, 6, 0.7);
+  --glass-gradient: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.4) 30%,
+    rgba(255, 255, 255, 0.2) 70%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+  --glass-inset-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                        0 6px 15px rgba(45, 4, 6, 0.05);
+  --separator-gradient: linear-gradient(
+    to right,
+    transparent,
+    rgba(45, 4, 6, 0.1),
+    transparent
+  );
+  --sortable-chosen-bg: rgba(45, 4, 6, 0.05);
+  --sortable-ghost-bg: rgba(45, 4, 6, 0.1);
+
+  --kirtan-bg: #ffffff;
+  --kirtan-tabbar-bg: #f2f2f2;
+  color-scheme: light;
+}
+
+:root.theme-dark {
+  color-scheme: dark;
+}
+
+
+/* ============================================================
+   CLASSES (.class-name)
+   ============================================================ */
+/* Fix for Onsen UI tabbar blocking content clicks */
+ons-tabbar.bottom-tabbar,
+.ons-swiper,
+.ons-swiper-target {
+  pointer-events: none;
+}
+
+/* Ensure the actual tab buttons still work */
+.tabbar,
+.tabbar__footer {
+  pointer-events: auto;
+}
+
+/* Ensure your page content explicitly allows clicks */
+#tab-home,
+#tab-lists,
+.page__content {
+  pointer-events: auto;
+}
+
+.ons-swiper-target {
+  pointer-events: none;
+}
+
+.ons-swiper-blocker {
+  display: none;
+}
+
+.bottom-tabbar {
+  pointer-events: none;
+}
+
+.tabbar:not(.tabbar--top) {
+  pointer-events: auto;
+}
+
+.tabbar__content {
+  pointer-events: none;
+}
+
+/* .active */
+.tabbar-btn.active {
+  color: var(--highlight-color, #ff8a3d);
+}
+
+/* .author-container */
+ons-toolbar .center.author-container {
+  line-height: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* .author-text */
+.author-text {
+  font-size: .8em;
+  color: var(--sub-text-color);
+  text-transform: lowercase;
+  font-weight: 400;
+}
+
+/* .author-wrapper */
+.author-wrapper {
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  overflow: clip;
+  color: var(--highlight-color);
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+/* .back-btn */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1rem;
+  padding: 10px 0 0 12px;
+}
+
+/* Target the icon specifically */
+.back-icon:hover {
+  filter: 
+    drop-shadow(0 0 5px var(--highlight)) 
+    drop-shadow(0 0 15px var(--highlight));
+}
+
+/* .bottom-tabbar */
+.bottom-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+}
+
+/* .bottom-tabbar__row */
+.bottom-tabbar__row {
+  display: flex;
+  height: 56px;
+  background: var(--kirtan-tabbar-bg, #161616);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* .center  — base styling provided by Onsen UI CDN */
+
+/* .context-popover  (created dynamically in utils.js) */
+/* No static rules; inherits from .popover */
+
+/* .default_img_container */
+.default_img_container {
+  box-sizing: border-box;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.default_img_container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* .dialog-label */
+/* No static rules; applied dynamically via JS */
+
+/* .dialog-list */
+.dialog-list {
+  margin: 10px -12px;
+  max-height: 40vh;
+  overflow: auto;
+}
+
+/* .expandable-content */
+/* No static rules; see .list-item__expandable-content below */
+
+/* .glassy */
+.alert-dialog,
+.glassy,
+.hr-text,
+.popover,
+.toast,
+.toolbar,
+.verse-card,
+body .glassyFloat {
+  background: var(--glass-gradient);
+  border: var(--glass-border);
+  box-shadow: var(--glass-inset-shadow);
+  border-radius: 15px;
+}
+
+/* .glassyEach */
+.glassyEach {
+  border-radius: 15px;
+}
+
+.glassyEach > .list-item {
+  background: var(--glass-gradient);
+  border: var(--glass-border);
+  box-shadow: var(--glass-inset-shadow);
+  border-radius: 15px;
+}
+
+.glassyEach > .list-item {
+  border-radius: unset;
+}
+
+/* .glassyFloat */
+.alert-dialog,
+.hr-text,
+.popover,
+.toast,
+.toolbar,
+body .glassyFloat {
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border-radius: 15px;
+  transition: all .6s cubic-bezier(.23, 1, .32, 1);
+}
+
+/* .gutter */
+.gutter {
+  margin: 15px;
+}
+
+/* .hr-text */
+.hr-text {
+  line-height: 1em;
+  position: relative;
+  outline: 0;
+  border: 0;
+  color: var(--text-color);
+  text-align: center;
+  height: 1.5em;
+  margin: 0;
+  margin-top: -1em;
+  border-radius: 50%;
+  background-color: inherit;
+  font-size: small;
+  width: 3em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hr-text::after {
+  content: attr(data-content);
+  position: relative;
+  display: inline-block;
+  padding: 0 .5em;
+  line-height: 1.5em;
+  color: var(--sub-text-color);
+  background-color: inherit;
+}
+
+/* .isCard */
+.isCard {
+  padding: 0;
+  display: block;
+}
+
+/* .left  — base styling provided by Onsen UI CDN */
+
+/* .line  — no static rules; generated dynamically in JS */
+
+/* .line-indent  (source uses .lineIndent) */
+#verseList span.lineIndent:not(:last-child) {
+  padding-bottom: .6em;
+}
+
+/* .list-header  — base styling provided by Onsen UI CDN */
+
+/* .list-header--material */
+.list-header--material {
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+/* .list-item__subtitle */
+ons-list-item .list-item__subtitle {
+  width: 100%;
+  display: flex;
+}
+
+ons-list-item .list-item__subtitle span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ons-list-item .list-item__subtitle :first-child {
+  margin-right: 10px;
+}
+
+ons-list-item .list-item__subtitle :nth-child(2) {
+  margin-left: auto;
+  color: var(--sub-text-color);
+  font-style: italic;
+}
+
+ons-list-item .list-item__subtitle span.no_right {
+  margin-left: unset;
+}
+
+/* .list-item__thumbnail */
+.list-item__thumbnail {
+  /* box-shadow: var(--thumbnail-shadow);*/
+  filter: 
+    drop-shadow(0 0 2px var(--highlight)) 
+    drop-shadow(0 0 4px var(--highlight));
+}
+
+/* 1. Add spacing to the container */
+.list-item__right.right {
+  padding-right: 16px !important;
+  display: flex;
+  align-items: center;
+  filter: drop-shadow(0 0 2px var(--highlight));
+}
+
+/* 2. Hide the existing CSS chevron */
+.list-item__expand-chevron {
+  /* display: none !important;*/
+  display: inline-block;
+}
+
+/* 3. Handle SVG visibility based on the expanded state */
+/* Assuming the parent '.list-item' gets an 'is-expanded' class */
+
+.chevron-up {
+  display: none;
+}
+
+.list-item.is-expanded .chevron-down {
+  display: none;
+}
+
+.list-item.is-expanded .chevron-up {
+  display: block;
+}
+
+/* .list-item__title  — base styling provided by Onsen UI CDN */
+
+/* .listSongView */
+.listSongView {
+  padding: 10px;
+  opacity: .8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.listSongView span {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 18px;
+  color: var(--material-list-header-text-color);
+}
+
+.listSongView ons-button {
+  vertical-align: middle;
+  font-size: 36px;
+  overflow: unset;
+}
+
+/* .mid-ellipsis  (source uses .midElli) */
+.midElli {
+  display: flex;
+  width: 100%;
+  white-space: pre;
+}
+
+.midElli .endP {
+  justify-content: flex-end;
+  display: inline-flex;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.midElli .startP {
+  display: inline-block;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* .nextSongBtn  — no static rules; applied dynamically in JS */
+
+/* .no-drag  — no static rules; applied dynamically in JS */
+
+/* .page */
+.page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--kirtan-bg, #0d0d0d);
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+/* .page--enter */
+.page--enter {
+  transform: translateX(16px);
+  opacity: 0;
+}
+
+/* .page__content */
+.page .page__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.page__content {
+  scrollbar-width: thin;
+}
+
+/* .prevSongBtn  — no static rules; applied dynamically in JS */
+
+/* .recents-scroll */
+.recents-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* .right  — base styling provided by Onsen UI CDN */
+
+/* .search-box */
+.search-box {
+  width: 100%;
+}
+
+.search-box > input {
+  font-size: 20px;
+  background-size: 0;
+  margin-bottom: -5px;
+}
+
+.search-box span {
+  font-size: 22px;
+}
+
+/* .search-container */
+.search-container {
+  display: flex;
+  padding: 0 12px;
+  margin: 12px 0;
+  min-height: 58px;
+  align-items: center;
+}
+
+.search-container > ons-icon {
+  min-width: 36px;
+  line-height: 26px;
+  font-size: 28px;
+  color: var(--highlight-color);
+  margin-top: 4px;
+}
+
+/* Search page (tmpl-search) — icon-in-input search bar.
+   Scoped to #search_page so it doesn't affect the home shell's
+   search-box, which already has its icon as a separate flex sibling. */
+#search_page .search-input-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+#search_page .search-box-icon {
+  position: absolute;
+  margin-left: 20px;
+  padding-top: 5px;
+  left: 12px;
+  pointer-events: none;
+}
+
+#search_page .search-box {
+  width: 80vw;
+}
+
+#search_page .search-box > input {
+  background-color: rgba(0, 0, 0, 0.4);
+  margin-left: 20px;
+  padding-left: 50px;
+  padding-right: 10px;
+  border-radius: 8px;
+  height: 40px;
+}
+
+/* .shell__content */
+.shell__content {
+  padding-bottom: 56px;
+}
+
+/* .tabbar-btn */
+.tabbar-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding-bottom: 16px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.7rem;
+}
+
+/* .timeAgo  (from home_content_page.css) */
+.timeAgo {
+  font-size: x-small;
+  padding-right: 5px;
+  float: right;
+  color: var(--sub-text-color);
+  font-style: italic;
+}
+
+/* .trans-container */
+.trans-container {
+  color: var(--sub-text-color);
+}
+
+/* .trans-intro */
+.trans-intro {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: .5em;
+  font-style: italic;
+}
+
+/* .verse-card */
+.verse-card {
+  padding: 5px 14px;
+  margin-left: 0;
+  margin-right: 0;
+  border: none;
+}
+
+.verse-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-weight: 700;
+  font-style: italic;
+}
+/* .verse-container  — no static rules; see .trans-container */
+
+
+/* ============================================================
+   IDs (#id-name)
+   ============================================================ */
+
+/* #addSongToListBtn */
+#addSongToListBtn {
+  text-transform: uppercase;
+  color: var(--highlight-color);
+  border: 2px dashed;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  opacity: .8;
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+#addSongToListBtn > .center {
+  text-align: center;
+  line-height: 2em;
+}
+
+#addSongToListBtn .ons-icon,
+#createListBtn .ons-icon,
+.button--md-outline > .ons-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+/* #group-nav — letter-jump grid above the all-songs list */
+.group-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.group-nav-btn {
+  padding: 16px;
+  gap: 6px;
+  flex: 1 1 auto;
+  text-align: center;
+  white-space: nowrap;
+  background: var(--glass-gradient);
+  border: var(--glass-border);
+  box-shadow: var(--glass-inset-shadow);
+  border-radius: 15px;
+  color: var(--highlight-color);
+  font-family: var(--material-font-family);
+  font-size: 16px;
+}
+
+.group-nav-btn:active {
+  background: var(--active-overlay);
+}
+
+/* #all-songs-list  — rendered by ons-lazy-repeat; no custom static rules */
+
+/* #all_songs_page  — styled via .page */
+
+/* #allSongs  — no direct styles; styled via ons-list-item */
+
+/* #app */
+#app {
+  position: relative;
+  height: 100%;
+  height: 100dvh;
+}
+
+/* #appVersion  — no custom styles; inherits text color */
+
+/* #createListBtn */
+#createListBtn {
+  text-transform: uppercase;
+  color: var(--highlight-color);
+  border: 2px dashed;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  opacity: .8;
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+#createListBtn > .center {
+  text-align: center;
+  line-height: 2em;
+}
+
+/* #custom-lists  — no direct styles; container for dynamic list items */
+
+/* #dialogList  — no static rules; created dynamically in JS */
+
+/* #footerSpacer */
+#footerSpacer {
+  height: 33vh;
+}
+
+#footerSpacer > div {
+  height: 100%;
+}
+
+#footerSpacer .listSongView {
+  position: sticky;
+  bottom: 0;
+}
+
+/* #infoBlurb  — uses .list-header .list-header--material */
+
+/* #lang-{code}  — no static rules; IDs generated dynamically for language settings */
+
+/* #list-list  — no direct styles; container for dynamic list items */
+
+/* #list_page  — styled via .page */
+
+/* #listBtn  — no direct styles; styled via parent ons-list-item */
+
+/* #listMenuBtn  — no direct styles; styled via ons-toolbar */
+
+/* #navigator */
+#navigator {
+  display: none;
+}
+
+/* #pronounce-list  — no direct styles; container for dynamic list items */
+
+/* #pronounce_page  — styled via .page */
+
+/* #pronounceGuide  — no direct styles; styled via ons-list-item */
+
+/* #recentHeader */
+#recentHeader {
+  display: none;
+}
+
+/* #recents  — no direct styles; container for #recents-items */
+/* Hide actions if the items list has no children */
+#recents:has(#recents-items:empty) #recents-actions {
+  display: none !important;
+}
+
+/* #recents-items  — no direct styles; container for dynamic recent items */
+
+/* #search-hint-add */
+#search-hint-add {
+  display: none;
+}
+
+/* #search-input  — no direct styles; uses .search-box */
+
+/* #search-list-page  — no direct styles; container for search results */
+
+/* #search_page  — styled via .page */
+
+/* #settings_page  — styled via .page */
+
+/* #settingsBtn  — no direct styles; styled via ons-list-item */
+
+/* #shareBtn  — no direct styles; styled via parent ons-list-item */
+
+/* #shell_page  — styled via .page */
+
+/* #songTitle  — no direct styles; content injected dynamically */
+
+/* #songView_page */
+#songView_page .page__content {
+  overflow: hidden;
+}
+
+/* #songViewMenuBtn  — no direct styles; styled via ons-toolbar */
+
+/* #songViewPopover */
+#songViewPopover ons-list-item {
+  color: var(--highlight-color);
+  text-transform: uppercase;
+  font-size: initial;
+}
+
+#songViewPopover ons-list-item ons-icon {
+  color: var(--highlight-color);
+}
+
+#songViewPopover .list-item__left {
+  min-width: 30px;
+}
+
+/* #tab-home */
+/* default visible; no override needed */
+
+/* #tab-lists */
+#tab-lists {
+  display: none;
+}
+
+/* #tabBtnHome  — no direct styles; styled via .tabbar-btn */
+
+/* #tabBtnLists  — no direct styles; styled via .tabbar-btn */
+
+/* #tattva-lists  — no direct styles; container for dynamic list items */
+
+/* #toTop */
+#toTop {
+  margin-top: 48px;
+  color: var(--highlight-color);
+  pointer-events: auto;
+  transition: 0.3s;
+}
+
+/* #transAvail  — no direct styles; content injected dynamically */
+
+/* #verseList */
+#verseList b {
+  text-decoration: underline;
+}
+
+#verseList span {
+  display: block;
+  text-indent: -1em;
+  padding-left: 1em;
+  font-weight: 600;
+  margin-bottom: .3em;
+  line-height: 1.3;
+}
+
+
+/* ============================================================
+   data-* ATTRIBUTES
+   ============================================================ */
+
+/* [data-init-fn]  — used by router.js to identify page init functions; no styles needed */
+
+/* [data-content]  (used on .hr-text, e.g. hr.hr-text[data-content]) */
+.hr-text[data-content]::after {
+  content: attr(data-content);
+}
+
+
+/* ============================================================
+   ONSEN UI TAGS IN USE
+   ============================================================
+   Base Onsen UI styles are loaded from CDN:
+     https://unpkg.com/onsenui/css/onsenui.css
+     https://unpkg.com/onsenui/css/dark-onsen-css-components.css
+
+   The following are app-specific overrides for Onsen components.
+   --------------------------------------------------------------- */
+
+/* ons-button */
+.listSongView ons-button {
+  vertical-align: middle;
+  font-size: 36px;
+  overflow: unset;
+}
+
+/* ons-card  — no app-specific overrides; uses CDN styles */
+
+/* ons-fab */
+#toTop {
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin-top: 48px;
+  color: var(--highlight-color);
+}
+
+/* ons-icon */
+.search-container > ons-icon {
+  min-width: 36px;
+  line-height: 26px;
+  font-size: 28px;
+  color: var(--highlight-color);
+  margin-top: 4px;
+}
+
+.list-item .ons-icon {
+  font-size: 28px;
+}
+
+.list-item--chevron .ons-icon {
+  color: var(--highlight-color);
+}
+
+#broadcasts .ons-icon {
+  margin-left: 6px;
+}
+
+/* ons-input  — no app-specific overrides beyond .search-box>input */
+
+/* ons-lazy-repeat  — no app-specific overrides */
+
+/* ons-list  — no app-specific overrides beyond glassy containers */
+
+/* ons-list-header  — no app-specific overrides beyond .list-header--material */
+
+/* ons-list-item */
+.list-item__top,
+ons-list-item {
+  min-height: 62px;
+}
+
+ons-list-item .left,
+ons-list-item .right {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#sharedLists-list ons-list-item .center,
+#sharedLists-list ons-list-item .left,
+ons-list-item .right {
+  padding: 0;
+}
+
+ons-list-item .center:not(.isCard) {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+  overflow: hidden;
+  padding-right: 0;
+}
+
+ons-list-item .center.list-item--chevron__center {
+  padding-right: 6px;
+}
+
+ons-list-item .center > span {
+  overflow: hidden;
+  width: 100%;
+}
+
+ons-list-item .rightButton {
+  padding-right: unset;
+  margin-right: 3px;
+}
+
+ons-list-item .list-item__subtitle {
+  width: 100%;
+  display: flex;
+}
+
+ons-list-item .list-item__subtitle span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ons-list-item .list-item__subtitle :first-child {
+  margin-right: 10px;
+}
+
+ons-list-item .list-item__subtitle :nth-child(2) {
+  margin-left: auto;
+  color: var(--sub-text-color);
+  font-style: italic;
+}
+
+ons-list-item .list-item__subtitle span.no_right {
+  margin-left: unset;
+}
+
+/* ons-page  — base styling provided by Onsen UI CDN; see .page for SPA override */
+
+/* ons-popover */
+ons-popover div.popover__content {
+  width: auto;
+  min-height: 0;
+}
+
+/* ons-radio  — no app-specific overrides */
+
+/* ons-tabbar  — replaced by custom .bottom-tabbar in this SPA */
+
+/* ons-toolbar */
+ons-toolbar .center.author-container {
+  line-height: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.toolbar {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border: none;
+}
+
+.toolbar--material__left > .back-button,
+.toolbar--material__right > .toolbar-button {
+  display: flex !important;
+  justify-content: center;
+}
+
+
+/* ============================================================
+   ADDITIONAL APP-SPECIFIC HELPERS
+   ============================================================ */
+
+/* Body / HTML constraints */
+html, body {
+  height: 100%;
+  margin: 0;
+  overscroll-behavior: none;
+}
+
+body {
+  max-width: 768px;
+  margin: auto;
+  background-color: var(--background-color);
+  box-shadow: var(--outer-shadow);
+  font-size: 20px;
+}
+
+/* Safe-area insets for navigator */
+ons-navigator {
+  top: var(--inset-top);
+  bottom: var(--inset-bottom);
+  right: var(--inset-right);
+}
+
+/* SortableJS helpers */
+.sortable-chosen {
+  background-color: var(--sortable-chosen-bg);
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+.sortable-ghost {
+  background-color: var(--sortable-ghost-bg);
+}
+
+/* Subtitle helper */
+.subText {
+  font-style: italic;
+  left: 10px;
+  position: relative;
+  width: calc(100% - 10px);
+}
+
+/* Button outline helper */
+.button--md-outline {
+  border: 1px solid;
+  font-size: 18px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* List item separator override */
+.list-item:not(:last-child) > .center:not(.isCard),
+.list-item__top:not(:last-child) > .center:not(.isCard) {
+  background-image: var(--separator-gradient);
+}
+
+/* List item chevron override */
+.list-item--chevron:before {
+  border-color: var(--highlight-color);
+}
+
+/* Material list item padding */
+.list-item--material {
+  padding: 0 12px;
+}
+
+/* Broadcasts / chevron left min-width */
+#broadcasts .list-item .list-item--material__left,
+.list-item--chevron .list-item--material__left {
+  min-width: 44px;
+}
+
+/* Expandable content */
+.list-item__expandable-content {
+  width: 100vw;
+  padding: 0 5% 0 5%;
+  margin-bottom: 12px;
+}
+
+/* Alert-dialog content spacing */
+.alert-dialog-content {
+  margin: 10px 0;
+}
+
+/* HOME BOTTOM DOCK BAR */
+
+/* 1. Reset: Remove the default Onsen UI chevron borders for these specific items */
+#allSongs::before,
+#pronounceGuide::before,
+#settingsBtn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 14px; /* Adjust distance from right edge */
+  width: 28px;  /* Adjust icon size */
+  height: 28px; /* Adjust icon size */
+  transform: translateY(-50%);
+  border: none !important; /* This is the critical part to remove the old chevron */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* 2. Assign the specific SVG icons */
+
+/* Alphabetized Icon */
+#allSongs::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23feb913"><path d="m298-262-56-56 121-122H80v-80h283L242-642l56-56 218 218-218 218Zm222-18v-80h360v80H520Zm0-320v-80h360v80H520Zm120 160v-80h240v80H640Z"/></svg>');
+}
+
+/* Pronunciation Icon */
+#pronounceGuide::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23feb913"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+/* Settings Icon */
+#settingsBtn::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23feb913"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+/* The container for the buttons */
+.bottom-tabbar__row {
+  display: flex;
+  width: 95%;           /* Slight margin from sides to look like a floating dock */
+  max-width: 600px;     /* Optional: prevents it from being too wide on tablets */
+  margin: 0 auto;       /* Centers the dock horizontally */
+  height: 65px;
+  
+  /* Glass Effect */
+  background-color: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  /* Shape: Rounded Top, Sharp Bottom */
+  border-radius: 20px 20px 0 0; 
+  
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* The footer container itself should be transparent */
+.tabbar.ons-tabbar__footer {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.bottom-tabbar__row button {
+  flex: 1;
+  display: flex;
+  flex-direction: row;    /* Changed from column to row */
+  align-items: center;    /* Keeps icon and text vertically centered */
+  justify-content: center;
+  gap: 8px;               /* Adds space between the icon and the text */
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+}
+
+/* Optional: Reset any default Onsen UI margin on the icon */
+.bottom-tabbar__row button ons-icon {
+  margin-bottom: 0 !important; 
+}
+
+/* PRONUNCIATION */
+
+/* Container for each list item in the pronunciation list */
+ons-list#pronounce-list ons-list-item {
+  display: flex;
+  justify-content: center; /* Centers the whole row's content */
+  width: 100%;
+  padding-left: 0 !important; /* Reset default padding */
+}
+
+/* The left side (Word) */
+ons-list#pronounce-list .list-item__left {
+  flex: 0 0 50% !important;   /* Occupy exactly 50% */
+  display: flex;
+  justify-content: center;    /* Center content horizontally */
+  align-items: center;        /* Center content vertically */
+  text-align: center;
+  padding-right: 0 !important; /* Remove right spacing */
+}
+
+/* The center side (Pronunciation) */
+ons-list#pronounce-list .list-item__center {
+  flex: 0 0 50% !important;   /* Occupy exactly 50% */
+  display: flex;
+  justify-content: center;    /* Center content horizontally */
+  align-items: center;        /* Center content vertically */
+  text-align: center;
+  background-image: none !important; /* Removes default Onsen UI border if any */
+}
+
+highlight {
+  font-weight: 400;
+  color: var(--highlight-color);
+  background-color: transparent; !important;
+}
+
+/**/
+footnote {
+  font-weight: 400;
+  color: var(--gray-dark);
+  background-color: transparent; !important;
+}
+
+#addSongToListBtn > .center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#addSongToListBtn .ons-icon {
+  vertical-align: middle;
+  margin-top: 0px;
+}

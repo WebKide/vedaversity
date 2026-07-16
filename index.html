@@ -2,47 +2,516 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link rel="manifest" href="site.webmanifest"/>
   <meta name="theme-color" content="#0d0d0d"/>
-  <!-- Favicons -->
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <title>Kirtan</title>
-  <meta name="author" content="Keshto" />
+  <meta name="author" content="Keshto@gmail.com" />
 
-  <!-- 1. Stylesheets: Critical path for First Contentful Paint -->
-  <link rel="stylesheet" href="css/all_songs_page.css" />
-  <link rel="stylesheet" href="css/capacitor.css" />
-  <link rel="stylesheet" href="css/dark-theme.css" />
-  <link rel="stylesheet" href="css/home_content_page.css" />
-  <link rel="stylesheet" href="css/pronounce_page.css" />
-  <link rel="stylesheet" href="css/songView_page.css" />
-  <link rel="stylesheet" href="css/theme.css" />
-  <link rel="stylesheet" href="css/dependencies/baloo-da-2-font/css/font.css" />
-  <link rel="stylesheet" href="css/dependencies/material-design-iconic-font/css/material-design-iconic-font.min.css" />
+  <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
+  <link rel="stylesheet" href="css/dependencies/offline-onsenui.css">
+  <script src="js/dependencies/offline-onsenui.js"></script>
 
-  <!-- Service Worker Registration -->
+  <!-- New: SPA page-stack layout (replaces what ons-navigator used to handle) -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- <link rel="stylesheet" href="css/dependencies/baloo-da-2-font/css/font.css" />
+  <link rel="stylesheet" href="css/dependencies/material-design-iconic-font/css/material-design-iconic-font.min.css" /> -->
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .catch((err) => {
-            if (request.mode === "navigate") return caches.match("index.html");
-            throw err; // don't return undefined
-          });
+        navigator.serviceWorker.register('sw.js').catch((err) => console.error('SW registration failed:', err));
       });
     }
   </script>
 </head>
 
 <body>
-  <script>var a0_0x1d4924=a0_0x1f0f;function a0_0x1f0f(a,r){return a-=471,a0_0x966b()[a]}(()=>{for(var a=a0_0x1f0f,r=a0_0x966b();;)try{if(210261==-parseInt(a(487))*(-parseInt(a(478))/2)+parseInt(a(475))/3*(-parseInt(a(488))/4)+parseInt(a(474))/5*(-parseInt(a(476))/6)+-parseInt(a(493))/7*(parseInt(a(483))/8)+-parseInt(a(489))/9*(parseInt(a(471))/10)+parseInt(a(486))/11*(-parseInt(a(494))/12)+parseInt(a(473))/13)break;r.push(r.shift())}catch(a){r.push(r.shift())}})();var a0_0xda4616=(()=>{var n=!0;return function(r,t){var a=n?function(){var a;if(t)return a=t[a0_0x1f0f(480)](r,arguments),t=null,a}:function(){};return n=!1,a}})(),a0_0x163d1d=a0_0xda4616(this,function(){var a=a0_0x1f0f;return a0_0x163d1d[a(482)]()[a(477)](a(491)+"+$").toString()[a(492)+"r"](a0_0x163d1d)[a(477)](a(491)+"+$")});function a0_0x966b(){var a=["552jPAOfq","search","62572ojsRXO","innerHTML","apply","lates/home","toString","2951688MWOcYZ",'avigator" ',"body","4433oHRxOY","7gltrCv","332CijNzJ","9geyHIx","or>","(((.+)+)+)","constructo","7TVlLJP","6312rUGoFD","ns-navigat",'.html"></o',"3133590fvlrcI",'page="temp',"14636284JFKtdt","660XHUSqt","8247XNpdsw"];return(a0_0x966b=function(){return a})()}a0_0x163d1d(),document[a0_0x1d4924(485)][a0_0x1d4924(479)]='<ons-navigator id="n'+a0_0x1d4924(484)+a0_0x1d4924(472)+a0_0x1d4924(481)+a0_0x1d4924(496)+a0_0x1d4924(495)+a0_0x1d4924(490)</script>
+  <!-- Root container that our custom router renders pages into. -->
+  <div id="app"></div>
 
-  <script type="module" src="js/capacitor_plugins_bundle.js"></script>
+  <!-- The element existing code refers to as document.getElementById("navigator").
+       js/router.js attaches pushPage/popPage/replacePage/resetToPage/topPage onto it,
+       so any old call site written against ons-navigator's API keeps working. -->
+  <div id="navigator" style="display:none;"></div>
 
-  <script src="data.a"></script>
+  <!-- ===================================================================== -->
+  <!-- TEMPLATES — plain <template> tags, cloned by js/router.js on demand.  -->
+  <!-- Each root node needs class="page" so the router can show/hide it.    -->
+  <!-- ===================================================================== -->
 
-  <script src="data.b" defer=""></script>
+  <!-- Root shell: Home + Lists tabs live here permanently; everything else
+       (search, all-songs, settings, pronounce, list detail, song view) is
+       pushed on top of it as a modal-style page. -->
+  <template id="tmpl-shell" class="main">
+    <ons-page class="page" id="shell_page" data-init-fn="shell_page_init">
+      <div class="page__content shell__content">
+
+        <!-- ===== Home tab ===== -->
+        <div id="tab-home">
+          <div class="gutter">
+            <div class="glassy search-container">
+              <div class="left">
+                <svg class="search-icon"
+                     viewBox="0 0 24 24"
+                     height="32px" 
+                     width="32px" 
+                     fill="var(--highlight-color)"
+                     aria-hidden="true"
+                     focusable="false">
+                  <path d="M9.5,3C13.1,3,16,5.9,16,9.5c0,1.6-0.6,3.1-1.6,4.2l0.3,0.3h0.8l5,5L19,20.5l-5-5v-0.8l-0.3-0.3 c-2.7,2.3-6.8,2-9.2-0.7C3.6,12.6,3,11.1,3,9.5C3,5.9,5.9,3,9.5,3z M9.5,5C7,5,5,7,5,9.5S7,14,9.5,14S14,12,14,9.5S12,5,9.5,5z"/>
+                </svg>
+              </div>
+              <ons-input id="search-input" class="search-box" placeholder="Search"
+                autocapitalize="off" autocomplete="off" spellcheck="false" autocorrect="off"></ons-input>
+            </div>
+
+            <ons-list>
+              <ons-list-header id="recentHeader" style="display:none;">
+                <div class="left">
+                  <svg class="sort-icon"
+                       viewBox="0 -960 960 960"
+                       height="32px" 
+                       width="32px" 
+                       fill="var(--highlight-color)"
+                       aria-hidden="true"
+                       focusable="false">
+                    <path d="m80-280 150-400h86l150 400h-82l-34-96H196l-32 96H80Zm140-164h104l-48-150h-6l-50 150Zm328 164v-76l202-252H556v-72h282v76L638-352h202v72H548ZM360-760l120-120 120 120H360ZM480-80 360-200h240L480-80Z"/>
+                  </svg>
+                </div>
+               Recents
+              </ons-list-header>
+              <div id="recents" class="glassy">
+                <!-- Add this above <div id="recents-items"> -->
+                <div id="recents-actions" style="display: flex; justify-content: space-around; padding: 12px; border-bottom: 1px solid rgba(128,128,128,0.2);">
+                  <div id="btn-clear-recents" style="text-align: center; cursor: pointer;">
+                    <svg class="clear-list-icon" viewBox="0 -960 960 960" height="32px" width="32px" fill="var(--highlight-color)">
+                      <path d="M600-240v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120-640H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440-200H200q-33 0-56.5-23.5T120-280v-360Zm80 0v360h240v-360H200Zm0 0v360-360Z"/>
+                    </svg>
+                    <div style="font-size: 11px; color: var(--highlight-color); margin-top: 4px; font-weight: 500;">Clear</div>
+                  </div>
+
+                  <div id="btn-create-list-from-recents" style="text-align: center; cursor: pointer;">
+                    <svg class="create-list-icon" viewBox="0 -960 960 960" height="32px" width="32px" fill="var(--highlight-color)">
+                      <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z"/>
+                    </svg>
+                    <div style="font-size: 11px; color: var(--highlight-color); margin-top: 4px; font-weight: 500;">Create List</div>
+                  </div>
+                </div>
+                <div id="recents-items" class="recents-scroll"></div>
+              </div>
+            </ons-list>
+
+            <ons-list class="glassy" style="margin-top: 15px;">
+              <ons-list-item modifier="chevron" tappable id="allSongs">
+                <div class="left">
+                  <svg class="search-icon"
+                       viewBox="0 -960 960 960"
+                       height="32px" 
+                       width="32px" 
+                       fill="var(--highlight-color)"
+                       aria-hidden="true"
+                       focusable="false">
+                    <path d="m80-280 150-400h86l150 400h-82l-34-96H196l-32 96H80Zm140-164h104l-48-150h-6l-50 150Zm328 164v-76l202-252H556v-72h282v76L638-352h202v72H548ZM360-760l120-120 120 120H360ZM480-80 360-200h240L480-80Z"/>
+                  </svg>
+                </div>
+                Songs alphabetized
+              </ons-list-item>
+              <ons-list-item modifier="chevron" tappable id="pronounceGuide">
+                <div class="left">
+                  <svg class="eq-icon"
+                       viewBox="0 0 24 24"
+                       height="32px" 
+                       width="32px" 
+                       fill="var(--highlight-color)"
+                       aria-hidden="true"
+                       focusable="false">
+                    <path d="M6 22c1 0 1.9-.3 2.5-.8S9.7 20 10.1 19c.4-1.2.7-1.9 2.6-3.4 1-.8 3.3-3 3.3-6.6 0-3.8-2.8-7-7-7-3.9 0-7 2.9-7 7h2c0-2 1.5-5 5-5 2.8 0 5 2.1 5 5 0 3.2-1.8 4.4-2.6 5.1-.9.8-2.2 1.6-3.1 3.8-.2.7-.5 1.3-.8 1.6s-.8.5-1.5.5c-1.6 0-2-1.5-2-2H2c0 1.1.8 4 4 4m4.8-11.2c.5-.5.7-1.1.7-1.8s-.2-1.3-.7-1.8-1.1-.7-1.8-.7-1.3.2-1.8.7-.7 1.1-.7 1.8.2 1.3.7 1.8 1.1.7 1.8.7 1.3-.2 1.8-.7m7.7 3.7L17 13.1c.3-.6 1-1.7 1-4 0-2.2-.7-3.4-1-4l1.5-1.5C19 4.3 20 6.5 20 9c0 2.8-1 4.7-1.5 5.5m2.9 2.9L20 16c.6-1 2-2.8 2-7 0-3.5-1.4-5.9-2.1-6.9L21.4.6C22.2 1.8 24 4.7 24 9c0 4.1-1.8 7.2-2.6 8.4"/>
+                  </svg>
+                </div>
+                Pronunciation Guide
+              </ons-list-item>
+              <ons-list-item modifier="chevron" tappable id="settingsBtn">
+                <div class="left">
+                  <svg class="settings-icon"
+                       viewBox="0 0 24 24"
+                       height="32px" 
+                       width="32px" 
+                       fill="var(--highlight-color)"
+                       aria-hidden="true"
+                       focusable="false">
+                    <path d="M20.7,13.4l-1-0.8c0-0.1-0.4-0.5,0-1.1l1-0.8c0.7-0.6,0.9-1.6,0.4-2.4L19.8,6c-0.5-0.8-1.4-1.1-2.3-0.8l-1.2,0.5 c-0.1,0-0.6,0.1-0.9-0.5l-0.2-1.3c-0.2-0.9-0.9-1.6-1.9-1.6h-2.6C9.8,2.3,9,2.9,8.9,3.8L8.6,5.1C8.6,5.2,8.4,5.7,7.7,5.6L6.5,5.2 C5.6,4.9,4.7,5.2,4.2,6L2.9,8.2C2.4,9,2.6,10,3.3,10.6l1,0.8c0,0.1,0.4,0.5,0,1.1l-1,0.8C2.6,14,2.4,15,2.9,15.8L4.2,18 c0.5,0.8,1.4,1.1,2.3,0.8l1.2-0.5c0.1,0,0.6-0.1,0.9,0.5l0.2,1.3c0.2,0.9,0.9,1.6,1.9,1.6h2.6c0.9,0,1.7-0.7,1.9-1.6l0.2-1.3 c0.1-0.1,0.2-0.6,0.9-0.5l1.2,0.5c0.9,0.3,1.8,0,2.3-0.8l1.3-2.2C21.6,15,21.4,14,20.7,13.4z M12,15.8c-2.1,0-3.8-1.7-3.8-3.8 c0-2.1,1.7-3.8,3.8-3.8c2.1,0,3.8,1.7,3.8,3.8C15.8,14.1,14.1,15.8,12,15.8z"/>
+                  </svg>
+                </div>
+                Settings
+              </ons-list-item>
+            </ons-list>
+
+            <div class="default_img_container" style="display:block; padding-top:15px; text-align:center;">
+              <img style="display:block; width:120px; height:120px; margin:0 auto; box-shadow:var(--thumbnail-shadow);" src="img/home_default.jpg">
+              <p style="margin-top:10px;" id="appVersion">Kirtan v1.06</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Lists tab ===== -->
+        <div id="tab-lists" style="display:none;">
+          <div class="gutter">
+            <ons-list style="margin-top: 15px;">
+              <div id="custom-lists" class="glassy"></div>
+              <ons-list-item id="createListBtn" tappable modifier="md-outline" style="margin-top: 10px;">
+                <ons-icon icon="md-collection-plus"></ons-icon>
+                Create a new list
+              </ons-list-item>
+            </ons-list>
+
+            <ons-list style="margin: 15px 0;">
+              <ons-list-header>Lists by tattva</ons-list-header>
+              <div id="tattva-lists" class="glassy"></div>
+            </ons-list>
+          </div>
+        </div>
+      </div>
+
+      <ons-tabbar class="bottom-tabbar" position="bottom">
+        <div class="bottom-tabbar__row">
+          <button id="tabBtnHome" class="tabbar-btn active">
+            <div class="left">
+              <svg class="home-icon"
+                   viewBox="0 0 24 24"
+                   height="24px" 
+                   width="24px" 
+                   fill="var(--highlight-color)"
+                   aria-hidden="true"
+                   focusable="false">
+                <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8 M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              </svg>
+            </div>
+            <span>Home</span>
+          </button>
+          <button id="tabBtnLists" class="tabbar-btn">
+            <div class="left">
+              <svg class="lists-icon"
+                   viewBox="0 0 24 24"
+                   height="24px" 
+                   width="24px" 
+                   fill="var(--highlight-color)"
+                   aria-hidden="true"
+                   focusable="false">
+                <path d="M3 18c-.6 0-1 .4-1 1s.5 1 1 1 1-.4 1-1-.4-1-1-1m0-7c-.6 0-1 .4-1 1s.5 1 1 1 1-.4 1-1-.4-1-1-1m5.4-4.3h12.2c.8 0 1.4-.6 1.4-1.4 0-.7-.7-1.3-1.4-1.3H8.4C7.6 4 7 4.6 7 5.4c0 .7.6 1.3 1.4 1.3m0 6.7h12.3c.8 0 1.4-.6 1.4-1.4s-.6-1.4-1.4-1.4H8.4c-.8 0-1.4.6-1.4 1.4s.6 1.4 1.4 1.4M3 4c-.6 0-1 .4-1 1s.5 1 1 1 1-.4 1-1-.4-1-1-1m17.6 13.3H8.4c-.8 0-1.4.6-1.4 1.4 0 .7.6 1.3 1.4 1.3h12.3c.8 0 1.4-.6 1.4-1.4-.1-.7-.7-1.3-1.5-1.3"/>
+              </svg>
+            </div>
+            <span>Lists</span>
+          </button>
+        </div>
+      </ons-tabbar>
+    </ons-page>
+  </template>
+
+  <!-- All songs, alphabetized -->
+  <template id="tmpl-all-songs">
+    <ons-page class="page" id="all_songs_page" data-init-fn="all_songs_page_init">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left"><button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+        <div class="left">
+          <svg class="back-icon"
+               viewBox="0 -960 960 960"
+               height="24px" 
+               width="24px" 
+               fill="var(--highlight-color)"
+               aria-hidden="true"
+               focusable="false">
+            <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+          </svg>
+        </div>
+         Back</button></div>
+        <div class="center"><ons-icon icon="md-sort-asc"></ons-icon> Songs alphabetized</div>
+      </ons-toolbar>
+
+      <!-- toTop FAB -->
+      <ons-fab id="toTop"
+               style="transition: all 0.3s;"
+               position="bottom right"
+               class="glassyFloat"
+               onclick="const el = this.closest('.page').querySelector('.page__content'); if(el) el.scrollTo({top:0,behavior:'smooth'})">
+        <svg class="to-top-icon"
+             viewBox="0 0 24 24"
+             height="24px"
+             width="24px"
+             fill="var(--highlight-color)"
+             aria-hidden="true"
+             focusable="false">
+          <path d="M11 16h2v-4.2l1.6 1.6L16 12l-4-4-4 4 1.4 1.4 1.6-1.6zm1 6c-1.4 0-2.7-.3-3.9-.8S5.8 20 4.9 19.1s-1.6-2-2.1-3.2S2 13.4 2 12s.3-2.7.8-3.9S4 5.8 4.9 4.9s2-1.6 3.2-2.1S10.6 2 12 2s2.7.3 3.9.8 2.3 1.2 3.2 2.1 1.6 2 2.1 3.2.8 2.5.8 3.9-.3 2.7-.8 3.9-1.2 2.3-2.1 3.2-2 1.6-3.2 2.1-2.5.8-3.9.8m0-2c2.2 0 4.1-.8 5.7-2.3 1.5-1.5 2.3-3.4 2.3-5.7s-.8-4.1-2.3-5.7C16.1 4.8 14.2 4 12 4s-4.1.8-5.7 2.3S4 9.8 4 12s.8 4.1 2.3 5.7C7.9 19.2 9.8 20 12 20"/>
+        </svg>
+      </ons-fab>
+
+      <div class="page__content">
+        <div class="gutter">
+          <div id="group-nav" class="group-nav"></div>
+            <ons-list class="glassyEach">
+              <ons-lazy-repeat id="all-songs-list"></ons-lazy-repeat>
+            </ons-list>
+          </div>
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Group detail — songs for a single Sanskrit letter group -->
+  <template id="tmpl-group-detail">
+    <ons-page class="page" id="group_detail_page" data-init-fn="group_detail_page_init">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left">
+          <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+            <svg class="back-icon" viewBox="0 -960 960 960" width="24" height="24" fill="var(--highlight-color)" aria-hidden="true" focusable="false">
+              <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+            </svg>
+            <span>Back</span>
+          </button>
+        </div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <div class="page__content">
+        <div class="gutter">
+          <ons-list id="group-detail-list" class="glassy"></ons-list>
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Search (used both standalone and when adding a song to a list) -->
+  <template id="tmpl-search">
+    <ons-page class="page" id="search_page" data-init-fn="search_page_init">
+      <div class="page__content">
+        <div class="gutter">
+          <div class="glassyFloat search-container" style="position: sticky; z-index: 100;">
+            <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+              <svg
+                class="back-icon"
+                viewBox="0 -960 960 960"
+                width="24"
+                height="24"
+                fill="var(--highlight-color)"
+                aria-hidden="true"
+                focusable="false">
+                <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+              </svg>
+              <span>Back</span>
+            </button>
+
+            <div class="search-input-wrap">
+              <svg class="search-box-icon" viewBox="0 0 24 24" width="20" height="20"
+                   fill="var(--sub-text-color)" aria-hidden="true" focusable="false">
+                <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/>
+              </svg>
+              <ons-input class="search-box" placeholder="Search"
+                autocapitalize="off" autocomplete="off" spellcheck="false" autocorrect="off"></ons-input>
+            </div>
+          </div>
+
+        </div>
+          <ons-list id="search-list-page">
+            <div id="search-hint-add" class="list-header list-header--material" style="display:none;">
+              <i>Type to find a song to add to the list</i>
+            </div>
+            <div class="default_img_container">
+              <img src="img/search_default.png" />
+            </div>
+          </ons-list>
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Settings -->
+  <template id="tmpl-settings">
+    <ons-page class="page" id="settings_page" data-init-fn="settings_page_init">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left">
+            <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+              <svg
+                class="back-icon"
+                viewBox="0 -960 960 960"
+                width="24"
+                height="24"
+                fill="var(--highlight-color)"
+                aria-hidden="true"
+                focusable="false">
+                <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+              </svg>
+              <span>Back</span>
+            </button>
+</div>
+        <div class="center">Settings</div>
+      </ons-toolbar>
+      <div class="page__content">
+        <div class="gutter"></div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Pronunciation guide (static, no audio) -->
+  <template id="tmpl-pronounce">
+    <ons-page class="page" id="pronounce_page" data-init-fn="pronounce_page_init">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left">
+            <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+              <svg
+                class="back-icon"
+                viewBox="0 -960 960 960"
+                width="24"
+                height="24"
+                fill="var(--highlight-color)"
+                aria-hidden="true"
+                focusable="false">
+                <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+              </svg>
+              <span>Back</span>
+            </button>
+          </div>
+        <div class="center">Pronunciation Guide</div>
+      </ons-toolbar>
+      <div class="page__content">
+        <div class="gutter">
+          <ons-list id="pronounce-list" class="glassyEach"></ons-list>
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Single list detail -->
+  <template id="tmpl-list">
+    <ons-page class="page" id="list_page" data-init-fn="list_page_init">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left">
+          <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+            <svg
+              class="back-icon"
+              viewBox="0 -960 960 960"
+              width="24"
+              height="24"
+              fill="var(--highlight-color)"
+              aria-hidden="true"
+              focusable="false">
+              <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+            </svg>
+            <span>Back</span>
+          </button>
+        </div>
+        <div class="center"></div>
+        <div class="right"><button id="listMenuBtn"><ons-icon icon="md-more-vert"></ons-icon></button></div>
+      </ons-toolbar>
+      <div class="page__content">
+        <div class="gutter">
+          <span id="infoBlurb" class="list-header list-header--material">Long press to rearrange items.</span>
+          <ons-list id="list-list" class="glassy"></ons-list>
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Song view template -->
+  <template id="tmpl-songview">
+    <ons-page class="page" id="songView_page" data-init-fn="songView_page_init" data-css="css/songView_page.css">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left">
+          <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+            <svg class="back-icon" viewBox="0 -960 960 960" width="24" height="24" fill="var(--highlight-color)" aria-hidden="true" focusable="false">
+              <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+            </svg>
+            <span>Back</span>
+          </button>
+        </div>
+        <div class="center" id="songTitle"></div>
+        <div class="right">
+          <ons-toolbar-button id="songViewMenuBtn" ripple="false">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="var(--highlight-color)">
+              <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+          </ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+
+      <div class="page__content">
+        <span id="transAvail" class="list-header list-header--material"></span>
+        <div class="list-header--material" style="text-align:center; opacity:.6; font-size:12px;">
+          TAP VERSE FOR TRANSLATION,<br/>
+          DOUBLE TAP TO TOGGLE FULL TRANSLATION.
+        </div>
+        <ons-list id="verseList"></ons-list>
+        <div id="footerSpacer" style="height: 33vh;">
+          <div style="height: 100%"></div>
+        </div>
+      </div>
+
+      <!-- toTop FAB — restored from the commented template -->
+      <ons-fab id="toTop"
+               style="opacity: 0; pointer-events: none; transition: all 0.3s;"
+               position="bottom right"
+               class="glassyFloat"
+               onclick='document.querySelector("#songView_page .page__content").scrollTo({top:0,behavior:"smooth"})'>
+        <svg class="to-top-icon"
+             viewBox="0 0 24 24"
+             height="24px"
+             width="24px"
+             fill="var(--highlight-color)"
+             aria-hidden="true"
+             focusable="false">
+          <path d="M11 16h2v-4.2l1.6 1.6L16 12l-4-4-4 4 1.4 1.4 1.6-1.6zm1 6c-1.4 0-2.7-.3-3.9-.8S5.8 20 4.9 19.1s-1.6-2-2.1-3.2S2 13.4 2 12s.3-2.7.8-3.9S4 5.8 4.9 4.9s2-1.6 3.2-2.1S10.6 2 12 2s2.7.3 3.9.8 2.3 1.2 3.2 2.1 1.6 2 2.1 3.2.8 2.5.8 3.9-.3 2.7-.8 3.9-1.2 2.3-2.1 3.2-2 1.6-3.2 2.1-2.5.8-3.9.8m0-2c2.2 0 4.1-.8 5.7-2.3 1.5-1.5 2.3-3.4 2.3-5.7s-.8-4.1-2.3-5.7C16.1 4.8 14.2 4 12 4s-4.1.8-5.7 2.3S4 9.8 4 12s.8 4.1 2.3 5.7C7.9 19.2 9.8 20 12 20"/>
+        </svg>
+      </ons-fab>
+
+      <!-- Popover — correctly placed as a direct child of <ons-page>, NOT inside the FAB -->
+      <ons-popover id="songViewPopover" cancelable cover-target>
+        <ons-list>
+          <ons-list-item id="listBtn" tappable modifier="nodivider">
+            <div class="left">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--highlight-color)">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+              </svg>
+            </div>
+            <div class="center">Add to list</div>
+          </ons-list-item>
+          <ons-list-item id="announceBtn" tappable modifier="nodivider" style="display: none;">
+            <div class="left">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--highlight-color)">
+                <path d="M4 4v16h16V4H4zm14 14H6V6h12v12zM8 8h2v2H8V8zm4 0h2v2h-2V8zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z"/>
+              </svg>
+            </div>
+            <div class="center">Announce</div>
+          </ons-list-item>
+          <ons-list-item id="shareBtn" tappable modifier="nodivider">
+            <div class="left">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--highlight-color)">
+                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+              </svg>
+            </div>
+            <div class="center">Copy / Share</div>
+          </ons-list-item>
+        </ons-list>
+      </ons-popover>
+    </ons-page>
+  </template>
+
+  <!-- App scripts -->
+  <script src="js/dependencies/Sortable.min.js"></script>
+  <script src="js/dependencies/fuse.min.js"></script>
+
+  <script src="js/router.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/app.js"></script>
+
+  <script src="js/home_page.js"></script>
+  <script src="js/lists_page.js"></script>
+  <script src="js/list_page.js"></script>
+  <script src="js/all_songs_page.js"></script>
+  <script src="js/search_page.js"></script>
+  <script src="js/settings_page.js"></script>
+  <script src="js/pronounce_page.js"></script>
+  <script src="js/songView_page.js"></script>
 </body>
 </html>
