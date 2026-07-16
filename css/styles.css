@@ -992,14 +992,29 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* #app */
 #app {
-  position: relative;
-  padding-top: var(--inset-top);
-  padding-bottom: var(--inset-bottom);
-  padding-left: var(--inset-left);
-  padding-right: var(--inset-right);
-  min-height: 100vh;
+  /* Use official iOS environment variables with fallback values */
+  padding-top: calc(env(safe-area-inset-top) + 0px);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  
+  /* Fix the 180px bottom gap by ensuring full viewport height */
+  min-height: 100vh; 
+  min-height: 100dvh; /* Dynamic viewport height fixes mobile browser bar glitches */
   box-sizing: border-box;
 }
+
+/* Specific adjustments for smaller mobile screens if needed */
+@media (max-width: 520px) {
+  #app {
+    /* If you must shift the top bar up, use calc to subtract pixels */
+    padding-top: calc(env(safe-area-inset-top) - 180px); 
+    
+    /* Forces the app to touch the absolute bottom of the screen */
+    padding-bottom: 0px; 
+  }
+}
+
 
 /* #appVersion  — no custom styles; inherits text color */
 
