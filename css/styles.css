@@ -993,8 +993,12 @@ ons-list-item .list-item__subtitle span.no_right {
 /* #app */
 #app {
   position: relative;
-  height: 100%;
-  height: 100dvh;
+  padding-top: var(--inset-top);
+  padding-bottom: var(--inset-bottom);
+  padding-left: var(--inset-left);
+  padding-right: var(--inset-right);
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 /* #appVersion  — no custom styles; inherits text color */
