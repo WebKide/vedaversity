@@ -12,10 +12,13 @@
 
 <div align="center">
    <img src="https://img.shields.io/badge/Made%20with-JavaScript-blue.svg?style=popout&logo=javascript&logoColor=yellow" alt="JavaScript" />
+   <img src="https://img.shields.io/badge/Data-LocalJSON-%234ea94b.svg?style=popout&logo=git&logoColor=white" alt="Local JSON" />
+</div>
+
+<div align="center">
    <img src="https://img.shields.io/badge/Library-OnsenUI-orange?style=popout" alt="Onsen UI" />
    <img src="https://img.shields.io/badge/Library-fuse.js-red?style=popout" alt="fuse.min.js" />
    <img src="https://img.shields.io/badge/Library-SortableJS-9cf?style=popout" alt="Sortable.min.js" />
-   <img src="https://img.shields.io/badge/Data-LocalJSON-%234ea94b.svg?style=popout&logo=git&logoColor=white" alt="Local JSON" />
 </div>
 
 <div align="center">
@@ -23,20 +26,20 @@
 </div>
 
 <div align="center">
-   <h2>「✦ Kirtan ✦」</h2>
+   <h1>✦ Kīrtan App ✦</h1>
    <p>॥ oṁ namo bhagavate vāsudevāya ॥</p>
 </div>
 
-### Original app by [Vedaversity](https://github.com/vedaversity/kirtan) ported as a SPA that works offline as an installable PWA
-
 A clean, dark-themed (saffron theme supported) Kīrtan songbook that works fully offline. Browse and search hundreds of songs, organize them into your own lists, group them by tattva, and read along verse-by-verse — all rendered locally, with nothing to install but a home-screen icon.
+
+### 「Original app [Vedaversity](https://github.com/vedaversity/kirtan) was developed by Keshto, this port of it as a **SPA** (single page app) was forked and developed to function totally offline as a **PWA** (progresive web app) that can be installed on any device」
 
 ## 🗃️ Features
 
 - **Song Library** — every song, alphabetized, one tap away.
 - **Search** — find a song instantly by title or lyric, fuzzy support.
 - **Custom Lists** — build your own playlists, add songs from Search, and reorder them by drag-and-drop.
-- **Tattva Collections** — songs pre-grouped by theme [SOON]:
+- **Tattva Collections** — songs pre-grouped by theme [TODO]:
   - Śrī Guru, Vaiṣṇava, Śrī Nitāi, Śrī Gaura, Nitāi & Gaurāṅga, Śrīmatī Rādhā, Śrī Kṛṣṇa, and Śrī Śrī Rādhā & Kṛṣṇa.
 - **Recents** — jump back into whatever you were reading last, or turn your history into a new list in one tap.
 - **Pronunciation Guide** — a quick reference for getting the Sanskrit/Bengali right.
@@ -89,7 +92,7 @@ A clean, dark-themed (saffron theme supported) Kīrtan songbook that works fully
 ### 🔰 Behavior
 
 - All content is rendered locally from JSON files — no server round-trips after the first load.
-- Lists, recents, theme, and text-size preferences are all saved on-device.
+- Lists, recents, theme, and text-size and font-family preferences are all saved on-device.
 - The service worker precaches the song library and app shell for instant, offline-first loading, and checks for updates automatically.
 
 ### 📱 Mobile Support
@@ -127,9 +130,11 @@ For issues or feature requests, please open an issue on [GitHub](https://github.
 - [x] Replace native keep-awake plugin with the Screen Wake Lock API
 - [x] Regenerate `IDX.json` directly from the `/SO/` song files via a build script
 - [ ] TODO: organize by tattva: Śrī Guru, Vaiṣṇava, Śrī Nitāi, Śrī Gaura, Nitāi & Gaurāṅga, Śrīmatī Rādhā, Śrī Kṛṣṇa, and Śrī Śrī Rādhā & Kṛṣṇa.
-- [ ] Wire up Fuse.js search with the final index configuration
+- [x] Wire up Fuse.js search with the final index configuration
 - [ ] Confirm no load-bearing styles were left behind in the legacy stylesheets
 - [ ] Full integration testing across the rebuilt SPA
 - [ ] Letter-group dividers for the All Songs list
+- [ ] Include more fonts with IAST support
+- [ ] Add more JSON song files to include extra bhajans and kīrtans
 
 ###### No accounts, subscriptions or personal data required. Responsive design for desktop and mobile. Runs entirely in your browser.

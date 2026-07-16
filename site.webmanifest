@@ -1,13 +1,15 @@
 {
   "name": "Kīrtan by Vedaversity",
-  "short_name": "Vedaversity",
-  "description": "Browse, search, and view song lyrics with pronunciation guides and lists.",
+  "short_name": "Kīrtana App",
+  "description": "Browse, search, and view song lyrics with pronunciation guides and lists by tattva.",
   "start_url": "index.html",
   "scope": "/",
+  "display_override": ["minimal-ui"],
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "theme_color": "#0d0d0d",
+  "categories": ["lifestyle", "utilities", "spirituality"],
   "icons": [
     { "src": "img/icons/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "img/icons/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

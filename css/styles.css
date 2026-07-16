@@ -718,7 +718,9 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* .page */
 .page {
-  position: fixed;
+  position: absolute;
+  width: auto; /* Let it be defined by left/right */
+  /*position: fixed;*/
   inset: 0;
   display: flex;
   flex-direction: column;
@@ -736,6 +738,7 @@ ons-list-item .list-item__subtitle span.no_right {
 .page .page__content {
   flex: 1 1 auto;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -772,8 +775,9 @@ ons-list-item .list-item__subtitle span.no_right {
 .search-container {
   display: flex;
   padding: 0 12px;
-  margin: 12px 0;
+  margin: 24px 0;
   min-height: 58px;
+  max-width: 90%;
   align-items: center;
 }
 
@@ -783,6 +787,40 @@ ons-list-item .list-item__subtitle span.no_right {
   font-size: 28px;
   color: var(--highlight-color);
   margin-top: 4px;
+}
+
+#glassyFloat .search-container {
+  width: auto;
+  min-width: 260px;
+  max-width: 90%;
+}
+
+/* Update in search_page styling */
+#search_page .page__content {
+  position: relative;
+  width: 100%;
+}
+
+#search_page .gutter {
+  display: block;
+  width: 100%;
+  padding: 25px 15px 0 15px;
+  box-sizing: border-box;
+  margin: 0; /* Remove potential negative margin-left */
+}
+
+#search_page .glassyFloat.search-container {
+  position: sticky;
+  top: 10px;
+  left: 0; /* Anchors the sticky element within the gutter */
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 100;
+  width: 100%;
+  max-width: 100%; /* Ensure it doesn't shrink to 90% if centering is desired */
+  display: flex;
+  box-sizing: border-box;
 }
 
 /* Search page (tmpl-search) — icon-in-input search bar.
@@ -803,8 +841,10 @@ ons-list-item .list-item__subtitle span.no_right {
   pointer-events: none;
 }
 
-#search_page .search-box {
-  width: 80vw;
+#search_page .search-box, .glassyFloat.search-container {
+  width: 92%; /* Or a slightly smaller that 100% if you want margins */
+  max-width: 600px; /* Optional: cap it for very wide layouts */
+  margin: 0 auto; /* Center it horizontally */
 }
 
 #search_page .search-box > input {

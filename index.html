@@ -153,7 +153,7 @@
 
             <div class="default_img_container" style="display:block; padding-top:15px; text-align:center;">
               <img style="display:block; width:120px; height:120px; margin:0 auto; box-shadow:var(--thumbnail-shadow);" src="img/home_default.jpg">
-              <p style="margin-top:10px;" id="appVersion">Kirtan v1.06</p>
+              <p style="margin-top:10px;" id="appVersion">Kirtan v1.07</p>
             </div>
           </div>
         </div>
@@ -288,7 +288,8 @@
     <ons-page class="page" id="search_page" data-init-fn="search_page_init">
       <div class="page__content">
         <div class="gutter">
-          <div class="glassyFloat search-container" style="position: sticky; z-index: 100;">
+          <div class="glassyFloat search-container" 
+               style="position: static; z-index: 100;">
             <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
               <svg
                 class="back-icon"
