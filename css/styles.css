@@ -1008,7 +1008,8 @@ ons-list-item .list-item__subtitle span.no_right {
 @media (max-width: 520px) {
   #app {
     /* If you must shift the top bar up, use calc to subtract pixels */
-    padding-top: calc(env(safe-area-inset-top) - 180px); 
+    /* padding-top: calc(env(safe-area-inset-top) - 180px); */
+    padding-top: 80px !important;
     
     /* Forces the app to touch the absolute bottom of the screen */
     padding-bottom: 0px; 
