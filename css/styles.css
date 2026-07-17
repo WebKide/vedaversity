@@ -739,6 +739,18 @@ ons-list-item .list-item__subtitle span.no_right {
   transition: transform 0.22s ease, opacity 0.22s ease;
 }
 
+/* Specific adjustments for smaller mobile screens if needed */
+@media (max-width: 520px) {
+  .page {
+    /* If you must shift the top bar up, use calc to subtract pixels */
+    /* padding-top: calc(env(safe-area-inset-top) - 180px); */
+    padding-top: 80px !important;
+    
+    /* Forces the app to touch the absolute bottom of the screen */
+    padding-bottom: 0px !important; 
+  }
+}
+
 /* .page--enter */
 .page--enter {
   transform: translateX(16px);
@@ -1008,8 +1020,7 @@ ons-list-item .list-item__subtitle span.no_right {
 @media (max-width: 520px) {
   #app {
     /* If you must shift the top bar up, use calc to subtract pixels */
-    /* padding-top: calc(env(safe-area-inset-top) - 180px); */
-    padding-top: 80px !important;
+    padding-top: calc(env(safe-area-inset-top) - 80px);
     
     /* Forces the app to touch the absolute bottom of the screen */
     padding-bottom: 0px; 
