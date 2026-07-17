@@ -1031,15 +1031,30 @@ ons-toolbar {
 
 
 /* Specific adjustments for smaller mobile screens if needed */
-@media (max-width: 520px) {
-  #appmain {
-    /* Forces the app to touch the absolute bottom of the screen */
-    height: 100dvh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+/* Target the PWA standalone mode explicitly */
+@media (display-mode: standalone) {
+  /* Force the parent wrapper down */
+  #app {
+    margin-top: calc(env(safe-area-inset-top, 47px)) !important;
+    height: calc(100dvh - env(safe-area-inset-top, 47px)) !important;
+  }
+  /* Force the absolute Onsen page containers to respect the new boundary */
+  ons-page.page {
+    top: 0 !important;
+    height: 100% !important;
+  }
+  /* Prevent toolbar content from bleeding up into the camera notch area */
+  ons-toolbar {
+    position: relative !important;
+    top: 0 !important;
+    padding-top: 0 !important;
+  }
+  /* Pad internal content to keep the click targets safely in bounds */
+  .page__content {
+    padding-top: 20px !important;
   }
 }
+
 
 /* #appVersion  — no custom styles; inherits text color */
 
