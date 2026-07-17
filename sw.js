@@ -6,7 +6,7 @@
 
 'use strict';
 
-const SHELL_VERSION = 'v1.16'; /* manually bumped with each deployment */
+const SHELL_VERSION = 'v1.17'; /* manually bumped with each deployment */
 const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = 'vedaversity-runtime'; // no version — persists across deploys
 
