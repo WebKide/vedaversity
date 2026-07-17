@@ -1029,6 +1029,15 @@ ons-toolbar {
   padding-bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
 }
 
+/* 4. dedicated CSS class to shift the layout manually */
+body.ios-pwa-notch-fix #app {
+  margin-top: 50px !important; /* Forces physical space below the notch */
+  height: calc(100dvh - 50px) !important;
+}
+
+body.ios-pwa-notch-fix ons-page.page {
+  top: 0 !important;
+}
 
 /* Specific adjustments for smaller mobile screens if needed */
 /* Target the PWA standalone mode explicitly */
