@@ -1278,7 +1278,7 @@ ons-toolbar {
 }
 
 /* ============================================================
-   ADDITIONAL APP-SPECIFIC HELPERS
+   ADDITIONAL APP-SPECIFIC HELPERS STYLES.CSS
    ============================================================ */
 
 /* SortableJS helpers */
@@ -1489,3 +1489,5 @@ footnote {
   text-align: center; 
   color: var(--highlight-color);
 }
+
+.toolbar { background: red !important; }
