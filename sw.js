@@ -6,7 +6,7 @@
 
 'use strict';
 
-const SHELL_VERSION = 'v1.21'; /* manually bumped with each deployment */
+const SHELL_VERSION = 'v1.22'; /* manually bumped with each deployment */
 const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = 'vedaversity-runtime'; // no version — persists across deploys
 
@@ -15,7 +15,8 @@ const RUNTIME_CACHE = 'vedaversity-runtime'; // no version — persists across d
  * Deployment base.
  * Works correctly both from localhost and GitHub Pages subdirectories.
  */
-const BASE = new URL('./', self.location.href).href.replace(/\/$/, '');
+// const BASE = new URL('./', self.location.href).href.replace(/\/$/, '');
+const BASE = self.location.pathname.substring(0, self.location.pathname.lastIndexOf('/'));
 
 const ASSETS = [
   BASE + '/index.html', /* SPA landing and main page */
@@ -24,6 +25,7 @@ const ASSETS = [
   BASE + '/css/dependencies/offline-onsenui.css', /* NEW */
   BASE + '/css/fonts.css',
   BASE + '/css/styles.css',
+  BASE + '/css/dependencies/ios-safe-area-fix-v2.css',
   BASE + '/fonts/gentium-plus-v2-latin-ext-700.woff2', /* serif */
   BASE + '/fonts/gentium-plus-v2-latin-ext-700italic.woff2', /* serif */
   BASE + '/fonts/gentium-plus-v2-latin-ext-italic.woff2', /* serif */

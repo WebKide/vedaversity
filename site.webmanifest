@@ -1,6 +1,6 @@
 {
-  "name": "Kīrtan by Vedaversity",
-  "short_name": "Kīrtana App",
+  "name": "Kīrtan App V2",
+  "short_name": "Kīrtan App",
   "description": "Browse, search, and view song lyrics with pronunciation guides and lists by tattva.",
   "start_url": "index.html",
   "scope": "/",

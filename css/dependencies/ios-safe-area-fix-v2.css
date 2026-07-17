@@ -1,0 +1,156 @@
+/* ============================================================
+   iOS PWA BOTTOM DOCK / SAFE AREA FIX
+   Target: Custom floating dock with glass effect
+   Issue: Black gap below dock when bottom safe area is applied
+   ============================================================ */
+
+@supports (-webkit-touch-callout: none) {
+
+  /* ========== PORTRAIT ========== */
+  @media (orientation: portrait) {
+
+    /* 
+       The footer/tabbar container must remain at the very bottom edge
+       of the screen. The safe area padding should be INSIDE the 
+       .bottom-tabbar__row (the dock itself), not on the container.
+    */
+    .tabbar.ons-tabbar__footer,
+    ons-tabbar[position="bottom"] .tabbar,
+    .bottom-bar {
+      padding-bottom: 0 !important;
+      bottom: 0 !important;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    /* 
+       The actual dock (.bottom-tabbar__row) needs the safe area padding
+       added to its bottom, so it floats ABOVE the home indicator 
+       but the container stays at the bottom edge.
+    */
+    .bottom-tabbar__row {
+      padding-bottom: env(safe-area-inset-bottom) !important;
+      /* Keep the dock visually at the bottom, just with internal padding */
+      margin-bottom: 0 !important;
+    }
+
+    /* 
+       The page content must stop at the TOP of the tabbar container,
+       NOT at the top of the dock. The container is at bottom:0, 
+       so content should end at bottom: (dock height + safe area).
+       But since the dock has internal padding for safe area, we need
+       to account for the total height.
+    */
+    .page__content,
+    ons-page > .page__content {
+      /* Default Onsen UI: bottom is 0. With tabbar, it should be tabbar height.
+         With safe area, the tabbar is taller. We need to push content up. */
+      bottom: calc(65px + env(safe-area-inset-bottom)) !important;
+      padding-bottom: 0 !important; /* Don't double-pad */
+    }
+
+    /* When there's a bottom tabbar, Onsen UI usually sets bottom on content.
+       Make sure it accounts for the safe area. */
+    .tabbar__content:not(.tabbar--top__content),
+    ons-tabbar[position="bottom"] .tabbar__content {
+      bottom: calc(65px + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* 
+       If the page content is being pushed up but the background isn't 
+       extending, ensure the page background fills the safe area zone.
+    */
+    .page__background,
+    ons-page > .page__background {
+      bottom: 0 !important;
+    }
+
+    /* The shell page (home/lists tabs) needs its content to fill 
+       all the way to the bottom edge, behind the dock. */
+    #shell_page .page__content,
+    #shell_page .page__background {
+      bottom: 0 !important;
+    }
+
+    /* ========== TOP TOOLBAR (keep working) ========== */
+    .toolbar,
+    ons-toolbar {
+      padding-top: env(safe-area-inset-top) !important;
+      box-sizing: content-box !important;
+      top: 0 !important;
+    }
+
+    .toolbar:not(.toolbar--cover-content) + .page__background,
+    .toolbar:not(.toolbar--cover-content) + .page__background + .page__content {
+      top: calc(env(safe-area-inset-top) + 44px) !important;
+    }
+
+    .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content,
+    .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content .page__content {
+      top: 0 !important;
+      padding-top: calc(env(safe-area-inset-top) + 44px) !important;
+    }
+
+    /* ========== FABs ========== */
+    .fab--top__left,
+    .fab--top__center,
+    .fab--top__right,
+    ons-fab[position^="top"] {
+      top: calc(env(safe-area-inset-top) + 20px) !important;
+    }
+
+    .fab--bottom__left,
+    .fab--bottom__center,
+    .fab--bottom__right,
+    ons-fab[position^="bottom"] {
+      bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+    }
+  }
+
+  /* ========== LANDSCAPE ========== */
+  @media (orientation: landscape) {
+    .toolbar,
+    ons-toolbar {
+      padding-left: env(safe-area-inset-left) !important;
+      padding-right: env(safe-area-inset-right) !important;
+    }
+
+    .page__content,
+    ons-page > .page__content {
+      padding-left: env(safe-area-inset-left) !important;
+      padding-right: env(safe-area-inset-right) !important;
+    }
+
+    .bottom-tabbar__row {
+      padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+  }
+}
+
+/* ============================================================
+   DEBUG: Visual safe-area indicator
+   Remove after testing! Shows a lime bar at the top safe area
+   and a blue bar at the bottom safe area.
+   ============================================================ */
+@supports (-webkit-touch-callout: none) {
+  @media (orientation: portrait) {
+    .toolbar::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: env(safe-area-inset-top);
+      background: rgba(0, 255, 0, 0.25);
+      pointer-events: none;
+      z-index: 99999;
+    }
+    .bottom-tabbar__row::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: env(safe-area-inset-bottom);
+      background: rgba(0, 128, 255, 0.25);
+      pointer-events: none;
+      z-index: 99999;
+    }
+  }
+}
