@@ -195,10 +195,25 @@ window.getSongTitle = function (id) {
   return rec[window.IDX_TITLE] || rec[window.IDX_FIRSTLINE] || '';
 };
 
+
 function apply_font() {
   const font = appState.fontFamily;
   document.documentElement.style.setProperty('--font-family', font);
 }
+
+// ---------------------------------------------------------------------
+// iOS in standalone mode
+// ---------------------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+
+  if (isIOS && isStandalone) {
+    // Inject a hard utility flag directly onto the root body element
+    document.body.classList.add("ios-pwa-notch-fix");
+  }
+});
 
 // ---------------------------------------------------------------------
 // Theme
