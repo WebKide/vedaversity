@@ -12,17 +12,18 @@
  */
 
 const PRONOUNCE_GUIDE = [
-  ['অ — अ', 'a', '“A” as in “b<highlight>u</highlight>t”'],
+  ['অ — अ', 'a', '“A” as in “<highlight>a</highlight>pple”'],
   ['আ — आ', 'ā', '“AA” as in “f<highlight>a</highlight>r”'],
   ['ই — इ', 'i', '“I” as in “p<highlight>i</highlight>n”'],
-  ['ঈ — ई', 'ī', '“II” as in “p<highlight>i</highlight>que”'],
+  ['ঈ — ई', 'ī', '“EA” as in “<highlight>ea</highlight>t”'],
   ['উ — उ', 'u', '“U” as in “p<highlight>u</highlight>ll”'],
-  ['ঊ — ऊ', 'ū', '“II” as in “r<highlight>u</highlight>le”'],
+  ['ঊ — ऊ', 'ū', '“OO” as in “r<highlight>u</highlight>le”'],
   ['ঋ — ऋ', 'ṛ', '“RI” as in “<highlight>ri</highlight>m”'],
   ['এ — ए', 'e', '“E” as in “th<highlight>ey</highlight>”'],
   ['ঐ — ऐ', 'ai', '“AI” as in “<highlight>ai</highlight>sle”'],
   ['ও — ओ', 'o', '“O” as in “g<highlight>o</highlight>”'],
-  ['ঔ — औ', 'au', '“UA” as in “h<highlight>ow</highlight>”'],
+  ['ঔ — औ', 'au', '“AU” as in “h<highlight>ow</highlight>”'],
+
   ['ক — क', 'ka', '“K” as in “<highlight>k</highlight>ite”'],
   ['খ — ख', 'kha', '“KH” as in “Ec<highlight>kh</highlight>art”'],
   ['গ — ग', 'ga', '“G” as in “<highlight>g</highlight>ive”'],
@@ -58,6 +59,7 @@ const PRONOUNCE_GUIDE = [
   ['ড় — ड़', 'ṛa', '“Ṛ” as in “<highlight></highlight>”'],
   ['ঢ় — ढ़', 'ṛha', '“ṚH” as in “<highlight></highlight>”'],
   ['য় — य़', 'ẏa', '“Ẏ” as in “<highlight></highlight>”'],
+
   ['ঃ — ः', 'ḥ (visarga)', 'aspirate “aḥ” as in “<highlight>aha</highlight>”'],
   ['ঃ — ः', 'ḥ (visarga)', 'aspirate “iḥ” as in “<highlight>ihi</highlight>”'],
   ['ং — ं', 'ṁ (anusvāra)', 'pure nasal as in (FR) “bo<highlight>n</highlight>”'],
@@ -68,10 +70,16 @@ function pronounce_page_init(page) {
   const container = page.querySelector('#pronounce-list');
   container.innerHTML = '';
 
+  const heading3 = document.createElement('div');
+  heading3.className = 'list-header--material';
+  heading3.style.cssText = 'text-align:center; opacity:.6; font-size:16px; width:100%; margin-top:8px;';
+  heading3.textContent = 'Bengali, Hindi and Sanskrit pronunciation guide';
+  container.appendChild(heading3);
+
   PRONOUNCE_GUIDE.forEach(([script, roman, note]) => {
     const item = ons.createElement(`
       <ons-list-item modifier="nodivider">
-        <div class="left" style="font-size: 1.4rem; min-width: 40px; color: var(--highlight-color);">
+        <div class="left" style="font-size: 1.4rem; min-width: 28px; color: var(--highlight-color);">
           ${script}
         </div>
         <div class="center">

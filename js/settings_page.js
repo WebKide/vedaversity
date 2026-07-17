@@ -106,8 +106,11 @@ function settings_page_init(page) {
 
   const fonts = [
     { value: "'Ubuntu Sans', sans-serif", label: 'Ubuntu Sans (Modern)' },
+    { value: "'Charis SIL', serif", label: 'Charis SIL (Beautiful)' },
+    { value: "'Noto Serif', serif", label: 'Noto Serif (Traditional)' },
+    { value: "'Gentium Plus', serif", label: 'Gentium Plus (Classic IAST)' },
     { value: "'Nunito Sans', sans-serif", label: 'Nunito Sans (Rounded)' },
-    { value: "'Gentium Plus', serif", label: 'Gentium Plus (Classic IAST)' }
+    { value: "'Tiro Devanagari Sanskrit', sans-serif", label: 'Tiro Devanagari (Elegant)' }
   ];
 
   fonts.forEach((font) => {
@@ -131,6 +134,15 @@ function settings_page_init(page) {
 
     fontList.appendChild(item);
   });
+
+    fontList.appendChild(ons.createElement(`
+      <ons-list-header class="sample-text">
+        khaḍgaḥ śāntaṁ jñānaṁ dadāti ।<br />
+        gaṅgāyāṁ ṛṣiḥ kuṇḍe tiṣṭhati ।<br />
+        pañca ṭīkāḥ, ṣaḍ granthāḥ ।<br />
+        (kḷptaḥ) śubhaṁ bhavatu ॥
+      </ons-list-header>
+    `));
 
   content.appendChild(fontList);
 }

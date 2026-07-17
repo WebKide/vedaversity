@@ -6,7 +6,7 @@
 
 'use strict';
 
-const SHELL_VERSION = 'v1.18'; /* manually bumped with each deployment */
+const SHELL_VERSION = 'v1.20'; /* manually bumped with each deployment */
 const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = 'vedaversity-runtime'; // no version — persists across deploys
 
@@ -22,8 +22,8 @@ const ASSETS = [
   BASE + '/site.webmanifest',
   BASE + '/favicon.ico',
   BASE + '/css/dependencies/offline-onsenui.css', /* NEW */
+  BASE + '/css/fonts.css',
   BASE + '/css/styles.css',
-  BASE + '/fonts/baloo-da-2.woff', /* this is the original, but will change for new */
   BASE + '/fonts/gentium-plus-v2-latin-ext-700.woff2', /* serif */
   BASE + '/fonts/gentium-plus-v2-latin-ext-700italic.woff2', /* serif */
   BASE + '/fonts/gentium-plus-v2-latin-ext-italic.woff2', /* serif */
@@ -32,10 +32,18 @@ const ASSETS = [
   BASE + '/fonts/nunito-v32-latin-ext-700italic.woff2', /* round */
   BASE + '/fonts/nunito-v32-latin-ext-italic.woff2', /* round */
   BASE + '/fonts/nunito-v32-latin-ext-regular.woff2', /* round */
+  BASE + '/fonts/noto-serif-v33-latin-ext-regular.woff2', /* book */
+  BASE + '/fonts/noto-serif-v33-latin-ext-italic.woff2', /* book */
+  BASE + '/fonts/noto-serif-v33-latin-ext-700.woff2', /* book */
+  BASE + '/fonts/noto-serif-v33-latin-ext-700italic.woff2', /* book */
   BASE + '/fonts/ubuntu-sans-v4-latin-ext-600.woff2', /* modern */
   BASE + '/fonts/ubuntu-sans-v4-latin-ext-600italic.woff2', /* modern */
   BASE + '/fonts/ubuntu-sans-v4-latin-ext-italic.woff2', /* modern */
   BASE + '/fonts/ubuntu-sans-v4-latin-ext-regular.woff2', /* modern */
+  BASE + '/fonts/charis-sil-v2-latin-ext-italic.woff2', /* beautiful */
+  BASE + '/fonts/charis-sil-v2-latin-ext-regular.woff2', /* beautiful */
+  BASE + '/fonts/tiro-devanagari-sanskrit-v7-latin-ext-italic.woff2', /* elegant */
+  BASE + '/fonts/tiro-devanagari-sanskrit-v7-latin-ext-regular.woff2', /* elegant */
   BASE + '/img/icons/apple-touch-icon.png',
   BASE + '/img/icons/nitaig.png', /* icon for song list */
   BASE + '/img/icons/radhak.png',

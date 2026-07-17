@@ -1,0 +1,176 @@
+/* ─── Ubuntu Sans (UI Components) ───────────────────────────────────────── */
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Ubuntu Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: url('../fonts/ubuntu-sans-v4-latin-ext-600italic.woff2') format('woff2');
+}
+
+/* nunito-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/nunito-v32-latin-ext-regular.woff2') format('woff2');
+}
+
+/* nunito-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/nunito-v32-latin-ext-italic.woff2') format('woff2');
+}
+
+/* nunito-700 - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/nunito-v32-latin-ext-700.woff2') format('woff2');
+}
+
+/* nunito-700italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Nunito';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../fonts/nunito-v32-latin-ext-700italic.woff2') format('woff2');
+}
+
+/* gentium-plus-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/gentium-plus-v2-latin-ext-regular.woff2') format('woff2');
+}
+
+/* gentium-plus-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/gentium-plus-v2-latin-ext-italic.woff2') format('woff2');
+}
+
+/* gentium-plus-700 - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/gentium-plus-v2-latin-ext-700.woff2') format('woff2');
+}
+
+/* gentium-plus-700italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Gentium Plus';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../fonts/gentium-plus-v2-latin-ext-700italic.woff2') format('woff2');
+}
+
+/* noto-serif-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/noto-serif-v33-latin-ext-regular.woff2') format('woff2');
+}
+
+/* noto-serif-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/noto-serif-v33-latin-ext-italic.woff2') format('woff2');
+}
+
+/* noto-serif-700 - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/noto-serif-v33-latin-ext-700.woff2') format('woff2');
+}
+
+/* noto-serif-700italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Noto Serif';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../fonts/noto-serif-v33-latin-ext-700italic.woff2') format('woff2');
+}
+
+/* charis-sil-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Charis SIL';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/charis-sil-v2-latin-ext-regular.woff2') format('woff2');
+}
+
+/* charis-sil-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Charis SIL';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/charis-sil-v2-latin-ext-italic.woff2') format('woff2');
+}
+
+/* tiro-devanagari-sanskrit-regular - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Tiro Devanagari Sanskrit';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/tiro-devanagari-sanskrit-v7-latin-ext-regular.woff2') format('woff2');
+}
+
+/* tiro-devanagari-sanskrit-italic - latin-ext */
+@font-face {
+  font-display: swap;
+  font-family: 'Tiro Devanagari Sanskrit';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../fonts/tiro-devanagari-sanskrit-v7-latin-ext-italic.woff2') format('woff2');
+}

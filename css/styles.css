@@ -17,111 +17,6 @@
    CSS CUSTOM PROPERTIES (var(--x))
    ============================================================ */
 
-/* ─── Ubuntu Sans (UI Components) ───────────────────────────────────────── */
-@font-face {
-  font-display: swap;
-  font-family: 'Ubuntu Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/ubuntu-sans-v4-latin-ext-regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-display: swap;
-  font-family: 'Ubuntu Sans';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/ubuntu-sans-v4-latin-ext-italic.woff2') format('woff2');
-}
-
-@font-face {
-  font-display: swap;
-  font-family: 'Ubuntu Sans';
-  font-style: normal;
-  font-weight: 600;
-  src: url('../fonts/ubuntu-sans-v4-latin-ext-600.woff2') format('woff2');
-}
-
-@font-face {
-  font-display: swap;
-  font-family: 'Ubuntu Sans';
-  font-style: italic;
-  font-weight: 600;
-  src: url('../fonts/ubuntu-sans-v4-latin-ext-600italic.woff2') format('woff2');
-}
-
-/* nunito-regular - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Nunito';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/nunito-v32-latin-ext-regular.woff2') format('woff2');
-}
-
-/* nunito-italic - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Nunito';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/nunito-v32-latin-ext-italic.woff2') format('woff2');
-}
-
-/* nunito-700 - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Nunito';
-  font-style: normal;
-  font-weight: 700;
-  src: url('../fonts/nunito-v32-latin-ext-700.woff2') format('woff2');
-}
-
-/* nunito-700italic - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Nunito';
-  font-style: italic;
-  font-weight: 700;
-  src: url('../fonts/nunito-v32-latin-ext-700italic.woff2') format('woff2');
-}
-
-/* gentium-plus-regular - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Gentium Plus';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/gentium-plus-v2-latin-ext-regular.woff2') format('woff2');
-}
-
-/* gentium-plus-italic - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Gentium Plus';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/gentium-plus-v2-latin-ext-italic.woff2') format('woff2');
-}
-
-/* gentium-plus-700 - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Gentium Plus';
-  font-style: normal;
-  font-weight: 700;
-  src: url('../fonts/gentium-plus-v2-latin-ext-700.woff2') format('woff2');
-}
-
-/* gentium-plus-700italic - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Gentium Plus';
-  font-style: italic;
-  font-weight: 700;
-  src: url('../fonts/gentium-plus-v2-latin-ext-700italic.woff2') format('woff2');
-}
-
 /*
  * Default dark theme palette (from theme.css)
  * plus Onsen UI component variable overrides (from capacitor.css)
@@ -360,16 +255,15 @@
 
 /* ============================================================
    CLASSES (.class-name)
-   ============================================================ */
+   ============================================================
 .shell__content, .page {
-  /* Adds padding only if a notch/safe area exists */
   padding-top: env(safe-area-inset-top);
 }
 
 .shell__content, .page {
-  /* Replaces static 20px-40px padding with the device's actual requirement */
   padding-bottom: env(safe-area-inset-bottom);
 }
+ */
 
 
 /* Fix for Onsen UI tabbar blocking content clicks */
@@ -727,17 +621,17 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* .no-drag  — no static rules; applied dynamically in JS */
 
-/* .page */
+/* .page
 .page {
   position: absolute;
-  width: auto; /* Let it be defined by left/right */
-  /*position: fixed;*/
+  width: auto;
   inset: 0;
   display: flex;
   flex-direction: column;
   background: var(--kirtan-bg, #0d0d0d);
   transition: transform 0.22s ease, opacity 0.22s ease;
 }
+ */
 
 /* Specific adjustments for smaller mobile screens if needed */
 @media (max-width: 520px) {
@@ -972,16 +866,24 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* #group-nav — letter-jump grid above the all-songs list */
 .group-nav {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  /* Creates equal columns that fill the screen width */
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); 
   gap: 6px;
   margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+/* FIX: Forces headings to break out of the button grid layout */
+.group-nav .list-header--material {
+  grid-column: 1 / -1; /* Spans from the very first column to the very last column */
+  width: 100%;
 }
 
 .group-nav-btn {
-  padding: 16px;
-  gap: 6px;
-  flex: 1 1 auto;
+  padding: 12px 0px; 
+  width: 100%;
+  box-sizing: border-box;
   text-align: center;
   white-space: nowrap;
   background: var(--glass-gradient);
@@ -993,77 +895,18 @@ ons-list-item .list-item__subtitle span.no_right {
   font-size: 16px;
 }
 
-.group-nav-btn:active {
-  background: var(--active-overlay);
+.group-nav-btn:hover {
+  filter: 
+    drop-shadow(0 0 5px var(--highlight-color)) 
+    drop-shadow(0 0 15px var(--highlight-color));
 }
+
 
 /* #all-songs-list  — rendered by ons-lazy-repeat; no custom static rules */
 
 /* #all_songs_page  — styled via .page */
 
 /* #allSongs  — no direct styles; styled via ons-list-item */
-
-/* #app */
-/* Ensure the app occupies full dynamic screen space */
-html, body, #app {
-  height: 100dvh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-/* 1. Force the page containers to shift down past the notch */
-ons-page.page {
-  top: env(safe-area-inset-top) !important;
-  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
-}
-
-/* 2. Fix the toolbars so they don't hide under the notch */
-ons-toolbar {
-  position: relative !important;
-  top: 0 !important;
-}
-
-/* 3. Ensure internal content areas don't get chopped off at the bottom */
-.page__content {
-  padding-bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
-}
-
-/* 4. dedicated CSS class to shift the layout manually */
-body.ios-pwa-notch-fix #app {
-  margin-top: 50px !important; /* Forces physical space below the notch */
-  height: calc(100dvh - 50px) !important;
-}
-
-body.ios-pwa-notch-fix ons-page.page {
-  top: 0 !important;
-}
-
-/* Specific adjustments for smaller mobile screens if needed */
-/* Target the PWA standalone mode explicitly */
-@media (display-mode: standalone) {
-  /* Force the parent wrapper down */
-  #app {
-    margin-top: calc(env(safe-area-inset-top, 47px)) !important;
-    height: calc(100dvh - env(safe-area-inset-top, 47px)) !important;
-  }
-  /* Force the absolute Onsen page containers to respect the new boundary */
-  ons-page.page {
-    top: 0 !important;
-    height: 100% !important;
-  }
-  /* Prevent toolbar content from bleeding up into the camera notch area */
-  ons-toolbar {
-    position: relative !important;
-    top: 0 !important;
-    padding-top: 0 !important;
-  }
-  /* Pad internal content to keep the click targets safely in bounds */
-  .page__content {
-    padding-top: 20px !important;
-  }
-}
-
 
 /* #appVersion  — no custom styles; inherits text color */
 
@@ -1195,12 +1038,21 @@ body.ios-pwa-notch-fix ons-page.page {
 
 /* #tattva-lists  — no direct styles; container for dynamic list items */
 
-/* #toTop */
+/* ons-fab */
 #toTop {
   margin-top: 48px;
   color: var(--highlight-color);
   pointer-events: auto;
   transition: 0.3s;
+  display: block;
+  width: 48px;
+  height: 48px;
+}
+
+#toTop:hover {
+  filter: 
+    drop-shadow(0 0 5px var(--highlight-color)) 
+    drop-shadow(0 0 15px var(--highlight-color));
 }
 
 /* #transAvail  — no direct styles; content injected dynamically */
@@ -1250,15 +1102,6 @@ body.ios-pwa-notch-fix ons-page.page {
 }
 
 /* ons-card  — no app-specific overrides; uses CDN styles */
-
-/* ons-fab */
-#toTop {
-  display: block;
-  width: 48px;
-  height: 48px;
-  margin-top: 48px;
-  color: var(--highlight-color);
-}
 
 /* ons-icon */
 .search-container > ons-icon {
@@ -1385,32 +1228,58 @@ ons-toolbar .center.author-container {
   justify-content: center;
 }
 
-
 /* ============================================================
-   ADDITIONAL APP-SPECIFIC HELPERS
+   SAFE-AREA HANDLING (single source of truth)
    ============================================================ */
 
-/* Body / HTML constraints */
 html, body {
   height: 100%;
   margin: 0;
   overscroll-behavior: none;
 }
 
-body {
-  max-width: 768px;
-  margin: auto;
-  background-color: var(--background-color);
-  box-shadow: var(--outer-shadow);
-  font-size: 20px;
+#app {
+  position: relative;
+  height: 100dvh;
 }
 
-/* Safe-area insets for navigator */
-ons-navigator {
-  top: var(--inset-top);
-  bottom: var(--inset-bottom);
-  right: var(--inset-right);
+/* .page is position: fixed (see base rule) — so safe areas must be
+   applied as padding on the page itself, not margin on an ancestor. */
+.page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--kirtan-bg, #0d0d0d);
+  transition: transform 0.22s ease, opacity 0.22s ease;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  box-sizing: border-box;
 }
+
+/* Toolbar sits in normal flow inside the padded .page, so it's
+   automatically clear of the notch — no top/position overrides needed. */
+ons-toolbar {
+  position: relative;
+}
+
+/* Bottom tabbar is its own fixed element (see .bottom-tabbar), so it
+   needs its own bottom-inset padding rather than inheriting .page's. */
+.bottom-tabbar {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.page__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   ADDITIONAL APP-SPECIFIC HELPERS
+   ============================================================ */
 
 /* SortableJS helpers */
 .sortable-chosen {
@@ -1606,4 +1475,17 @@ footnote {
 #addSongToListBtn .ons-icon {
   vertical-align: middle;
   margin-top: 0px;
+}
+
+.sample-text {
+  text-transform: none; 
+  font-size: 1.2rem; 
+  background-image: none; 
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 0 0 12px 12px; 
+  margin: 12px; 
+  text-align: center; 
+  color: var(--highlight-color);
 }

@@ -21,16 +21,13 @@ let fuse = null;
 
 const FUSE_OPTIONS = {
   includeScore: true,
-  ignoreLocation: true,   // searchBlob is one long concatenated string per
-                           // song, not a bag of separately-located words —
-                           // location-constrained matching would miss hits
-                           // deep in the blob.
-  distance: 2000,          // generous, for the same reason as above.
+  ignoreLocation: true, /* searchBlob is one long concatenated string per song, not a bag of separately-located words — location-constrained matching would miss hits deep in the blob. */
+  distance: 3600, // generous, for the same reason as above.
   threshold: 0.3,
   minMatchCharLength: 3,
   keys: [
-    { name: String(window.IDX_SEARCHBLOB), weight: 0.8 }, // '2'
-    { name: String(window.IDX_TITLE_NORM), weight: 0.2 }  // '1'
+    { name: String(window.IDX_SEARCHBLOB), weight: 0.6 }, // '2'
+    { name: String(window.IDX_TITLE_NORM), weight: 0.4 }  // '1'
   ]
 };
 
@@ -84,7 +81,7 @@ function normalizeQuery(str) {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // strip combining diacritics
-    .replace(/[^a-z0-9]/g, '');      // strip punctuation/spaces
+    .replace(/[^a-z0-9]/g, ''); // strip punctuation/spaces
 }
 
 /**
@@ -114,6 +111,18 @@ function search(query) {
   const q = normalizeQuery(query);
   if (!q) return [];
 
+  /* Tier 1: exact prefix match */
+  const prefixIds = [];
+  const prefixSeen = new Set();
+  window.INDEX.forEach((rec, idx) => {
+    const titleNorm = rec[window.IDX_TITLE_NORM] || '';
+    if (titleNorm.startsWith(q)) {
+      prefixIds.push(idx);
+      prefixSeen.add(idx);
+    }
+  })
+
+  /* Tier 2: fuzzy fallback (typo tolerance, mid-lyric matches, etc */
   let results = fuse.search(q);
 
   if (results.length < 2) {
