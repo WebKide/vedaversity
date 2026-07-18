@@ -1,7 +1,13 @@
 /* ============================================================
-   iOS PWA BOTTOM DOCK / SAFE AREA FIX
-   Target: Custom floating dock with glass effect
-   Issue: Black gap below dock when bottom safe area is applied
+   iOS PWA SAFE AREA FIX v2 — Surgical
+   Target: iPhone installed PWA (iOS 26+)
+
+   Rules:
+   1. Shell page only: bottom safe area for custom dock
+   2. Cover-content transparent toolbars: safe area as content padding
+   3. Standard toolbars: safe area as toolbar padding
+   4. No-toolbar pages: safe area as page padding
+   5. Pushed pages: NO bottom safe area (no tabbar)
    ============================================================ */
 
 @supports (-webkit-touch-callout: none) {
@@ -9,89 +15,139 @@
   /* ========== PORTRAIT ========== */
   @media (orientation: portrait) {
 
-    /* 
-       The footer/tabbar container must remain at the very bottom edge
-       of the screen. The safe area padding should be INSIDE the 
-       .bottom-tabbar__row (the dock itself), not on the container.
-    */
-    .tabbar.ons-tabbar__footer,
-    ons-tabbar[position="bottom"] .tabbar,
-    .bottom-bar {
-      padding-bottom: 0 !important;
-      bottom: 0 !important;
-      background: transparent !important;
-      border: none !important;
-    }
+    /* ----------------------------------------------------------
+       TOP SAFE AREA
+       ---------------------------------------------------------- */
 
     /* 
-       The actual dock (.bottom-tabbar__row) needs the safe area padding
-       added to its bottom, so it floats ABOVE the home indicator 
-       but the container stays at the bottom edge.
+       PAGES WITH NO TOOLBAR (shell, search):
+       Apply safe area to page__content directly
     */
-    .bottom-tabbar__row {
-      padding-bottom: env(safe-area-inset-bottom) !important;
-      /* Keep the dock visually at the bottom, just with internal padding */
-      margin-bottom: 0 !important;
-    }
-
-    /* 
-       The page content must stop at the TOP of the tabbar container,
-       NOT at the top of the dock. The container is at bottom:0, 
-       so content should end at bottom: (dock height + safe area).
-       But since the dock has internal padding for safe area, we need
-       to account for the total height.
-    */
-    .page__content,
-    ons-page > .page__content {
-      /* Default Onsen UI: bottom is 0. With tabbar, it should be tabbar height.
-         With safe area, the tabbar is taller. We need to push content up. */
-      bottom: calc(65px + env(safe-area-inset-bottom)) !important;
-      padding-bottom: 0 !important; /* Don't double-pad */
-    }
-
-    /* When there's a bottom tabbar, Onsen UI usually sets bottom on content.
-       Make sure it accounts for the safe area. */
-    .tabbar__content:not(.tabbar--top__content),
-    ons-tabbar[position="bottom"] .tabbar__content {
-      bottom: calc(65px + env(safe-area-inset-bottom)) !important;
-    }
-
-    /* 
-       If the page content is being pushed up but the background isn't 
-       extending, ensure the page background fills the safe area zone.
-    */
-    .page__background,
-    ons-page > .page__background {
-      bottom: 0 !important;
-    }
-
-    /* The shell page (home/lists tabs) needs its content to fill 
-       all the way to the bottom edge, behind the dock. */
     #shell_page .page__content,
-    #shell_page .page__background {
-      bottom: 0 !important;
+    #search_page .page__content {
+      padding-top: env(safe-area-inset-top) !important;
     }
 
-    /* ========== TOP TOOLBAR (keep working) ========== */
-    .toolbar,
-    ons-toolbar {
+    /*
+       STANDARD TOOLBAR (not cover-content):
+       Safe area pushes toolbar down, content starts below toolbar
+    */
+    .page .toolbar:not(.toolbar--cover-content),
+    ons-page .toolbar:not(.toolbar--cover-content) {
       padding-top: env(safe-area-inset-top) !important;
       box-sizing: content-box !important;
+      position: relative !important;
       top: 0 !important;
     }
 
-    .toolbar:not(.toolbar--cover-content) + .page__background,
-    .toolbar:not(.toolbar--cover-content) + .page__background + .page__content {
+    /* Standard toolbar + content pair */
+    .page .toolbar:not(.toolbar--cover-content) + .page__background,
+    .page .toolbar:not(.toolbar--cover-content) + .page__background + .page__content,
+    ons-page .toolbar:not(.toolbar--cover-content) + .page__background,
+    ons-page .toolbar:not(.toolbar--cover-content) + .page__background + .page__content {
       top: calc(env(safe-area-inset-top) + 44px) !important;
+      padding-top: 0 !important;
     }
 
-    .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content,
-    .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content .page__content {
+    /*
+       COVER-CONTENT TRANSPARENT TOOLBAR:
+       Toolbar stays at top:0, content gets padding to push below it
+       This is the majority of your pushed pages
+    */
+    .page .toolbar.toolbar--transparent.toolbar--cover-content,
+    ons-page .toolbar.toolbar--transparent.toolbar--cover-content {
+      padding-top: 0 !important;
+      top: env(safe-area-inset-top) !important;
+      position: absolute !important;
+    }
+
+    /* Cover-content: content needs padding to clear toolbar + safe area */
+    .page .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content,
+    ons-page .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content {
       top: 0 !important;
       padding-top: calc(env(safe-area-inset-top) + 44px) !important;
     }
 
-    /* ========== FABs ========== */
+    /*
+       NESTED CONTENT inside cover-content pages (songView has nested structure)
+    */
+    .page .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content .page__content {
+      padding-top: 0 !important;
+    }
+
+    /* ----------------------------------------------------------
+       BOTTOM SAFE AREA — SHELL PAGE ONLY
+       The shell is the only page with a bottom tabbar/dock
+       ---------------------------------------------------------- */
+
+    /* 
+       SHELL PAGE: Custom dock handling
+       The tabbar container stays at bottom:0, transparent
+       The dock (.bottom-tabbar__row) gets internal padding
+    */
+    #shell_page .tabbar.ons-tabbar__footer,
+    #shell_page ons-tabbar[position="bottom"] .tabbar {
+      padding-bottom: 0 !important;
+      bottom: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      height: auto !important;
+      min-height: unset !important;
+    }
+
+    #shell_page .bottom-tabbar__row {
+      padding-bottom: env(safe-area-inset-bottom) !important;
+      margin-bottom: 0 !important;
+      /* Ensure the dock sits at the very bottom */
+      position: relative !important;
+      bottom: 0 !important;
+    }
+
+    /* Shell page content ends above the dock */
+    #shell_page .page__content {
+      bottom: calc(65px + env(safe-area-inset-bottom)) !important;
+      padding-bottom: 0 !important;
+    }
+
+    /* Shell page background fills entire screen behind dock */
+    #shell_page .page__background {
+      bottom: 0 !important;
+    }
+
+    /*
+       PUSHED PAGES (all-songs, settings, search, etc.):
+       NO bottom tabbar, so NO bottom safe area needed.
+       Content should extend to the very bottom of the screen.
+    */
+    #all_songs_page .page__content,
+    #group_detail_page .page__content,
+    #search_page .page__content,
+    #settings_page .page__content,
+    #pronounce_page .page__content,
+    #list_page .page__content,
+    #songView_page .page__content {
+      bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    /*
+       PUSHED PAGES: Background also fills to bottom
+    */
+    #all_songs_page .page__background,
+    #group_detail_page .page__background,
+    #search_page .page__background,
+    #settings_page .page__background,
+    #pronounce_page .page__background,
+    #list_page .page__background,
+    #songView_page .page__background {
+      bottom: 0 !important;
+    }
+
+    /* ----------------------------------------------------------
+       FAB POSITIONING
+       ---------------------------------------------------------- */
+
+    /* Top FABs: clear the notch */
     .fab--top__left,
     .fab--top__center,
     .fab--top__right,
@@ -99,16 +155,35 @@
       top: calc(env(safe-area-inset-top) + 20px) !important;
     }
 
-    .fab--bottom__left,
-    .fab--bottom__center,
-    .fab--bottom__right,
-    ons-fab[position^="bottom"] {
+    /* Bottom FABs on pushed pages: sit at bottom edge (no tabbar) */
+    #all_songs_page .fab--bottom__right,
+    #all_songs_page ons-fab[position="bottom right"],
+    #songView_page .fab--bottom__right,
+    #songView_page ons-fab[position="bottom right"] {
       bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+    }
+
+    /* ----------------------------------------------------------
+       POPOVER / MODAL POSITIONING
+       Ensure popovers don't get clipped by safe area
+       ---------------------------------------------------------- */
+    ons-popover {
+      /* Popover should account for safe area when positioning */
+      --safe-area-top: env(safe-area-inset-top);
+      --safe-area-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* If popover is triggered from toolbar button, ensure it's visible */
+    .toolbar ~ ons-popover,
+    ons-toolbar ~ ons-popover {
+      margin-top: env(safe-area-inset-top) !important;
     }
   }
 
   /* ========== LANDSCAPE ========== */
   @media (orientation: landscape) {
+
+    /* Side safe areas for landscape */
     .toolbar,
     ons-toolbar {
       padding-left: env(safe-area-inset-left) !important;
@@ -121,36 +196,9 @@
       padding-right: env(safe-area-inset-right) !important;
     }
 
-    .bottom-tabbar__row {
+    /* Shell dock in landscape */
+    #shell_page .bottom-tabbar__row {
       padding-bottom: env(safe-area-inset-bottom) !important;
-    }
-  }
-}
-
-/* ============================================================
-   DEBUG: Visual safe-area indicator
-   Remove after testing! Shows a lime bar at the top safe area
-   and a blue bar at the bottom safe area.
-   ============================================================ */
-@supports (-webkit-touch-callout: none) {
-  @media (orientation: portrait) {
-    .toolbar::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: env(safe-area-inset-top);
-      background: rgba(0, 255, 0, 0.25);
-      pointer-events: none;
-      z-index: 99999;
-    }
-    .bottom-tabbar__row::after {
-      content: "";
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: env(safe-area-inset-bottom);
-      background: rgba(0, 128, 255, 0.25);
-      pointer-events: none;
-      z-index: 99999;
     }
   }
 }
