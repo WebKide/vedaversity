@@ -89,7 +89,7 @@
     #shell_page ons-tabbar[position="bottom"] .tabbar {
       padding-bottom: 0 !important;
       bottom: 0 !important;
-      background: transparent !important;
+      background: var(--background-color) !important;
       border: none !important;
       height: auto !important;
       min-height: unset !important;

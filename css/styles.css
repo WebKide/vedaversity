@@ -1489,3 +1489,26 @@ footnote {
   text-align: center; 
   color: var(--highlight-color);
 }
+
+/* .search-result / .search-result-author / .search-result-title */
+ons-list-item .center.search-result {
+  display: flex;
+  flex-direction: column;
+  white-space: normal;
+  overflow: hidden;
+}
+
+.search-result-author {
+  font-size: 0.75em;
+  font-style: italic;
+  color: var(--sub-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

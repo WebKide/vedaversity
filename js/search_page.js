@@ -4,30 +4,33 @@
  * pushed with { listName }), backed by a real Fuse.js index built over
  * window.INDEX.
  *
- * window.INDEX[i] = [title, title_norm, searchBlob, firstLineRomanized, filename]
- *   - title_norm and searchBlob are already lowercase, diacritic-stripped,
- *     and space-stripped (see app.js IDX_* constants).
- *   - Query text is normalized the same way before it's handed to Fuse, so
- *     a search for "krsna" or "kṛṣṇa" or "krishna" all line up against the
- *     stored blob.
+ * window.INDEX[i] is now an object (from SO/IDX_db.json's "IDX" array):
+ *   { first_line, search, author, language, verses, en_translation,
+ *     translation_intro, unsorted, file_name }
+ *   - "search" is the full lyric blob, lowercase/diacritic-stripped, with
+ *     spaces between words (unlike the old space-stripped searchBlob).
+ *   - "first_line" keeps its original diacritics (it's the display title),
+ *     so a normalized shadow copy is built once below for matching/boost.
  *
- * Fuse indexes searchBlob (primary) and title_norm (secondary boost)
- * directly via array-index keys ('2' / '1') — no need to remap
- * window.INDEX into objects first.
+ * Fuse is built over a small shadow array {searchIdx, search, title_norm}
+ * rather than window.INDEX directly, since window.INDEX no longer carries
+ * a precomputed title_norm field. Array order/length match window.INDEX
+ * 1:1, so result.refIndex still maps straight to the real song id.
  */
 
 // --- Fuse wiring --------------------------------------------------
 let fuse = null;
+let titleNormCache = null; // parallel array: normalized first_line per song
 
 const FUSE_OPTIONS = {
   includeScore: true,
-  ignoreLocation: true, /* searchBlob is one long concatenated string per song, not a bag of separately-located words — location-constrained matching would miss hits deep in the blob. */
+  ignoreLocation: true, /* "search" is one long concatenated blob per song, not a bag of separately-located words — location-constrained matching would miss hits deep in the blob. */
   distance: 3600, // generous, for the same reason as above.
   threshold: 0.3,
   minMatchCharLength: 3,
   keys: [
-    { name: String(window.IDX_SEARCHBLOB), weight: 0.6 }, // '2'
-    { name: String(window.IDX_TITLE_NORM), weight: 0.4 }  // '1'
+    { name: 'search', weight: 0.6 },
+    { name: 'title_norm', weight: 0.4 }
   ]
 };
 
@@ -36,7 +39,16 @@ window.indexPromise.then(() => {
     console.error('[search_page] Fuse is not loaded. Reload the app.');
     return;
   }
-  fuse = new Fuse(window.INDEX, FUSE_OPTIONS);
+
+  titleNormCache = window.INDEX.map((rec) => normalizeQuery(rec.first_line));
+
+  const fuseData = window.INDEX.map((rec, searchIdx) => ({
+    searchIdx,
+    search: rec.search || '',
+    title_norm: titleNormCache[searchIdx]
+  }));
+
+  fuse = new Fuse(fuseData, FUSE_OPTIONS);
 });
 // ----------------------------------------------------------------------
 
@@ -61,8 +73,17 @@ function search_page_init(page) {
     };
   }
 
+  const MIN_QUERY_LENGTH = 3;
+  const SEARCH_DEBOUNCE_MS = 150;
+  let debounceTimer = null;
+
   const searchInput = page.querySelector('.search-box');
-  searchInput.onkeyup = () => render_searchUI(page, searchInput.value, clickHandler, 'search-list-page');
+  searchInput.onkeyup = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      render_searchUI(page, searchInput.value, clickHandler, 'search-list-page', MIN_QUERY_LENGTH);
+    }, SEARCH_DEBOUNCE_MS);
+  };
   // searchInput.focus();
   setTimeout(() => searchInput.focus(), 0);
 
@@ -81,7 +102,9 @@ function normalizeQuery(str) {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // strip combining diacritics
-    .replace(/[^a-z0-9]/g, ''); // strip punctuation/spaces
+    .replace(/[^a-z0-9\s]/g, '') // strip punctuation, keep spaces
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
@@ -94,7 +117,7 @@ function getFallbackSongId() {
   if (_fallbackSongId !== null) return _fallbackSongId;
   if (!window.INDEX) return null;
 
-  const idx = window.INDEX.findIndex((rec) => rec[window.IDX_FILE] === 'dp.json');
+  const idx = window.INDEX.findIndex((rec) => rec.file_name === 'dp.json');
   _fallbackSongId = idx; // -1 if not found; findIndex never returns null
   return idx;
 }
@@ -115,12 +138,12 @@ function search(query) {
   const prefixIds = [];
   const prefixSeen = new Set();
   window.INDEX.forEach((rec, idx) => {
-    const titleNorm = rec[window.IDX_TITLE_NORM] || '';
+    const titleNorm = (titleNormCache && titleNormCache[idx]) || '';
     if (titleNorm.startsWith(q)) {
       prefixIds.push(idx);
       prefixSeen.add(idx);
     }
-  })
+  });
 
   /* Tier 2: fuzzy fallback (typo tolerance, mid-lyric matches, etc */
   let results = fuse.search(q);
@@ -132,39 +155,69 @@ function search(query) {
     fuse.options.threshold = originalThreshold;
   }
 
-  return results.slice(0, 30).map((result) => ({
-    id: result.refIndex,
-    title: window.getSongTitle(result.refIndex)
-  }));
+  return results.slice(0, 30).map((result) => {
+    const rec = window.INDEX[result.refIndex];
+    return {
+      id: result.refIndex,
+      title: window.getSongTitle(result.refIndex),
+      author: (rec && rec.author) || ''
+    };
+  });
 }
 
 let last_query = '';
 
-function render_searchUI(page, query, clickHandler, listId) {
+function gen_searchResultItem(item, onClick) {
+  const el = document.createElement('ons-list-item');
+  el.setAttribute('tappable', '');
+  el.innerHTML = `
+    <div class="center search-result">
+      ${item.author ? `<div class="search-result-author">${escapeHtml(item.author)}</div>` : ''}
+      <div class="search-result-title">${escapeHtml(item.title)}</div>
+    </div>
+  `;
+  el.onclick = onClick;
+  return el;
+}
+
+function renderSearchResults(listElement, results, clickHandler) {
+  listElement.innerHTML = '';
+  results.forEach((item) => {
+    listElement.appendChild(gen_searchResultItem(item, () => clickHandler(item)));
+  });
+}
+
+function render_searchUI(page, query, clickHandler, listId, minLength) {
+  minLength = minLength || 1;
   if (query === last_query) return;
   last_query = query;
 
-  const results = search(query);
   const listElement = page.querySelector('#' + listId);
   if (!listElement) return;
 
+  // Below the character threshold: keep the default placeholder up rather
+  // than running Fuse or showing a "no match" fallback prematurely.
+  if (query.trim().length < minLength) {
+    listElement.innerHTML = `<div class="default_img_container"><img src="img/search_default.png"></div>`;
+    return;
+  }
+
+  const results = search(query);
+
   if (results && results.length > 0) {
-    listElement.innerHTML = '';
-    appendListItems(listElement, results, (item) => item.title, (item) => clickHandler(item));
-  } else if (query.length > 0) {
+    renderSearchResults(listElement, results, clickHandler);
+  } else {
     listElement.innerHTML =
       "<span style='padding:20px; display:block; background-color: var(--gray-darker); color: var(--highlight);'>Found this match for your query:</span>";
 
     const fallbackId = getFallbackSongId();
     if (fallbackId !== -1) {
-      appendListItems(
+      const fallbackRec = window.INDEX[fallbackId];
+      renderSearchResults(
         listElement,
-        [{ id: fallbackId, title: window.getSongTitle(fallbackId) }],
-        (item) => item.title,
-        (item) => clickHandler(item)
+        [{ id: fallbackId, title: window.getSongTitle(fallbackId), author: (fallbackRec && fallbackRec.author) || '' }],
+        clickHandler
       );
     }
-  } else {
-    listElement.innerHTML = `<div class="default_img_container"><img src="img/search_default.png"></div>`;
   }
 }

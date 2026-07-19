@@ -20,18 +20,9 @@ window.escapeHtml = function(str) {
 };
 
 async function loadSongData(songId) {
-  if (songDataCache[songId]) return songDataCache[songId];
-
   const rec = window.INDEX && window.INDEX[songId];
   if (!rec) throw new Error('Unknown song id: ' + songId);
-
-  const filename = rec[window.IDX_FILE];
-  const response = await fetch(`SO/${filename}`);
-  if (!response.ok) throw new Error('Failed to load song file: ' + filename);
-
-  const data = await response.json();
-  songDataCache[songId] = data;
-  return data;
+  return rec; // verses / en_translation / author / translation_intro already inline
 }
 
 async function songView_page_init(page) {
@@ -133,7 +124,7 @@ function setupMenuButtons(page, songId, songTitle) {
   if (shareBtn) {
     shareBtn.onclick = debouncify(async () => {
       popover.hide();
-      const song = songDataCache[songId];
+      const song = window.INDEX[songId];
       const text = `${songTitle}\n\n${song.verses.replace(/⋅/g, '')}`;
 
       try {

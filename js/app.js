@@ -10,27 +10,8 @@
 
 window.songCache = {}; // in-memory cache
 
-window.loadSong = async function(filename) {
-  if (window.songCache[filename]) {
-    return window.songCache[filename];
-  }
-  try {
-    const res = await fetch('SO/' + filename);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    window.songCache[filename] = data;
-    return data;
-  } catch (err) {
-    console.error('Failed to load song:', filename, err);
-    return null;
-  }
-};
-
 window.getSongById = async function(id) {
-  const rec = window.INDEX && window.INDEX[id];
-  if (!rec) return null;
-  const filename = rec[window.IDX_FILE];
-  return window.loadSong(filename);
+  return (window.INDEX && window.INDEX[id]) || null;
 };
 
 // ---------------------------------------------------------------------
@@ -177,22 +158,21 @@ window.IDX_SEARCHBLOB  = 2;  // "hegovindahegopalakesavamadhava...."
 window.IDX_FIRSTLINE   = 3;  // "he govinda he gopāla"
 window.IDX_FILE        = 4;  // "5G.json"
 
-window.indexPromise = fetch('SO/IDX.json')
+window.indexPromise = fetch('SO/IDX_db.json')
   .then((r) => r.json())
   .then((data) => {
-    window.INDEX = data;
-    return data;
+    window.INDEX = data.IDX || [];
+    return window.INDEX;
   })
   .catch((err) => {
-    console.error('Failed to load song index (SO/IDX.json):', err);
+    console.error('Failed to load song index (SO/IDX_db.json):', err);
     window.INDEX = [];
     return [];
   });
 
 window.getSongTitle = function (id) {
   const rec = window.INDEX && window.INDEX[id];
-  if (!rec) return '';
-  return rec[window.IDX_TITLE] || rec[window.IDX_FIRSTLINE] || '';
+  return rec ? (rec.first_line || '') : '';
 };
 
 function apply_font() {

@@ -156,21 +156,3 @@
   font-weight: 400;
   src: url('../fonts/charis-sil-v2-latin-ext-italic.woff2') format('woff2');
 }
-
-/* tiro-devanagari-sanskrit-regular - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Tiro Devanagari Sanskrit';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/tiro-devanagari-sanskrit-v7-latin-ext-regular.woff2') format('woff2');
-}
-
-/* tiro-devanagari-sanskrit-italic - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Tiro Devanagari Sanskrit';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/tiro-devanagari-sanskrit-v7-latin-ext-italic.woff2') format('woff2');
-}
