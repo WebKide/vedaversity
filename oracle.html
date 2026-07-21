@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1e1f22" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Wisdom Oracle" />
+  <meta name="description" content="Find instant wisdom, clarity, and emotional strength for everyday challenges." />
+  <title>Wisdom Oracle v1.1.57</title>
+  <meta name="author" content="WebKide" />
+
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+                 script-src 'self' 'unsafe-inline'; 
+                 style-src 'self' 'unsafe-inline'; 
+                 img-src 'self' data: blob:; 
+                 connect-src 'self';">
+
+  <!-- 1. Stylesheets: Critical path for First Contentful Paint -->
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/slideshow-panel.css" />
+
+  <!-- 2. Preloads: Prioritize critical assets while CSS parses -->
+  <link rel="preload" href="assets/images/card_bg.png" as="image" />
+  <link rel="manifest" href="site.webmanifest" />
+
+  <!-- 3. Immediate UI Script: Slideshow panel interactive element (slideshow) -->
+  <script src="js/slideshow-panel.js" defer></script>
+
+  <!-- 4. Global Dependencies: Must be available before main app modules -->
+  <script src="js/fuse.min.js" defer></script>
+
+  <!-- 5. Main Application Logic: Deferred by default via type="module" -->
+  <script src="js/app.js" type="module"></script>
+
+  <!-- 6. Heavy Utilities: Loaded last to avoid blocking startup bandwidth -->
+  <script src="js/html2canvas.min.js" defer></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .catch(err => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png" />
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════ NAVIGATION ════════════════════════════ -->
+<nav id="top-nav" aria-label="Main navigation">
+  <div class="top-nav-inner">
+    <img src="assets/images/wisdomoracle.svg" alt="Wisdom Oracle" class="top-nav-icon">
+    <div class="top-nav-links">
+      <button id="search-nav-btn"
+              class="top-nav-btn"
+              aria-label="Open Wisdom search"
+              title="Search">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9.5 3a6.5 6.5 0 0 1 6.5 6.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3Zm0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/>
+        </svg>
+      </button>
+
+      <button id="bookmark-nav-btn"
+              class="top-nav-btn"
+              aria-label="Open Bookmarks"
+              title="Bookmarks">
+        <svg class="tab-icon" viewBox="0 -960 960 960" aria-hidden="true">
+          <path d="M200-120v-640q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v640L480-240 200-120Zm80-122 200-86 200 86v-518H280v518Zm0-518h400-400Z"/>
+        </svg>
+      </button>
+
+      <a href="#about-section" class="top-nav-btn" title="About">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5,3C3.89,3 3,3.89 3,5V19C3,20.11 3.89,21 5,21H19C20.11,21 21,20.11 21,19V5C21,3.89 20.11,3 19,3H5M5,5H19V19H5V5M7,7V9H17V7H7M7,11V13H17V11H7M7,15V17H14V15H7Z" />
+        </svg>
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+<!-- ═════════════════════════════════ LANDING PAGE ═══════════════════════════ -->
+<main class="page-wrap" id="gita-section">
+
+<!-- ── Banner ── -->
+<header class="banner fade-in">
+  <span class="banner-date"></span>
+
+    <script>
+    (function () {
+      'use strict';
+      var MONTHS = ['January','February','March','April','May','June','July',
+                    'August','September','October','November','December'];
+
+      function getOrdinalSuffix(n) {
+        var v = n % 100;
+        if (v >= 11 && v <= 13) return 'ᵗʰ';
+        switch (n % 10) {
+          case 1: return 'ˢᵗ';
+          case 2: return 'ⁿᵈ';
+          case 3: return 'ʳᵈ';
+          default: return 'ᵗʰ';
+        }
+      }
+
+      function formatBannerDate(date) {
+        return MONTHS[date.getMonth()] + ' ' + date.getDate() + getOrdinalSuffix(date.getDate());
+      }
+
+      // Exposed so the Share-PNG date script further down can reuse this
+      // instead of duplicating the same month/ordinal logic a second time.
+      window.formatBannerDate = formatBannerDate;
+
+      var banner = document.querySelector('.banner-date');
+      if (banner) banner.textContent = formatBannerDate(new Date());
+    })();
+    </script>
+
+  <button class="menu-toggle" id="menu-toggle-btn" aria-label="Open settings">
+    <span class="menu-line"></span>
+    <span class="menu-line"></span>
+    <span class="menu-line"></span>
+    <span class="menu-dot"></span>
+  </button>
+
+  <!-- Logo — floats up and down -->
+  <img src="assets/images/wisdomoracle.svg"
+       alt=""
+       class="banner-lotus"
+       aria-hidden="true"
+       draggable="false"/>
+  <p class="banner-subtitle">Find wisdom, clarity, and emotional strength for everyday challenges.</p>
+</header>
+
+<!-- ── Module tabs ── -->
+<div class="module-tabs fade-in">
+  <button type="button"
+          id="wisdomoracle-random-btn"
+          class="module-tab module-tab--wisdom"
+          title="Click to reveal the inspiration">
+    <svg class="tab-icon"
+         viewBox="0 0 24 24"
+         aria-hidden="true"
+         focusable="false">
+      <path d="M2.44,20.79c0,0 -2.4,-1.27 -2.4,-2.57c-0,-1.78 2.39,-5.75 2.39,-5.75l0.01,8.32Zm5.99,2.63c0,0 -3.59,.01 -3.6,-2.39l-.01,-7.19c0,0 3.51,9.46 3.61,9.58Zm4.97,-.13c-1.23,.46 -2.65,-.26 -3.12,-1.49l-5.35,-14.6c-.5,-1.38 .05,-2.61 1.43,-3.12l9.04,-3.31c1.61,-.59 2.53,-.12 3.12,1.49l5.35,14.6c0.5,1.34 -.09,2.63 -1.43,3.12l-9.04,3.31Zm-.84,-2.27l9.04,-3.31l-5.35,-14.66l-9.04,3.31l5.35,14.66Zm-5.35,-14.66l9.04,-3.31l-9.04,3.31Z"/>
+    </svg>
+    <div class="tab-label-group">
+      <span class="tab-title">Wisdom Oracle</span>
+      <span class="tab-subtitle">personalised draw</span>
+      <span id="wo-notification-dot"
+            class="notification-dot">1</span>
+    </div>
+  </button>
+
+  <script>
+  // ─── Startup Notification Dot Logic ──────────────────────────────────────────
+  /**
+   * Show notification-dot on Wisdom Oracle button if unread today
+   */
+  (function () {
+    'use strict';
+
+    const STORAGE_KEY = 'wo_last_visit';
+
+    function today() {
+      return new Date().toDateString();
+    }
+
+    const button = document.getElementById('wisdomoracle-random-btn');
+    const dot = document.getElementById('wo-notification-dot');
+
+    if (!button || !dot) return;
+
+    // Show the notification if the user hasn't opened Wisdom Oracle today.
+    if (localStorage.getItem(STORAGE_KEY) !== today()) {
+      dot.classList.add('visible');
+    }
+
+    // Mark today's notification as read when the button is clicked.
+    button.addEventListener('click', function () {
+      localStorage.setItem(STORAGE_KEY, today());
+      dot.classList.remove('visible');
+    });
+
+    // Development helper
+    window.__TEST_DOT = function () {
+      localStorage.removeItem(STORAGE_KEY);
+      dot.classList.add('visible');
+      console.log('[WO-TEST] Notification reset. Reload to verify startup behaviour.');
+    };
+  })();
+  </script>
+
+  <button type="button"
+          id="gita-random-btn"
+          class="module-tab module-tab--gita"
+          title="Click for inspiration">
+    <svg class="tab-icon"
+         viewBox="0 0 24 24"
+         aria-hidden="true"
+         focusable="false">
+      <path d="M12 22.36c-.87-.69-2.93-2.18-6-2.18-2.19 0-3.69.78-4.36 1.15-.68.35-1.64-.13-1.64-.98V7.2c0-.64 2.97-2.29 6-2.29 3.03 0 5.07 1.09 6 1.64v13.2c.93-.58 2.98-1.75 6-1.75 1.92 0 3.18.44 3.82.65V5.78c1.1 0 2.18 1.44 2.18 1.64v13.15c0 .93-1.25 1.18-1.64.98-.67-.36-2.17-1.15-4.36-1.15-3.03 0-5.13 1.49-6 2.18Zm2.18-5.45V6.55l5.45-5.45v10.91l-5.45 4.91Zm-4.36 1.77V7.88c-.6-.25-1.86-.79-3.82-.79-1.96 0-3.22.51-3.82.76v10.83c.64-.24 2.17-.68 3.82-.68 1.64 0 3.18.45 3.82.68Z"/>
+    </svg>
+    <div class="tab-label-group">
+      <span class="tab-title">Gītā Wisdom</span>
+      <span class="tab-subtitle">timeless guidance</span>
+    </div>
+  </button>
+
+  <button type="button"
+          id="iching-random-btn"
+          class="module-tab module-tab--iching"
+          title="Click for inspiration">
+    <svg class="tab-icon"
+         viewBox="0 0 24 24"
+         aria-hidden="true"
+         focusable="false">
+      <path d="M12 0a12 12 0 1 1 0 24 12 12 0 0 1 0-24Zm-.04 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-4.93 15.04h9.97V6.95H7.03v10.09Zm1.96-2.04V9h6v6H9Z"/>
+    </svg>
+    <div class="tab-label-group">
+      <span class="tab-title">iChing Oracle</span>
+      <span class="tab-subtitle">millenium tradition</span>
+    </div>
+  </button>
+</div>
+
+<div class="linebreak fade-in"></div>
+
+<!-- ── Reload to update ── -->
+<div class="update-banner" id="update-banner">
+  <button type="button"
+          class="module-tab module-tab--reload"
+          title="Reload to use the latest version.">
+    <svg class="tab-icon"
+         viewBox="0 -960 960 960"
+         aria-hidden="true"
+         focusable="false">
+      <path d="M482-160q-134 0-228-93t-94-227v-7l-64 64-56-56 160-160 160 160-56 56-64-64v7q0 100 70.5 170T482-240q26 0 51-6t49-18l60 60q-38 22-78 33t-82 11Zm278-161L600-481l56-56 64 64v-7q0-100-70.5-170T478-720q-26 0-51 6t-49 18l-60-60q38-22 78-33t82-11q134 0 228 93t94 227v7l64-64 56 56-160 160Z"/>
+    </svg>
+    <div class="tab-label-group">
+      <span class="tab-title">Update Available</span>
+      <span class="tab-subtitle">press to reload</span>
+    </div>
+  </button>
+</div>
+
+<!-- ── Slideshow panel: cycles Gītā / iChing intro cards right-to-left ──
+     Transition style is chosen via a class on .wo-slideshow:
+       wo-anim-slide → filmstrip (both cards move together)
+       wo-anim-push  → incoming card slides over the outgoing one
+     Swap the class below to switch styles; no other markup changes needed.
+-->
+<div class="wo-slideshow wo-anim-slide fade-in" data-interval="7000">
+  <div class="wo-slideshow-viewport">
+    <div class="wo-slideshow-track">
+      <div class="wo-slideshow-item">
+
+        <!-- ── Gītā Wisdom card ── -->
+        <section class="intro intro--gita" aria-label="About the Gita Oracle">
+
+          <!-- Header & Description -->
+          <div class="intro-header">
+            <div class="intro-header-text">
+              <h2 class="intro-title">✦ Gītā Wisdom</h2>
+              <p class="intro-text">Connect with the ancient tradition of the Gītā to find timeless guidance and daily inspiration.</p>
+            </div>
+
+            <!-- Low-res JPG img while high-res PNG loads -->
+            <div class="intro-thumb ken-burns-frame" data-progressive-load>
+              <!-- Low-res placeholder: tiny file, immediate render -->
+              <img src="assets/images/prabhupada.jpg" 
+                   class="thumb-placeholder"
+                   alt=""
+                   aria-hidden="true"
+                   loading="eager">
+              
+              <!-- High-res: loads in background, swaps when ready -->
+              <img src="assets/images/prabhupada.png"
+                   class="thumb-final ken-burns"
+                   alt=""
+                   loading="lazy"
+                   style="--kb-duration:9s; --kb-scale:1.2; --kb-pan-x:-6%; --kb-pan-y:-6%;">
+            </div>
+
+          </div>
+          <ul>
+            <li>Receive <code>timeless guidance</code> relevant now.</li>
+            <li><b>OR:</b> Select below a <code>chapter</code> and <code>verse number</code> to study directly.</li>
+          </ul>
+
+          <!-- ════════════════════════ GĪTĀ WISDOM SECTION ═════════════════════════ -->
+          <!-- Gita Search Form (Now directly inside the card) -->
+          <div class="search-panel" aria-label="Verse lookup">
+            <form id="gita-form" class="search-row" autocomplete="off" novalidate>
+
+              <!-- Custom chapter dropdown -->
+              <div id="chapter-select" class="custom-select" aria-label="Chapter">
+                <button type="button"
+                        class="custom-select-trigger"
+                        id="chapter-trigger"
+                        aria-haspopup="listbox"
+                        aria-expanded="false">
+                  <span id="chapter-trigger-text">Select a Gītā Wisdom Chapter here</span>
+                  <span class="custom-select-arrow">&#9660;</span>
+                </button>
+
+                <ul class="custom-select-list"
+                    id="chapter-list"
+                    role="listbox"
+                    aria-label="Select a chapter">
+                  <li class="custom-select-option custom-select-title" role="none">
+                    <b>✦ Bhagavad Gītā As It Is <code>(1972)</code></b>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="1">
+                    <b>1 • First Chapter <span class="verse-count">(46 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Observing the Armies on the Battlefield of Kurukṣetra</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="2">
+                    <b>2 • Second Chapter <span class="verse-count">(72 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Contents of the Gītā Summarized</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="3">
+                    <b>3 • Third Chapter <span class="verse-count">(43 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Karma-yoga</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="4">
+                    <b>4 • Fourth Chapter <span class="verse-count">(42 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Transcendental Knowledge</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="5">
+                    <b>5 • Fifth Chapter <span class="verse-count">(29 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Karma-yoga — Action in Kṛṣṇa Consciousness</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="6">
+                    <b>6 • Sixth Chapter <span class="verse-count">(47 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Sāṅkhya-yoga</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="7">
+                    <b>7 • Seventh Chapter <span class="verse-count">(30 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Knowledge of the Absolute</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="8">
+                    <b>8 • Eighth Chapter <span class="verse-count">(28 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Attaining the Supreme</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="9">
+                    <b>9 • Ninth Chapter <span class="verse-count">(34 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Most Confidential Knowledge</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="10">
+                    <b>10 • Tenth Chapter <span class="verse-count">(42 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Opulence of the Absolute</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="11">
+                    <b>11 • Eleventh Chapter <span class="verse-count">(55 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Universal Form</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="12">
+                    <b>12 • Twelfth Chapter <span class="verse-count">(20 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Devotional Service</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="13">
+                    <b>13 • Thirteenth Chapter <span class="verse-count">(35 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Nature, the Enjoyer, and Consciousness</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="14">
+                    <b>14 • Fourteenth Chapter <span class="verse-count">(27 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Three Modes of Material Nature</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="15">
+                    <b>15 • Fifteenth Chapter <span class="verse-count">(20 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Yoga of the Supreme Person</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="16">
+                    <b>16 • Sixteenth Chapter <span class="verse-count">(24 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Divine and Demoniac Natures</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="17">
+                    <b>17 • Seventeenth Chapter <span class="verse-count">(28 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>The Divisions of Faith</small>
+                  </li>
+                  <li class="custom-select-option" role="option" data-value="18">
+                    <b>18 • Eighteenth Chapter <span class="verse-count">(78 𝗏𝖾𝗋𝗌𝖾𝗌)</span></b>
+                    <small>Conclusion — The Perfection of Renunciation</small>
+                  </li>
+                </ul>
+                <div class="custom-select-backdrop" id="chapter-backdrop"></div>
+              </div><!-- /#chapter-select -->
+
+              <!-- Verse number input — empty by default (no trailing "1") -->
+              <input id="gita-verse-input"
+                     class="verse-input verse-field"
+                     type="number"
+                     inputmode="numeric"
+                     min="1"
+                     max="81"
+                     placeholder="Verse number"
+                     autocorrect="off"
+                     autocapitalize="none"
+                     spellcheck="false"
+                     aria-label="Verse number" />
+
+              <button type="submit"
+                      class="btn btn-primary"
+                      aria-label="Look up verse">
+                SEEK WISDOM
+              </button>
+            </form>
+
+            <!-- Gita error box
+            <p id="gita-error-box" class="error-msg" role="alert" aria-live="polite"></p> -->
+
+          </div><!-- /.search-panel -->
+
+        </section>
+      </div><!-- /.wo-slideshow-item (gita) -->
+
+      <div class="divider fade-in"></div>
+
+      <div class="wo-slideshow-item">
+
+          <!-- ═════════════════════════ ICHING ORACLE SECTION ═════════════════════════ -->
+
+          <!-- ── iChing Oracle card ── -->
+          <section class="intro intro--iching" aria-label="About the iChing Oracle">
+            <div class="ribbon">NEW</div>
+
+            <!-- Header & Description -->
+            <div class="intro-header">
+              <div class="intro-header-text">
+                <h2 class="intro-title">✦ iChing Oracle</h2>
+                <p class="intro-text">Move through the challenges of everyday life with the inspiration from the Book of Changes.</p>
+              </div>
+
+            <!-- Low-res JPG img while high-res PNG loads -->
+            <div class="intro-thumb ken-burns-frame" data-progressive-load>
+              <!-- Low-res placeholder: tiny file, immediate render -->
+              <img src="assets/images/iching.jpg" 
+                   class="thumb-placeholder"
+                   alt=""
+                   aria-hidden="true"
+                   loading="eager">
+              
+              <!-- High-res: loads in background, swaps when ready -->
+              <img src="assets/images/iching.png"
+                   class="thumb-final ken-burns"
+                   alt=""
+                   loading="lazy"
+                   style="--kb-duration:9s; --kb-scale:1.2; --kb-pan-x:-6%; --kb-pan-y:-6%;">
+            </div>
+
+            <ul>
+              <li>Input a <code>hexagram</code> number to read it.</li>
+              <li><b>OR:</b> Receive inspiration for the moment by clicking <code>CONSULT ORACLE</code> below.</li>
+            </ul>
+
+            <!-- ── iChing lookup panel ──
+                 IDs used in app.js: iching-form, iching-input, iching-btn, iching-error-box
+                 No chapter dropdown — single file, hexagram 1–64 (plus 65–66 special).
+                 Empty input = random hexagram.
+            -->
+            <div class="search-panel">
+              <form id="iching-form" class="search-row" autocomplete="off" novalidate>
+
+                <!-- Hexagram number input — empty = random (spec) -->
+                <input id="iching-input"
+                       class="verse-input verse-field verse-field--iching"
+                       type="number"
+                       inputmode="numeric"
+                       min="1"
+                       max="64"
+                       placeholder="Hexagram 1–64"
+                       autocorrect="off"
+                       autocapitalize="none"
+                       spellcheck="false"
+                       aria-label="Hexagram number 1 to 64, leave empty for random" />
+
+                <!-- Toss Coins: empty input → random; number → that hexagram -->
+                <button id="iching-btn" 
+                        type="submit"
+                        class="btn btn-primary btn-primary--iching"
+                        aria-label="Toss coins or look up hexagram">
+                  CONSULT ORACLE
+                </button>
+              </form>
+
+              <!-- iChing error box
+              <p id="iching-error-box" class="error-msg" role="alert" aria-live="polite"></p> -->
+
+            </div><!-- /.search-panel (iching) -->
+          </section>
+
+      </div><!-- /.wo-slideshow-item (iching) -->
+
+      <div class="linebreak fade-in"></div>
+
+    </div><!-- /.wo-slideshow-track -->
+  </div>
+  <div class="wo-slideshow-dotnav"
+       role="tablist"
+       aria-label="Choose card">
+
+      <button
+          type="button"
+          class="wo-dot"
+          data-index="0"
+          aria-label="Show Gītā Wisdom">
+      </button>
+
+      <button
+          type="button"
+          class="wo-dot"
+          data-index="1"
+          aria-label="Show iChing Oracle">
+      </button>
+  </div>
+
+</div><!-- /.wo-slideshow -->
+
+<!-- Global Error Box Container -->
+<div class="footer-error-box">
+  <div id="global-error-box" 
+       class="error-msg" 
+       role="alert" 
+       aria-live="polite">
+
+    <!-- Warning icon — collapses with the box -->
+    <svg class="error-icon"
+         viewBox="0 -960 960 960"
+         aria-hidden="true"
+         focusable="false">
+      <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z"/>
+    </svg>
+
+    <!-- Text content injected here by JS -->
+    <span class="error-text"></span>
+    
+  </div>
+</div>
+
+<!-- ── Page footer — full-width darker block with circular image ──
+     imgfooter.png sits like a Discord embed footer icon (28×28, circular).
+-->
+<footer class="page-footer fade-in">
+  <div class="footer-inner">
+    <img src="assets/images/prabhupada.png"
+         alt=""
+         class="footer-icon"
+         width="28"
+         height="28"
+         loading="lazy"
+         aria-hidden="true"
+         draggable="false" />
+    <p>
+      To <i><b>Śrīla Baladeva Vidyābhūṣaṇa</b></i><br />who presented so nicely the 
+      <i>“Govinda-bhāṣya”</i> commentary on Vedānta philosophy. <b>「v1.1.57」</b>
+    </p>
+  </div>
+</footer>
+
+</main><!-- /.page-wrap -->
+
+<!-- ══════════════════════════════ LIGHTBOX OVERLAY ══════════════════════════════
+     Shared by both Gita and iChing oracles.
+     The header branding (icon + title) is swapped by app.js on each open.
+
+     IDs app.js requires:
+       lightbox, lb-overlay, lb-card, lb-close,
+       lb-prev, lb-next,
+       lb-purport-btn, lb-font-increase, lb-font-decrease,
+       lb-author-icon, lb-author-title, lb-author-ref,
+       lb-verse-section, lb-purport-section,
+       lb-chapter-heading,
+       lb-text-num,
+       lb-translation  (shown FIRST — main feature)
+       lb-sanskrit     (shown SECOND)
+       lb-synonyms     (shown THIRD)
+       lb-open-purport-btn  (bottom blue btn: "Read Purport / Commentary")
+       lb-purport, lb-return-btn,
+       lb-footer, lb-chapter-end
+-->
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Verse viewer">
+
+  <!-- Backdrop — click fires closeLightbox() -->
+  <div id="lb-overlay" class="lb-overlay"></div>
+
+  <article id="lb-card" class="lb-card">
+
+    <!-- ══ Card header ══ -->
+    <header class="lb-header">
+
+      <!-- Book / oracle title + current reference -->
+      <div class="lb-author">
+      <!-- iChing icon path is swapped by applyLightboxBranding() in lightbox.js -->
+        <img id="lb-author-icon"
+             src="assets/images/ichingcoin.png"
+             alt="I Ching coin"
+             class="lb-author-icon"
+             width="28"
+             height="28"
+             loading="lazy"
+             draggable="false" />
+        <span id="lb-author-title" class="lb-author-name">
+          <strong><i>Bhagavad Gītā</i> As It Is</strong>
+          <b id="lb-author-ref"></b>
+        </span>
+      </div>
+
+      <!-- Right-hand action buttons -->
+      <div class="lb-header-actions">
+
+        <!-- Copy and Share buttons — always visible; Share falls back to Copy if API unavailable -->
+        <button id="lb-copy-btn"
+                class="lb-icon-btn"
+                title="Copy to clipboard"
+                aria-label="Copy verse">
+          COPY
+        </button>
+        <button id="lb-share-btn"
+                class="lb-icon-btn"
+                title="Share verse"
+                aria-label="Share verse">
+          SHARE
+        </button>
+
+        <!-- Bookmarks icon -->
+        <button id="lb-bookmark-btn"
+                class="lb-icon-btn"
+                title="Bookmark"
+                aria-label="Bookmark"
+                style="display:none;">
+          <svg class="tab-icon" viewBox="0 -960 960 960" width="20" height="20" aria-hidden="true">
+            <path d="M200-120v-640q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v640L480-240 200-120Zm80-122 200-86 200 86v-518H280v518Zm0-518h400-400Z"/>
+          </svg>
+        </button>
+
+        <!-- Font-size controls -->
+        <button id="lb-font-decrease"
+                class="lb-icon-btn lb-font-btn lb-font-decrease"
+                title="Decrease text size"
+                aria-label="Decrease text size">
+          Aᴀ−
+        </button>
+        <button id="lb-font-increase"
+                class="lb-icon-btn lb-font-btn lb-font-increase"
+                title="Increase text size"
+                aria-label="Increase text size">
+          +ᴀA
+        </button>
+
+        <!-- Purport / commentary toggle — visible only in purport/commentary view -->
+        <button id="lb-purport-btn"
+                class="lb-icon-btn lb-purport-top-btn"
+                title="Return to verse / hexagram (P)"
+                aria-label="Return to verse or hexagram"
+                style="display:none">
+          ↩ Return
+        </button>
+
+        <!-- Close -->
+        <button id="lb-close"
+                class="lb-close-btn"
+                title="Close (Esc)"
+                aria-label="Close viewer">
+          &times;
+        </button>
+      </div>
+
+    </header><!-- /.lb-header -->
+
+    <!-- ══ Card body ══ -->
+    <div class="lb-body">
+
+      <!-- Chapter / hexagram heading — updated during navigation -->
+      <h3 id="lb-chapter-heading" class="lb-chapter-heading"></h3>
+
+      <!-- ══════════════════════════════════
+           VERSE / HEXAGRAM SECTION
+           Display order (spec):
+             1. Translation ← main feature, shown first
+             2. Sanskrit / hexagram lines
+             3. Synonyms / judgment lines
+             4. "Read Purport / Commentary" bottom button
+           Visible in verse mode; hidden in purport mode.
+      ══════════════════════════════════ -->
+      <div id="lb-verse-section">
+
+        <!-- TEXT / HEXAGRAM label — e.g. "TEXT 4" or "HEXAGRAM 17" -->
+        <p id="lb-text-num" class="section-label"></p>
+
+        <!-- 1. Translation / Judgment — FIRST (main feature) -->
+        <p class="section-label">🗒️ TRANSLATION</p>
+        <blockquote id="lb-translation" class="lb-translation"></blockquote>
+
+        <!-- 2. Sanskrit / hexagram lines — SECOND -->
+        <p class="section-label" id="lb-sanskrit-label">📜 SANSKRIT</p>
+        <p id="lb-sanskrit" class="lb-sanskrit" lang="sa"></p>
+
+        <!-- 3. Synonyms / judgment lines — THIRD -->
+        <p class="section-label" id="lb-synonyms-label">📖 SYNONYMS</p>
+        <div class="lb-synonyms-wrap">
+          <span id="lb-synonyms"></span>
+        </div>
+
+        <div class="separator fade-in"></div>
+
+        <!-- Bottom "Read Purport / Commentary" button (blue, 65% width, right-aligned)
+        Shown in verse/hexagram view; hidden in purport/commentary view.
+        Label set dynamically by app.js: "📖 Read Purport" or "📖 Read Commentary" -->
+        <button id="lb-open-purport-btn"
+                class="lb-bottom-btn lb-open-purport-btn"
+                aria-label="Open purport or commentary">
+          📖 Read Purport
+        </button>
+
+      </div><!-- /#lb-verse-section -->
+
+      <!-- ══════════════════════════════════
+           PURPORT / COMMENTARY SECTION
+           Hidden in verse mode; visible in purport mode.
+      ══════════════════════════════════ -->
+      <div id="lb-purport-section" class="hidden">
+
+        <!-- Purport dedicatory greeting (Gita only; hidden for iChing by JS) -->
+        <p class="lb-purport-dedicatory">
+          My Dear reader,<br />
+          Please accept my blessings.
+        </p>
+
+        <!-- Section label — changes to "COMMENTARY" for iChing via JS class -->
+        <p class="section-label" id="lb-purport-label">🖊 PURPORT</p>
+
+        <!-- Purport / commentary body — paragraphs injected by renderVerse() -->
+        <div id="lb-purport" class="lb-purport"></div>
+
+        <div class="divider fade-in"></div>
+
+        <!-- Closing dedication (Gita only; hidden for iChing by JS) -->
+        <p class="lb-purport-dedicatory-top"></p>
+
+        <!-- Prabhupāda signature — shown for Gita, hidden for iChing by JS -->
+        <img src="assets/images/signature.svg"
+             alt="Your ever well-wisher, A.C. Bhaktivedānta Swami"
+             class="lb-signature"
+             loading="lazy"
+             draggable="false" />
+
+        <!-- Closing dedication (Gita only; hidden for iChing by JS) -->
+        <p class="lb-purport-dedicatory">
+          A.C. Bhaktivedānta Swami
+        </p>
+
+        <!-- Bottom "Return to Verse / Hexagram" button (red, 65% width, right-aligned)
+        Shown in purport/commentary view; hidden in verse view.
+        Label set dynamically by app.js: "Return to Verse" or "Return to Hexagram" -->
+        <button id="lb-return-btn"
+                class="lb-bottom-btn lb-return-btn"
+                aria-label="Return to verse or hexagram view">
+          ↩ Return to Verse
+        </button>
+
+      </div><!-- /#lb-purport-section -->
+
+      <!-- Chapter-end colophon (shown only on last verse of a Gita chapter) -->
+      <p id="lb-chapter-end" class="lb-chapter-end"></p>
+
+    </div><!-- /.lb-body -->
+
+    <!-- ══ Footer / navigation bar ══ -->
+    <footer class="lb-footer-bar">
+      <span id="lb-footer" class="lb-footer-text"></span>
+      <nav class="lb-nav-row" aria-label="Verse navigation">
+        <button id="lb-prev"
+                class="lb-nav-btn"
+                title="Previous (← or swipe right)"
+                aria-label="Previous verse or hexagram">&#8592;</button>
+        <button id="lb-next"
+                class="lb-nav-btn"
+                title="Next (→ or swipe left)"
+                aria-label="Next verse or hexagram">&#8594;</button>
+      </nav>
+    </footer>
+
+  </article><!-- /#lb-card -->
+
+</div><!-- /#lightbox -->
+
+<!-- ══════════════════════════════ USAGE OVERLAY ══════════════════════════════ -->
+<div id="usage-modal"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="How to use">
+  <div class="lb-overlay" id="usage-overlay"></div>
+  <article class="lb-card">
+    <header class="lb-header">
+      <div class="lb-author">
+        <img src="assets/images/prabhupada.png" 
+             alt="" 
+             class="lb-author-icon" 
+             width="28" 
+             height="28" 
+             draggable="false"
+             aria-hidden="true" />
+        <span class="lb-author-name"><strong>॥ oṁ namo nārāyaṇāya ॥</strong></span>
+      </div>
+      <div class="lb-header-actions">
+        <button class="lb-icon-btn lb-font-btn lb-font-decrease"
+                title="Decrease text size"
+                aria-label="Decrease text size">Aᴀ−</button>
+        <button class="lb-icon-btn lb-font-btn lb-font-increase"
+                title="Increase text size"
+                aria-label="Increase text size">+ᴀA</button>
+        <button class="lb-close-btn"
+                id="usage-close"
+                title="Close"
+                aria-label="Close">&times;</button>
+      </div>
+    </header>
+    <div class="lb-body">
+      <!-- populated by renderInfoCard() from assets/data/usage.json -->
+    </div>
+  </article>
+</div>
+
+<!-- ══════════════════════════════ ABOUT OVERLAY ══════════════════════════════ -->
+<div id="about-modal"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="About Wisdom Oracle">
+  <div class="lb-overlay" id="about-overlay"></div>
+  <article class="lb-card">
+    <header class="lb-header">
+      <div class="lb-author">
+        <img src="assets/images/prabhupada.png" 
+             alt=""
+             class="lb-author-icon"
+             width="28"
+             height="28"
+             draggable="false" />
+        <span class="lb-author-name"><strong>About Wisdom Oracle</strong></span>
+      </div>
+      <div class="lb-header-actions">
+        <button class="lb-icon-btn lb-font-btn lb-font-decrease"
+                title="Decrease text size"
+                aria-label="Decrease text size">Aᴀ−</button>
+        <button class="lb-icon-btn lb-font-btn lb-font-increase"
+                title="Increase text size"
+                aria-label="Increase text size">+ᴀA</button>
+        <button class="lb-close-btn"
+                id="about-close"
+                title="Close"
+                aria-label="Close">&times;</button>
+      </div>
+    </header>
+    <div class="lb-body">
+      <!-- populated by renderInfoCard() from assets/data/about.json -->
+    </div>
+  </article>
+</div>
+
+<!-- ═══════════════════════════ SETTINGS OVERLAY ═════════════════════════════ -->
+<div id="settings-modal"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Settings">
+  <div class="lb-overlay" id="settings-overlay"></div>
+  <article class="lb-card lb-card--settings">
+    <header class="lb-header">
+      <div class="lb-author">
+        <svg class="lb-author-icon"
+             viewBox="0 0 410 619"
+             width="28"
+             height="28"
+             aria-hidden="true"
+             draggable="false"
+             focusable="false">
+          <path fill="#c07d10" d="M376.7,183.1H360.2c14.6-9.6,28.1-24.2,28.1-45.6C388.3,84.4,323.3,0,246.9,0s-80.1,75.1-80.1,83.5c0,35.8,45.9,81.1,58,99.6h-23v8l21.8,21.8c0,26.1-29.3,57.2-61.9,93.3-7.3-5.6-15.1-11.9-23-18.6,26.5-26.5,47.8-57,47.8-96.2,0-17.7-53.4-73.7-87-73.7-14.9,0-57.7,6.8-57.7,63.7,0,24.5,20.4,54.6,43.7,80.9C36.2,311.4,0,343.7,0,367.3a59.35,59.35,0,0,0,2.5,17.5L39,421.3s-1-8.5-1-15c0-38,45.5-68.1,86.1-105,10.3,9.4,18.8,16.6,23.5,20.5-36.4,41.5-72.2,89.1-72.2,142.8,0,109.3,99.6,154.1,99.6,154.1l4.6-4s-63.2-36-63.2-113.7c0-95.5,105.2-171.8,105.2-171.8V444.9l36.2,36.2h4.9v-259h42.8V419.5l35.9,36.2h4.9V222.1h63.3V216ZM99.5,247.8c-10.7-13.7-17.8-27.5-17.8-39.6,0-58.6,66.5-47.4,66.5-47.4S141.6,201,99.5,247.8ZM278.6,153l30.2,30.2H258.2c-22.8-16.7-47.6-41.7-47.6-71.4,0-65.5,58.3-71.4,71.7-71.4s64.2,4.1,64.2,51.6S278.6,153,278.6,153Z"/>
+        </svg>
+        <span class="lb-author-name"><strong>⚙ PWApp Settings</strong></span>
+      </div>
+      <div class="lb-header-actions">
+        <button class="lb-close-btn"
+                id="settings-close"
+                title="Close"
+                aria-label="Close settings">&times;</button>
+      </div>
+    </header>
+
+    <div class="lb-body">
+      <p style="
+        font-family: var(--font-text);
+        font-weight: 400;
+        color:       var(--text-secondary);">
+        These settings control some visual aspects</p>
+      <div class="divider"></div>
+
+      <!-- Row 1: Usage button — now matches the row format -->
+      <div class="settings-row">
+        <span class="settings-row-label">
+          What’s New <em class="settings-row-tag">Version History</em> logs
+        </span>
+        <button type="button" 
+                id="setting-open-usage" 
+                class="settings-action-ico"
+                aria-label="Open app usage">
+          <svg class="tab-icon"
+               viewBox="0 0 24 24"
+               aria-hidden="true"
+               width="20"
+               height="20">
+            <path d="M13 7H11V9H13V7M13 11H11V17H13V11M17 1H7C5.9 1 5 1.9 5 3V21C5 22.1 5.9 23 7 23H17C18.1 23 19 22.1 19 21V3C19 1.9 18.1 1 17 1M17 19H7V5H17V19Z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Row 2: Datestamp toggle -->
+      <div class="settings-row">
+        <span class="settings-row-label">
+          Include <em class="settings-row-tag">datestamp</em> in PNG share
+        </span>
+        <label class="toggle" aria-label="Include date in PNG share">
+          <input type="checkbox" id="setting-show-date" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Row 3: HD PNG toggle -->
+      <div class="settings-row">
+        <span class="settings-row-label">
+          Share <em class="settings-row-tag">High Res</em> PNG share
+        </span>
+        <label class="toggle" aria-label="HD PNG share">
+          <input type="checkbox" id="setting-hd-png" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Row 4: DevTools toggle -->
+      <div class="settings-row">
+        <span class="settings-row-label">
+          Show layout outlines <em class="settings-row-tag">devTools</em>
+        </span>
+        <label class="toggle" aria-label="Show layout outlines">
+          <input type="checkbox" id="setting-show-outlines" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Row 5: Slideshow toggle -->
+      <div class="settings-row">
+        <span class="settings-row-label">
+          Stop <em class="settings-row-tag">slideShow</em> animation
+        </span>
+        <label class="toggle" aria-label="Stop slideshow scroll animation">
+          <input type="checkbox" id="remove-slideshow-scrolling" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+  </article>
+</div>
+
+<!-- ═══════════════════════════ BOOKMARKS OVERLAY ═════════════════════════════ -->
+<div id="bookmarks-modal"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Your Bookmarks">
+  <div class="lb-overlay" id="bookmarks-overlay"></div>
+  <article class="lb-card">
+    <header class="lb-header">
+      <div class="lb-author">
+        <svg class="lb-author-icon" viewBox="0 -960 960 960" width="28" height="28" aria-hidden="true" draggable="false">
+          <path fill="var(--accent)" d="M200-120v-640q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v640L480-240 200-120Zm80-122 200-86 200 86v-518H280v518Zm0-518h400-400Z"/>
+        </svg>
+        <span class="lb-author-name"><strong>Your Bookmarks</strong></span>
+      </div>
+      <div class="lb-header-actions">
+        <button class="lb-close-btn"
+                id="bookmarks-close"
+                title="Close"
+                aria-label="Close bookmarks">&times;</button>
+      </div>
+    </header>
+    <div class="lb-body" id="bookmarks-body">
+      <!-- populated by bookmarks.js -->
+    </div>
+
+  </article>
+</div>
+
+<!-- ══════════════════════════════ SEARCH CARD MOUNT ══════════════════════════════
+     Shell only — full card HTML is injected by search-ui.js from
+     assets/data/search.json on first open. IDs assigned by renderer are:
+       search-card, search-overlay, search-close,
+       search-input, search-btn-verse, search-btn-purport,
+       search-status, search-results,
+       search-footer-text, search-prev, search-page-info, search-next
+-->
+<div id="search-card-mount"></div>
+
+<!-- #share-png-card hidden from view, used for template to share PNG -->
+<div id="share-png-card">
+  <h2 class="share-png-title"></h2>
+  <p class="share-png-verse"></p>
+  <footer class="share-png-footer">
+    <span class="share-png-date"></span>
+  </footer>
+</div>
+
+<!-- Dynamically load the application entry point. -->
+<script type="module">
+  /**
+   * Dynamically imports the application entry point.
+   * If the module graph fails to load, surfaces a user-facing error message.
+   * Tries to inject into #global-error-box first; falls back to a fixed
+   * banner above the top-nav if the DOM isn't ready yet.
+   */
+  (async function loadOracle() {
+    try {
+      await import('./js/app.js');
+    } catch (err) {
+      console.error('Oracle module failed to load:', err);
+      
+      const message = 
+        '<h3>Wisdom Oracle failed to load</h3>' +
+        '<p>Please check your network connection and refresh the page.</p>' +
+        '<p style="color:#5c6068;font-size:0.85rem;margin-top:12px;">' + 
+        (err && err.message ? err.message : 'Unknown error') + 
+        '</p>';
+      
+      // ── Strategy 1: Inject into the styled error box if DOM is ready ──
+      const errorBox = document.getElementById('global-error-box');
+      const wrapper = document.querySelector('.footer-error-box');
+      
+      if (errorBox && wrapper) {
+        const textSpan = errorBox.querySelector('.error-text');
+        if (textSpan) {
+          textSpan.innerHTML = message;
+        } else {
+          // Fallback if .error-text span missing (old markup)
+          errorBox.innerHTML = message;
+        }
+        wrapper.classList.add('has-error');
+        // Scroll to make it visible
+        wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      
+      // ── Strategy 2: Fixed fallback banner above top-nav ──
+      const banner = document.createElement('div');
+      banner.setAttribute('role', 'alert');
+      banner.style.cssText = 
+        'position:fixed;' +
+        'top:56px;' +                    /* just below the 52px nav */
+        'left:50%;' +
+        'transform:translateX(-50%);' +
+        'width:92%;' +
+        'max-width:640px;' +
+        'z-index:2000;' +                /* above #top-nav (1000) */
+        'padding:16px 20px;' +
+        'text-align:left;' +
+        'font-family:var(--font-body),system-ui,sans-serif;' +
+        'font-size:0.92rem;' +
+        'color:#dbdee1;' +
+        'background:rgba(30,32,37,0.96);' +
+        'border:3px solid rgba(200,97,95,0.35);' +
+        'border-radius:8px;' +
+        'box-shadow:0 8px 40px rgba(0,0,0,0.55);' +
+        'backdrop-filter:blur(8px);' +
+        '-webkit-backdrop-filter:blur(8px);' +
+        'animation:error-in 0.3s ease;';
+      
+      banner.innerHTML = 
+        '<div style="display:flex;align-items:flex-start;gap:12px;">' +
+          '<svg width="22" height="22" viewBox="0 -960 960 960" fill="#e57373" style="flex-shrink:0;margin-top:2px;">' +
+            '<path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm330.5-51.5Q520-263 520-280t-11.5-28.5Q497-320 480-320t-28.5 11.5Q440-297 440-280t11.5 28.5Q463-240 480-240t28.5-11.5ZM440-360h80v-200h-80v200Zm40-100Z"/>' +
+          '</svg>' +
+          '<div>' + message + '</div>' +
+        '</div>';
+      
+      document.body.appendChild(banner);
+    }
+  })();
+</script>
+
+</body>
+</html>
