@@ -6,17 +6,10 @@
 
 'use strict';
 
-const SHELL_VERSION = 'v1.25'; /* manually bumped with each deployment */
+const SHELL_VERSION = 'v1.26'; /* manually bumped with each deployment */
 const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = 'vedaversity-runtime';
-
-// Tier 1: small, known, core files — safe to precache in full
-/**
- * Deployment base.
- * Works correctly both from localhost and GitHub Pages subdirectories.
- */
 const BASE = self.location.pathname.substring(0, self.location.pathname.lastIndexOf('/'));
-
 const ASSETS = [
   BASE + '/index.html', /* SPA landing and main page */
   BASE + '/site.webmanifest',
@@ -77,13 +70,11 @@ const ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL_CACHE);
-
     for (const url of ASSETS) {
       try {
         const response = await fetch(url, {
             cache: 'reload'
         });
-
         if (response.ok) {
           await cache.put(url, response);
         } else {
@@ -104,68 +95,53 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-
     if ('navigationPreload' in self.registration) {
       try {
         await self.registration.navigationPreload.enable();
       } catch (_) {}
     }
-
     const keys = await caches.keys();
-
     await Promise.all(
       keys
         .filter(key => key !== SHELL_CACHE && key !== RUNTIME_CACHE)
         .map(key => caches.delete(key))
     );
-
     await self.clients.claim();
-
     const clients = await self.clients.matchAll();
-
     for (const client of clients) {
       client.postMessage({
         type: 'SW_UPDATED',
         version: SHELL_VERSION
       });
     }
-
   })());
 });
 
 self.addEventListener('fetch', event => {
   const request = event.request;
-
   if (request.method !== 'GET')
     return;
-
   if (!request.url.startsWith(self.location.origin))
     return;
-
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(SHELL_CACHE);
       const url = new URL(request.url);
       const baseUrl = new URL(BASE);
-
       let cached = await cache.match(request);
-
       if (!cached) {
         const isBasePath = url.pathname === baseUrl.pathname ||
                            url.pathname === baseUrl.pathname + '/';
         const isRoot = url.pathname === '/';
-
         if (isBasePath || isRoot) {
           cached = await cache.match(BASE + '/index.html');
         }
       }
-
       if (cached) {
         void (async () => {
           try {
             const preload = await event.preloadResponse;
             const response = preload || await fetch(request);
-
             if (response && response.ok) {
               const clone = response.clone();
               const cache = await caches.open(SHELL_CACHE);
@@ -173,14 +149,11 @@ self.addEventListener('fetch', event => {
             }
           } catch (_) {}
         })();
-
         return cached;
       }
-
       try {
         const preload = await event.preloadResponse;
         const response = preload || await fetch(request);
-
         if (response && response.ok) {
           cache.put(request, response.clone());
         }
@@ -188,24 +161,20 @@ self.addEventListener('fetch', event => {
       } catch (err) {
         const fallback = await cache.match(BASE + '/index.html');
         if (fallback) return fallback;
-
         return new Response(
           'Kīrtan App is offline. Please check your connection.',
           { status: 503, statusText: 'Service Unavailable', headers: { 'Content-Type': 'text/plain' } }
         );
       }
     })());
-
     return;
   }
 
   event.respondWith((async () => {
     const cache = await caches.open(SHELL_CACHE);
     const cached = await cache.match(request);
-
     if (cached)
       return cached;
-
     try {
       const response = await fetch(request);
       if (response && response.ok) {

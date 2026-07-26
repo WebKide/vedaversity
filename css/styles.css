@@ -24,8 +24,8 @@
  */
 :root {
   font-family: 'Ubuntu Sans', sans-serif; /* 1. Base property */
-  --font-family: 'Nunito', sans-serif; /* 2. Standard components */
-  --material-font-family: 'Gentium Plus', serif; /* 3. Material components */
+  --font-family: 'Charis SIL', serif; /* 3. Material components */
+  --material-font-family: 'Nunito', sans-serif; /* 2. Standard components */
   /* ---- App theme palette (dark) ---- */
   --background-color: black;
   --text-color: #e0e0e0;
@@ -830,7 +830,8 @@ ons-list-item .list-item__subtitle span.no_right {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-weight: 700;
+  line-height: 1.86rem;
+  font-weight: 400;
   font-style: italic;
 }
 /* .verse-container  — no static rules; see .trans-container */
@@ -1059,7 +1060,7 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* #verseList */
 #verseList b {
-  text-decoration: underline;
+  text-decoration: bold;
 }
 
 #verseList span {

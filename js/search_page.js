@@ -107,6 +107,12 @@ function normalizeQuery(str) {
     .trim();
 }
 
+function truncateWords(str, maxWords) {
+  const words = String(str || '').trim().split(/\s+/);
+  if (words.length <= maxWords) return str;
+  return words.slice(0, maxWords).join(' ') + ' ॥';
+}
+
 /**
  * dp.json's index-array position isn't fixed/known ahead of time (IDX.json
  * is regenerated from the SO/ directory), so we look it up by filename
@@ -173,7 +179,7 @@ function gen_searchResultItem(item, onClick) {
   el.innerHTML = `
     <div class="center search-result">
       ${item.author ? `<div class="search-result-author">${escapeHtml(item.author)}</div>` : ''}
-      <div class="search-result-title">${escapeHtml(item.title)}</div>
+      <div class="search-result-title">${escapeHtml(truncateWords(item.title, 7))}</div>
     </div>
   `;
   el.onclick = onClick;

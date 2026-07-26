@@ -5,7 +5,6 @@
 
 // ---------------------------------------------------------------------
 // Global state
-// Song loader — fetches individual song JSON files
 // ---------------------------------------------------------------------
 
 window.songCache = {}; // in-memory cache
@@ -16,8 +15,6 @@ window.getSongById = async function(id) {
 
 // ---------------------------------------------------------------------
 // localStorage-backed key/value store
-// (Promise-returning so call sites written as `await dbGetItem(...)` still work;
-// swap the bodies below for an IndexedDB wrapper later if storage needs grow.)
 // ---------------------------------------------------------------------
 
 const DB_PREFIX = 'kirtan:';
@@ -48,7 +45,7 @@ window.addRecent = async function(songId, filename) {
   appState.recents = appState.recents.filter(item => item.id !== songId);
 
   // Add to the beginning of the array
-  appState.recents.unshift({ id: songId, file: filename, time: Date.now() });
+  appState.recents.unshift({ id: songId, time: Date.now() });
 
   // Limit to most recent 50 items
   if (appState.recents.length > 50) {
@@ -122,7 +119,7 @@ window.appState = {
   langCode: 'EN',
   themeMode: 'dark',
   zoomSize: 22,
-  fontFamily: "'Ubuntu Sans', sans-serif",
+  fontFamily: "'Charis SIL', serif",
   trans: false,
   deviceInfo: null
 };
@@ -151,12 +148,12 @@ async function loadPersistedState() {
 // Song index
 // window.INDEX[i] = [title, slug, searchBlob, firstLineRomanized, filename]
 // ---------------------------------------------------------------------
-
+/*
 window.IDX_TITLE       = 0;  // "he govinda he gopāla"
 window.IDX_TITLE_NORM  = 1;  // "hegovindahegopala"
 window.IDX_SEARCHBLOB  = 2;  // "hegovindahegopalakesavamadhava...."
 window.IDX_FIRSTLINE   = 3;  // "he govinda he gopāla"
-window.IDX_FILE        = 4;  // "5G.json"
+window.IDX_FILE        = 4;  // "5G.json"*/
 
 window.indexPromise = fetch('SO/IDX_db.json')
   .then((r) => r.json())

@@ -101,7 +101,7 @@ function render_tattvaLists(page) {
     
     tattva.files.forEach((filename) => {
       // Find the numerical ID by searching the INDEX for the filename
-      const id = window.INDEX.findIndex(rec => rec && rec[window.IDX_FILE] === filename);
+      const id = window.INDEX.findIndex(rec => rec && rec.file_name === filename);
       
       if (id !== -1) {
         const title = window.getSongTitle(id);

@@ -7,8 +7,7 @@
  * copy-share from the toolbar menu.
  *
  * Dropped vs. the original: GunDB "Announce" broadcast feature, Russian
- * translation loading, native-only branching (this build treats every
- * platform as "web").
+ * translation loading, native-only branching, and per-song file fetching.
  */
 
 const songDataCache = {};
@@ -19,10 +18,14 @@ window.escapeHtml = function(str) {
   return p.innerHTML;
 };
 
+/**
+ * Returns the song record from the unified in-memory index.
+ * All verse data is already inline — no secondary fetch required.
+ */
 async function loadSongData(songId) {
   const rec = window.INDEX && window.INDEX[songId];
   if (!rec) throw new Error('Unknown song id: ' + songId);
-  return rec; // verses / en_translation / author / translation_intro already inline
+  return rec;
 }
 
 async function songView_page_init(page) {
@@ -59,7 +62,7 @@ async function songView_page_init(page) {
   // 4. Render Header (Title & Author)
   const titleElement = page.querySelector('#songTitle');
   if (titleElement) {
-    const firstLine = rec[window.IDX_TITLE] || rec[window.IDX_FIRSTLINE] || '';
+    const firstLine = song.first_line || '';
     const author = song.author || '';
 
     if (author) {
@@ -104,7 +107,7 @@ async function songView_page_init(page) {
   gestureInit(verseList, page);
 
   // 6. Lifecycle & Analytics
-  if (typeof addRecent === 'function') addRecent(songId, rec[window.IDX_FILE]);
+  if (typeof addRecent === 'function') addRecent(songId);
 
   page.onShow = (typeof keepAwake === 'function') ? keepAwake : null;
   page.onHide = (typeof allowSleep === 'function') ? allowSleep : null;
@@ -194,6 +197,10 @@ async function initPageState() {
   await Promise.all([initSetting('zoomSize', 22), initSetting('trans', false)]);
 }
 
+/**
+ * Touch screen gestures, need to make sure scroll up/down work well
+ * each verse must snap to the bottom of the top nav-bar.
+ */
 function gestureInit(verseList, page) {
   const pageContent = page.querySelector('.page__content');
   let startScrollTop;
