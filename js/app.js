@@ -158,17 +158,25 @@ window.IDX_FILE        = 4;  // "5G.json"*/
 window.indexPromise = fetch('SO/IDX_db.json')
   .then((r) => r.json())
   .then((data) => {
-    window.INDEX = data.IDX || [];
+    const list = data.IDX || [];
+    // Convert array to a Map/Object for easy lookup by file_name
+    window.INDEX = {};
+    list.forEach(item => {
+      if (item.file_name) {
+        window.INDEX[item.file_name] = item;
+      }
+    });
     return window.INDEX;
   })
   .catch((err) => {
     console.error('Failed to load song index (SO/IDX_db.json):', err);
-    window.INDEX = [];
-    return [];
+    window.INDEX = {};
+    return {};
   });
 
 window.getSongTitle = function (id) {
   const rec = window.INDEX && window.INDEX[id];
+  // Access the named property 'first_line' from the object
   return rec ? (rec.first_line || '') : '';
 };
 

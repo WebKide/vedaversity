@@ -79,9 +79,10 @@ function buildSortedToc() {
     return [];
   }
 
-  // 1. Collect all songs with titles
-  const songs = window.INDEX
-    .map((_, index) => ({ id: index, title: window.getSongTitle(index) }))
+  // 1. Collect all songs with titles — window.INDEX is now an object keyed
+  // by file_name, so iterate its keys instead of array indices.
+  const songs = Object.keys(window.INDEX)
+    .map((fileName) => ({ id: fileName, title: window.getSongTitle(fileName) }))
     .filter((item) => item.title);
 
   // 2. Sort alphabetically, ignoring leading punctuation

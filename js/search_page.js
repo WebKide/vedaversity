@@ -40,16 +40,24 @@ window.indexPromise.then(() => {
     return;
   }
 
-  titleNormCache = window.INDEX.map((rec) => normalizeQuery(rec.first_line));
+  // titleNormCache is now keyed by file_name instead of numeric index
+  titleNormCache = {};
+  Object.keys(window.INDEX).forEach((fileName) => {
+    titleNormCache[fileName] = normalizeQuery(window.INDEX[fileName].first_line);
+  });
 
-  const fuseData = window.INDEX.map((rec, searchIdx) => ({
-    searchIdx,
-    search: rec.search || '',
-    title_norm: titleNormCache[searchIdx]
+  // Each fuseData entry carries its own file_name as `id`, so a Fuse
+  // result can be traced straight back to the song without needing an
+  // array index.
+  const fuseData = Object.keys(window.INDEX).map((fileName) => ({
+    id: fileName,
+    search: window.INDEX[fileName].search || '',
+    title_norm: titleNormCache[fileName]
   }));
 
   fuse = new Fuse(fuseData, FUSE_OPTIONS);
 });
+
 // ----------------------------------------------------------------------
 
 function search_page_init(page) {
@@ -123,9 +131,9 @@ function getFallbackSongId() {
   if (_fallbackSongId !== null) return _fallbackSongId;
   if (!window.INDEX) return null;
 
-  const idx = window.INDEX.findIndex((rec) => rec.file_name === 'dp.json');
-  _fallbackSongId = idx; // -1 if not found; findIndex never returns null
-  return idx;
+  // window.INDEX is now keyed by file_name — direct lookup instead of a scan
+  _fallbackSongId = window.INDEX['dp.json'] ? 'dp.json' : -1;
+  return _fallbackSongId;
 }
 
 /**
@@ -143,11 +151,11 @@ function search(query) {
   /* Tier 1: exact prefix match */
   const prefixIds = [];
   const prefixSeen = new Set();
-  window.INDEX.forEach((rec, idx) => {
-    const titleNorm = (titleNormCache && titleNormCache[idx]) || '';
+  Object.keys(window.INDEX).forEach((fileName) => {
+    const titleNorm = (titleNormCache && titleNormCache[fileName]) || '';
     if (titleNorm.startsWith(q)) {
-      prefixIds.push(idx);
-      prefixSeen.add(idx);
+      prefixIds.push(fileName);
+      prefixSeen.add(fileName);
     }
   });
 
@@ -162,10 +170,13 @@ function search(query) {
   }
 
   return results.slice(0, 30).map((result) => {
-    const rec = window.INDEX[result.refIndex];
+    // result.item is the fuseData object we built above, which carries
+    // the real file_name as `id` — use that instead of refIndex
+    const fileName = result.item.id;
+    const rec = window.INDEX[fileName];
     return {
-      id: result.refIndex,
-      title: window.getSongTitle(result.refIndex),
+      id: fileName,
+      title: window.getSongTitle(fileName),
       author: (rec && rec.author) || ''
     };
   });

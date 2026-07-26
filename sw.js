@@ -6,7 +6,7 @@
 
 'use strict';
 
-const SHELL_VERSION = 'v1.26'; /* manually bumped with each deployment */
+const SHELL_VERSION = 'v1.27'; /* manually bumped with each deployment */
 const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = 'vedaversity-runtime';
 const BASE = self.location.pathname.substring(0, self.location.pathname.lastIndexOf('/'));

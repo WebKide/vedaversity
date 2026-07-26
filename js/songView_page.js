@@ -62,7 +62,8 @@ async function songView_page_init(page) {
   // 4. Render Header (Title & Author)
   const titleElement = page.querySelector('#songTitle');
   if (titleElement) {
-    const firstLine = song.first_line || '';
+    // const firstLine = song.first_line || '';
+    const firstLine = rec.first_line || '';
     const author = song.author || '';
 
     if (author) {
@@ -103,7 +104,7 @@ async function songView_page_init(page) {
   }
 
   setupNavButtons(page, songId, listName);
-  setupMenuButtons(page, songId, rec[window.IDX_TITLE]);
+  setupMenuButtons(page, songId, rec.first_line);
   gestureInit(verseList, page);
 
   // 6. Lifecycle & Analytics
