@@ -1,17 +1,20 @@
 /**
  * sw.js — Service Worker
- * Cache-first for static assets; stale-while-revalidate for navigation.
- * Update SHELL_VERSION to bust the cache on new deployments.
+ * Update VERSION to bust the cache on new deployments.
  */
 
 'use strict';
 
-const SHELL_VERSION = 'v1.29'; /* manually bumped with each deployment */
-const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
-const RUNTIME_CACHE = 'vedaversity-runtime';
-const BASE = self.location.pathname.substring(0, self.location.pathname.lastIndexOf('/'));
+const VERSION = 'v1.30';
+const CACHE = `vedaversity-${VERSION}`;
+
+const BASE = self.location.pathname.substring(
+  0,
+  self.location.pathname.lastIndexOf('/')
+);
+
 const ASSETS = [
-  BASE + '/index.html', /* SPA landing and main page */
+  BASE + '/index.html',
   BASE + '/site.webmanifest',
   BASE + '/favicon.ico',
   BASE + '/css/dependencies/offline-onsenui.css',
@@ -50,7 +53,7 @@ const ASSETS = [
   BASE + '/img/home_default.png',
   BASE + '/img/list_default.png',
   BASE + '/img/search_default.png',
-  BASE + '/js/dependencies/fuse.min.js', /* library for fuzzy search */
+  BASE + '/js/dependencies/fuse.min.js',
   BASE + '/js/dependencies/offline-onsenui.js',
   BASE + '/js/dependencies/Sortable.min.js',
   BASE + '/js/all_songs_page.js',
@@ -66,138 +69,92 @@ const ASSETS = [
   BASE + '/SO/IDX_db.json',
 ];
 
-// Clean install event listener optimized for single-bundle configuration
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
-    const cache = await caches.open(SHELL_CACHE);
-    for (const url of ASSETS) {
-      try {
-        const response = await fetch(url, {
-            cache: 'reload'
-        });
-        if (response.ok) {
-          await cache.put(url, response);
-        } else {
-          console.warn('[SW] Skip caching (HTTP ' + response.status + '):', url);
-        }
-      } catch (err) {
-        console.warn('[SW] Skip caching:', url, err);
-      }
-    }
+    const cache = await caches.open(CACHE);
+
+    // Install succeeds ONLY if every asset is cached.
+    await cache.addAll(ASSETS);
+
+    // Activate immediately.
+    await self.skipWaiting();
   })());
 });
 
-self.addEventListener('message', (event) => {
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+
+    // Delete every old cache.
+    const keys = await caches.keys();
+
+    await Promise.all(
+      keys
+        .filter(key => key !== CACHE)
+        .map(key => caches.delete(key))
+    );
+
+    await self.clients.claim();
+
+    const clients = await self.clients.matchAll();
+
+    for (const client of clients) {
+      client.postMessage({
+        type: 'SW_UPDATED',
+        version: VERSION
+      });
+    }
+
+  })());
+});
+
+self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    if ('navigationPreload' in self.registration) {
-      try {
-        await self.registration.navigationPreload.enable();
-      } catch (_) {}
-    }
-    const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter(key => key !== SHELL_CACHE && key !== RUNTIME_CACHE)
-        .map(key => caches.delete(key))
-    );
-    await self.clients.claim();
-    const clients = await self.clients.matchAll();
-    for (const client of clients) {
-      client.postMessage({
-        type: 'SW_UPDATED',
-        version: SHELL_VERSION
-      });
-    }
-  })());
-});
-
 self.addEventListener('fetch', event => {
+
   const request = event.request;
+
   if (request.method !== 'GET')
     return;
+
   if (!request.url.startsWith(self.location.origin))
     return;
 
-  if (request.mode === 'navigate') {
-    event.respondWith((async () => {
-      const cache = await caches.open(SHELL_CACHE);
-      // Always try the specific request first, then fall back to the shell
-      return await cache.match(request) || 
-             await cache.match(BASE + '/index.html') || 
-             fetch(request);
-    })());
-    return;
-  }
-
-  /*
-  if (request.mode === 'navigate') {
-    event.respondWith((async () => {
-      const cache = await caches.open(SHELL_CACHE);
-      const url = new URL(request.url);
-      const baseUrl = new URL(BASE);
-      let cached = await cache.match(request);
-      if (!cached) {
-        const isBasePath = url.pathname === baseUrl.pathname ||
-                           url.pathname === baseUrl.pathname + '/';
-        const isRoot = url.pathname === '/';
-        if (isBasePath || isRoot) {
-          cached = await cache.match(BASE + '/index.html');
-        }
-      }
-      if (cached) {
-        void (async () => {
-          try {
-            const preload = await event.preloadResponse;
-            const response = preload || await fetch(request);
-            if (response && response.ok) {
-              const clone = response.clone();
-              const cache = await caches.open(SHELL_CACHE);
-              cache.put(request, clone);
-            }
-          } catch (_) {}
-        })();
-        return cached;
-      }
-      try {
-        const preload = await event.preloadResponse;
-        const response = preload || await fetch(request);
-        if (response && response.ok) {
-          cache.put(request, response.clone());
-        }
-        return response;
-      } catch (err) {
-        const fallback = await cache.match(BASE + '/index.html');
-        if (fallback) return fallback;
-        return new Response(
-          'Kīrtan App is offline. Please check your connection.',
-          { status: 503, statusText: 'Service Unavailable', headers: { 'Content-Type': 'text/plain' } }
-        );
-      }
-    })());
-    return;
-  }
-  */
-
   event.respondWith((async () => {
-    const cache = await caches.open(SHELL_CACHE);
-    const cached = await cache.match(request);
+
+    const cache = await caches.open(CACHE);
+
+    // SPA routing.
+    if (request.mode === 'navigate') {
+      return await cache.match(`${BASE}/index.html`);
+    }
+
+    // Cache-first for everything else.
+    const cached = await cache.match(request, {
+      ignoreSearch: true
+    });
+
     if (cached)
       return cached;
+
+    // Should almost never happen, but supports
+    // future assets that weren't precached.
     try {
       const response = await fetch(request);
-      if (response && response.ok && response.type === 'basic') {
-        cache.put(request, response.clone());
+
+      if (response.ok && response.type === 'basic') {
+        await cache.put(request, response.clone());
       }
+
       return response;
-    } catch (err) {
-      console.warn('[SW] Asset fetch failed (offline?):', request.url);
-      return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+
+    } catch {
+      return Response.error();
     }
+
   })());
+
 });
