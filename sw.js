@@ -6,7 +6,7 @@
 
 'use strict';
 
-const SHELL_VERSION = 'v1.28'; /* manually bumped with each deployment */
+const SHELL_VERSION = 'v1.29'; /* manually bumped with each deployment */
 const SHELL_CACHE = `vedaversity-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = 'vedaversity-runtime';
 const BASE = self.location.pathname.substring(0, self.location.pathname.lastIndexOf('/'));
@@ -123,6 +123,19 @@ self.addEventListener('fetch', event => {
     return;
   if (!request.url.startsWith(self.location.origin))
     return;
+
+  if (request.mode === 'navigate') {
+    event.respondWith((async () => {
+      const cache = await caches.open(SHELL_CACHE);
+      // Always try the specific request first, then fall back to the shell
+      return await cache.match(request) || 
+             await cache.match(BASE + '/index.html') || 
+             fetch(request);
+    })());
+    return;
+  }
+
+  /*
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(SHELL_CACHE);
@@ -169,6 +182,7 @@ self.addEventListener('fetch', event => {
     })());
     return;
   }
+  */
 
   event.respondWith((async () => {
     const cache = await caches.open(SHELL_CACHE);
@@ -177,7 +191,7 @@ self.addEventListener('fetch', event => {
       return cached;
     try {
       const response = await fetch(request);
-      if (response && response.ok) {
+      if (response && response.ok && response.type === 'basic') {
         cache.put(request, response.clone());
       }
       return response;

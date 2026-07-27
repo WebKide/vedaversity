@@ -129,38 +129,25 @@ function setupMenuButtons(page, songId, songTitle) {
     shareBtn.onclick = debouncify(async () => {
       popover.hide();
       const song = window.INDEX[songId];
-      // Construct a full title including author if it exists
-      const fullTitle = song.author ? `${songTitle} (by ${song.author})` : songTitle;
-      const text = `${fullTitle}\n\n${song.verses.replace(/⋅/g, '')}`;
+      
+      // Markdown: *bold*, _italic_, ~strikethrough~, and ```monospace```
+      const titleLine = `*${songTitle}*`;
+      const authorLine = song.author ? `by ${song.author}` : '';
+      
+      // Construct the copied message with specific spacing
+      const text = `${titleLine}\n${authorLine}\n\n${song.verses.replace(/⋅/g, '')}`;
 
       try {
         if (navigator.share) {
-          // Use fullTitle here for the native share sheet title
-          await navigator.share({ title: fullTitle, text });
-        } else if (navigator.clipboard) {
-          await navigator.clipboard.writeText(text);
-          ons.notification.toast('Copied to clipboard', { timeout: 1800 });
-        }
-      } catch (err) { }
-    });
-
-    /*shareBtn.onclick = debouncify(async () => {
-      popover.hide();
-      const song = window.INDEX[songId];
-      const text = `${songTitle}\n\n${song.verses.replace(/⋅/g, '')}`;
-
-      try {
-        if (navigator.share) {
-          await navigator.share({ title: songTitle, text });
+          await navigator.share({ title: songTitle, text: text });
         } else if (navigator.clipboard) {
           await navigator.clipboard.writeText(text);
           ons.notification.toast('Copied to clipboard', { timeout: 1800 });
         }
       } catch (err) {
-        // user cancelled the native share sheet — not an error
+        console.error("Share failed:", err);
       }
-    });*/
-
+    });
   }
 }
 
