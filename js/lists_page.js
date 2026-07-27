@@ -449,7 +449,7 @@ function render_tattvaLists(page) {
         title: 'āna kathā āna vyathā, nāhi jena jāi tathā', 
         firstline: 'ana katha ana vyatha nahi jena jai tatha', 
         file: '0W.json' },
-    ] },
+    ] }
   ];
 
   container.innerHTML = '';

@@ -833,6 +833,7 @@ ons-list-item .list-item__subtitle span.no_right {
   line-height: 1.86rem;
   font-weight: 400;
   font-style: italic;
+  margin: 9px 0 9px 0;
 }
 /* .verse-container  — no static rules; see .trans-container */
 
@@ -1201,7 +1202,7 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* ons-popover */
 ons-popover div.popover__content {
-  width: auto;
+  width: 180px;
   min-height: 0;
 }
 

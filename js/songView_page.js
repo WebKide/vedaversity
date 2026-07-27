@@ -129,6 +129,24 @@ function setupMenuButtons(page, songId, songTitle) {
     shareBtn.onclick = debouncify(async () => {
       popover.hide();
       const song = window.INDEX[songId];
+      // Construct a full title including author if it exists
+      const fullTitle = song.author ? `${songTitle} (by ${song.author})` : songTitle;
+      const text = `${fullTitle}\n\n${song.verses.replace(/⋅/g, '')}`;
+
+      try {
+        if (navigator.share) {
+          // Use fullTitle here for the native share sheet title
+          await navigator.share({ title: fullTitle, text });
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(text);
+          ons.notification.toast('Copied to clipboard', { timeout: 1800 });
+        }
+      } catch (err) { }
+    });
+
+    /*shareBtn.onclick = debouncify(async () => {
+      popover.hide();
+      const song = window.INDEX[songId];
       const text = `${songTitle}\n\n${song.verses.replace(/⋅/g, '')}`;
 
       try {
@@ -141,7 +159,8 @@ function setupMenuButtons(page, songId, songTitle) {
       } catch (err) {
         // user cancelled the native share sheet — not an error
       }
-    });
+    });*/
+
   }
 }
 
