@@ -129,13 +129,19 @@ function setupMenuButtons(page, songId, songTitle) {
     shareBtn.onclick = debouncify(async () => {
       popover.hide();
       const song = window.INDEX[songId];
-      
-      // Markdown: *bold*, _italic_, ~strikethrough~, and ```monospace```
+
       const titleLine = `*${songTitle}*`;
       const authorLine = song.author ? `by ${song.author}` : '';
-      
-      // Construct the copied message with specific spacing
-      const text = `${titleLine}\n${authorLine}\n\n${song.verses.replace(/⋅/g, '')}`;
+
+      // 1. Get raw verses
+      let formattedVerses = song.verses;
+
+      // 2. Replace tags (<b>, <highlight>, <i>, <em>) and their closing counterparts with '*'
+      // This regex matches any of those tags, case-insensitive
+      formattedVerses = formattedVerses.replace(/<\/?(b|highlight|i|em)>/gi, '*');
+
+      // 3. Remove the special dot character and construct final text
+      const text = `${titleLine}\n${authorLine}\n\n${formattedVerses.replace(/⋅/g, '')}`;
 
       try {
         if (navigator.share) {
@@ -223,14 +229,34 @@ function gestureInit(verseList, page) {
 
   gestureDetector.on('dragmove', (event) => {
     if (isPinching) return;
+    event.gesture.preventDefault();
     const distance = event.gesture.distance * (event.gesture.direction === 'down' ? -1 : 1);
     pageContent.scrollTop = startScrollTop + distance;
   });
 
+  // Dynamic Alignment, Context Awareness, Visual Consistency
   gestureDetector.on('dragend', (event) => {
     if (isPinching) return;
-    const snapOffset = (pageContent.clientHeight - 25) * (event.gesture.direction === 'left' ? -1 : 1);
-    pageContent.scrollTo({ top: startScrollTop + snapOffset, behavior: 'smooth' });
+
+    const snapPoint = toolbarBottom();
+    const verses = Array.from(verseList.querySelectorAll('.verse-container'));
+    let closestVerse = null;
+    let minDistance = Infinity;
+
+    verses.forEach((verse) => {
+      const rect = verse.getBoundingClientRect();
+      const distance = Math.abs(rect.top - snapPoint);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestVerse = verse;
+      }
+    });
+
+    if (closestVerse) {
+      const verseRect = closestVerse.getBoundingClientRect();
+      const targetScroll = pageContent.scrollTop + (verseRect.top - snapPoint);
+      pageContent.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    }
   });
 
   // Swipe left/right navigates to next/prev song (only meaningful in list context)
@@ -309,6 +335,9 @@ function render_verses(verseList, page, songId, song) {
         <div class="expandable-content trans-container">${transText}</div>
       </ons-list-item>
     `);
+
+    // Disable single-tap expansion so only double-tap toggles all translations
+    item.toggleExpansion = () => {};
 
     fragment.appendChild(item);
   });

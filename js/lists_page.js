@@ -130,7 +130,7 @@ function render_tattvaLists(page) {
         firstline: 'thakura vaisnava gana kari ei nivedana', 
         file: 'dx.json' },
       { 
-        title: 'eibāra karuṇā kara vaiṣṇava gosāi', 
+        title: 'eibāra karuṇā kara vaiṣṇava gosāī', 
         firstline: 'eibara karuna kara vaisnava gosai', 
         file: '07.json' },
       { 
@@ -138,7 +138,7 @@ function render_tattvaLists(page) {
         firstline: 'kirupe paiba seva mui duracara', 
         file: 'dz.json' },
       { 
-        title: 'sakala vaiṣṇava gosāi dayā kara more', 
+        title: 'sakala vaiṣṇava gosāī dayā kara more', 
         firstline: 'sakala vaisnava gosai daya kara more', 
         file: 'dA.json' },
       { 

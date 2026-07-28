@@ -1006,7 +1006,8 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* #songView_page */
 #songView_page .page__content {
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 /* #songViewMenuBtn  — no direct styles; styled via ons-toolbar */
@@ -1437,7 +1438,7 @@ ons-list#pronounce-list ons-list-item {
 
 /* The left side (Word) */
 ons-list#pronounce-list .list-item__left {
-  flex: 0 0 50% !important;   /* Occupy exactly 50% */
+  flex: 0 0 30% !important;   /* Occupy exactly 30% */
   display: flex;
   justify-content: center;    /* Center content horizontally */
   align-items: center;        /* Center content vertically */
@@ -1447,7 +1448,7 @@ ons-list#pronounce-list .list-item__left {
 
 /* The center side (Pronunciation) */
 ons-list#pronounce-list .list-item__center {
-  flex: 0 0 50% !important;   /* Occupy exactly 50% */
+  flex: 0 0 70% !important;   /* Occupy exactly 70% */
   display: flex;
   justify-content: center;    /* Center content horizontally */
   align-items: center;        /* Center content vertically */

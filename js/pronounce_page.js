@@ -14,55 +14,62 @@
 const PRONOUNCE_GUIDE = [
   ['অ — अ', 'a', '“A” as in “<highlight>a</highlight>pple”'],
   ['আ — आ', 'ā', '“AA” as in “f<highlight>a</highlight>r”'],
-  ['ই — इ', 'i', '“I” as in “p<highlight>i</highlight>n”'],
+  ['ই — इ', 'i', '“I” as in “m<highlight>i</highlight>lk”'],
   ['ঈ — ई', 'ī', '“EA” as in “<highlight>ea</highlight>t”'],
   ['উ — उ', 'u', '“U” as in “p<highlight>u</highlight>ll”'],
-  ['ঊ — ऊ', 'ū', '“OO” as in “r<highlight>u</highlight>le”'],
+  ['ঊ — ऊ', 'ū', '“OO” as in “bl<highlight>u</highlight>e”'],
   ['ঋ — ऋ', 'ṛ', '“RI” as in “<highlight>ri</highlight>m”'],
   ['এ — ए', 'e', '“E” as in “th<highlight>ey</highlight>”'],
   ['ঐ — ऐ', 'ai', '“AI” as in “<highlight>ai</highlight>sle”'],
-  ['ও — ओ', 'o', '“O” as in “g<highlight>o</highlight>”'],
+  ['ও — ओ', 'o', '“O” as in “g<highlight>o</highlight>ld”'],
   ['ঔ — औ', 'au', '“AU” as in “h<highlight>ow</highlight>”'],
+  ['ळ', 'ḷ', '“Ḷ” tongue flexed back “<highlight>l</highlight>ake”'],
 
   ['ক — क', 'ka', '“K” as in “<highlight>k</highlight>ite”'],
-  ['খ — ख', 'kha', '“KH” as in “Ec<highlight>kh</highlight>art”'],
+  ['খ — ख', 'kha', '“KH” as in “loc<highlight>k-h</highlight>orn”'],
   ['গ — ग', 'ga', '“G” as in “<highlight>g</highlight>ive”'],
-  ['ঘ — घ', 'gha', '“GH” as in “di<highlight>g h</highlight>ard”'],
+  ['ঘ — घ', 'gha', '“GH” as in “di<highlight>g-h</highlight>ard”'],
   ['ঙ — ङ', 'ṅa', '“NG” as in “si<highlight>ng</highlight>”'],
-  ['চ — च', 'ca', '“C” as in “<highlight>c</highlight>hair”'],
-  ['ছ — छ', 'cha', '“CH” as in “staun<highlight>ch h</highlight>eart”'],
+  ['চ — च', 'ca', '“C” as in “<highlight>ch</highlight>eese”'],
+  ['ছ — छ', 'cha', '“CH” as in “mu<highlight>ch-h</highlight>arder”'],
   ['জ — ज', 'ja', '“J” as in “<highlight>j</highlight>oy”'],
   ['ঝ — झ', 'jha', '“JH” as in “he<highlight>deh</highlight>og”'],
   ['ঞ — ञ', 'ña', '“Ñ” as in “ca<highlight>ny</highlight>on”'],
   ['ট — ट', 'ṭa', '“Ṭ” as in “<highlight>t</highlight>ub”'],
-  ['ঠ — ठ', 'ṭha', '“ṬH” as in “ligh<highlight>t h</highlight>eart”'],
+  ['ঠ — ठ', 'ṭha', '“ṬH” as in “ligh<highlight>t-h</highlight>ouse”'],
   ['ড — ड', 'ḍa', '“Ḍ” as in “<highlight>d</highlight>ove”'],
   ['ঢ — ढ', 'ḍha', '“ḌH” as in “re<highlight>d-h</highlight>ot”'],
   ['ণ — ण', 'ṇa', '“Ṇ” as in “<highlight>n</highlight>ut”'],
   ['ত — त', 'ta', '“T” as in “<highlight>t</highlight>ango”'],
-  ['থ — थ', 'tha', '“TH” as in “Mar<highlight>th</highlight>a”'],
-  ['দ — द', 'da', '“d” as in “Wan<highlight>d</highlight>a”'],
-  ['ধ — ध', 'dha', '“DH” as in “han<highlight>d h</highlight>eld”'],
-  ['ন — न', 'na', '“N” as in “<highlight>n</highlight>asal”'],
+  ['থ — थ', 'tha', '“TH” as in “au<highlight>th</highlight>or”'],
+  ['দ — द', 'da', '“d” as in “<highlight>d</highlight>ice”'],
+  ['ধ — ध', 'dha', '“DH” as in “re<highlight>dh</highlight>ead”'],
+  ['ন — न', 'na', '“N” as in “<highlight>n</highlight>ame”'],
   ['প — प', 'pa', '“P” as in “<highlight>p</highlight>ine”'],
-  ['ফ — फ', 'pha', '“F” as in “u<highlight>ph</highlight>ill”'],
-  ['ব — ब', 'ba', '“B” as in “<highlight>b</highlight>ird”'],
-  ['ভ — भ', 'bha', '“BH” as in “ru<highlight>b h</highlight>ard”'],
-  ['ম — म', 'ma', '“M” as in “<highlight>m</highlight>other”'],
+  ['ফ — फ', 'pha', '“F” as in “co<highlight>ff</highlight>ee”'],
+  ['ব — ब', 'ba', '“B” as in “<highlight>b</highlight>oat”'],
+  ['ভ — भ', 'bha', '“BH” as in “clu<highlight>b-h</highlight>ouse”'],
+  ['ম — म', 'ma', '“M” as in “<highlight>m</highlight>oon”'],
   ['য — य', 'ya', '“Y” as in “<highlight>y</highlight>es”'],
   ['র — र', 'ra', '“R” as in “<highlight>r</highlight>un”'],
   ['ল — ल', 'la', '“L” as in “<highlight>l</highlight>ight”'],
+  ['व — व', 'va', '“V” as in “<highlight>v</highlight>iolet”'],
   ['শ — श', 'śa', '“SH” as in “<highlight>sh</highlight>ine”'],
-  ['ষ — ष', 'ṣa', '“Ṣ” as in “<highlight></highlight>”'],
+  ['ষ — ष', 'ṣa', '“Ṣ” as in “<highlight>s</highlight>ugar”'],
   ['স — स', 'sa', '“S” as in “<highlight>s</highlight>and”'],
   ['হ — ह', 'ha', '“H” as in “<highlight>h</highlight>ome”'],
-  ['ড় — ड़', 'ṛa', '“Ṛ” as in “<highlight></highlight>”'],
-  ['ঢ় — ढ़', 'ṛha', '“ṚH” as in “<highlight></highlight>”'],
-  ['য় — य़', 'ẏa', '“Ẏ” as in “<highlight></highlight>”'],
+  ['ড় — ड़', 'ṛa', '“Ṛ” as in “butte<highlight>ry</highlight>”'],
+  ['ঢ় — ढ़', 'ṛha', '“ṚH” as in “bi<highlight>r</highlight>d”'],
+  ['য় — य़', 'ẏa', '“Ẏ” as in “<highlight>y</highlight>ard”'],
 
-  ['ঃ — ः', 'ḥ (visarga)', 'aspirate “aḥ” as in “<highlight>aha</highlight>”'],
+  ['क्ष — ক্ষ', 'kṣa', '“KṢA” as in “boo<highlight>k-sh</highlight>elf”'],
+  ['त्र — ত্র', 'tra', '“TRA” as in “<highlight>tr</highlight>affic”'],
+  ['ज्ञ — জ্ঞ', 'jña', '“JÑA” as in “<highlight>gya</highlight>”'],
+  ['श्र — শ্র', 'śra', '“ŚRA” as in “ca<highlight>sh-r</highlight>ing”'],
+
+  ['ঃ — ः', 'ḥ (visarga)', 'aspirate “aḥ” as in “<highlight>uh-oh</highlight>”'],
   ['ঃ — ः', 'ḥ (visarga)', 'aspirate “iḥ” as in “<highlight>ihi</highlight>”'],
-  ['ং — ं', 'ṁ (anusvāra)', 'pure nasal as in (FR) “bo<highlight>n</highlight>”'],
+  ['ং — ं', 'ṁ (anusvāra)', 'pure nasal “N” as in (FR) “bo<highlight>n</highlight>”'],
   ['ঁ — ँ', '̐ (candrabindu)', '“M” as in “mu<highlight>m</highlight>”']
 ];
 
@@ -70,20 +77,42 @@ function pronounce_page_init(page) {
   const container = page.querySelector('#pronounce-list');
   container.innerHTML = '';
 
-  const heading3 = document.createElement('div');
-  heading3.className = 'list-header--material';
-  heading3.style.cssText = 'text-align:center; opacity:.6; font-size:16px; width:100%; margin-top:8px;';
-  heading3.textContent = 'Bengali, Hindi and Sanskrit pronunciation guide';
-  container.appendChild(heading3);
+  const guideIntro = document.createElement('div');
+  guideIntro.className = 'list-item__subtitle';
+  guideIntro.style.cssText = 'text-align:left; opacity:.6; font-size:16px; margin:12px 6px;';
+
+  const fullText = 'Throughout the centuries, the Sanskrit language has been written in a variety of alphabets. The mode of writing most widely used throughout India, however, is called devanāgarī, which literally means “the city writing of the devas, or gods.” [DOUBLETAP TO READ MORE]\n\nThe devanāgarī alphabet consists of forty-eight characters, including thirteen vowels and thirty-five consonants. The ancient Sanskrit grammarians arranged the alphabet according to concise linguistic principles, and this arrangement has been accepted by all Western scholars. The system of transliteration used in this book conforms to a system that scholars in the last fifty years have almost universally accepted to indicate the pronunciation of each Sanskrit sound. Some of the Sanskrit consonants have no exact equivalent in the English language. Wherever possible, the nearest English sound has been chosen to illustrate the pronunciation. In a few instances, however, the closest approximation can be obtained only by combining the final sound of one English word with the initial sound of the next. Thus “gh” is pronounced as in “dig-hard”. These combinations preserve the distinct consonant and following breath that characterize the aspirated sounds of Sanskrit. Since no single English word contains these sounds exactly, the examples are intended merely as practical approximations.';
+
+  const parts = fullText.split('\n\n');
+  const teaser = parts[0];
+  const rest  = parts.slice(1).join('\n\n');
+
+  if (rest) {
+    guideIntro.innerHTML = `
+      <p style="margin:0 0 0.5em 0;">${teaser}</p>
+      <p class="guide-rest" style="margin:0;display:none;">${rest}</p>
+    `;
+    const gd = ons.GestureDetector(guideIntro);
+    gd.on('doubletap', () => {
+      const restEl = guideIntro.querySelector('.guide-rest');
+      if (restEl) restEl.style.display = restEl.style.display === 'none' ? 'block' : 'none';
+    });
+  } else {
+    guideIntro.textContent = fullText;
+  }
+
+  container.appendChild(guideIntro);
 
   PRONOUNCE_GUIDE.forEach(([script, roman, note]) => {
     const item = ons.createElement(`
       <ons-list-item modifier="nodivider">
-        <div class="left" style="font-size: 1.4rem; min-width: 28px; color: var(--highlight-color);">
+        <div class="left" 
+             style="font-size: 1.4rem; min-width: 28px; width: 32px; color: var(--highlight-color);">
           ${script}
         </div>
         <div class="center">
-          <span class="list-item__title" style="color: var(--second-highlight-color);">
+          <span class="list-item__title" 
+                style="color: var(--second-highlight-color);">
             ${roman}
           </span>
           ${note ? `<span class="list-item__subtitle; margin-right=0;">${note}</span>` : '“” as in “”'}

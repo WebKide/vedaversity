@@ -51,12 +51,27 @@ function shell_page_init(page) {
     else { render_customLists(page); render_tattvaLists(page); }
   };
 
-  // --- Recents action buttons ---
+  // --- Recents action buttons (popover) ---
+  const menuBtn = page.querySelector('#recentsMenuBtn');
+  const popover = page.querySelector('#recentsPopover');
+
+  if (menuBtn && popover) {
+    menuBtn.onclick = () => {
+      popover.show(menuBtn);
+    };
+  }
+
   const clearBtn = page.querySelector('#btn-clear-recents');
   const createBtn = page.querySelector('#btn-create-list-from-recents');
 
-  if (clearBtn) clearBtn.onclick = window.clearRecents;
-  if (createBtn) createBtn.onclick = window.createListFromRecents;
+  if (clearBtn) clearBtn.onclick = () => {
+    popover.hide();
+    window.clearRecents();
+  };
+  if (createBtn) createBtn.onclick = () => {
+    popover.hide();
+    window.createListFromRecents();
+  };
 
   activateTab('home');
 }

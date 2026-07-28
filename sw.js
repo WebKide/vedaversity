@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.30';
+const VERSION = 'v1.31';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -50,7 +50,7 @@ const ASSETS = [
   BASE + '/img/icons/sradha.png',
   BASE + '/img/icons/ssguru.png',
   BASE + '/img/icons/vaishn.png',
-  BASE + '/img/home_default.png',
+  BASE + '/img/home_default.jpg',
   BASE + '/img/list_default.png',
   BASE + '/img/search_default.png',
   BASE + '/js/dependencies/fuse.min.js',
@@ -74,7 +74,16 @@ self.addEventListener('install', event => {
     const cache = await caches.open(CACHE);
 
     // Install succeeds ONLY if every asset is cached.
-    await cache.addAll(ASSETS);
+    // await cache.addAll(ASSETS);
+    for (const url of ASSETS) {
+        const response = await fetch(url, {
+            cache: 'reload'
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to cache ${url}`);
+        }
+        await cache.put(url, response);
+    }
 
     // Activate immediately.
     await self.skipWaiting();
@@ -114,6 +123,7 @@ self.addEventListener('message', event => {
 });
 
 self.addEventListener('fetch', event => {
+  console.log('[SW fetch]', event.request.mode, event.request.url);
 
   const request = event.request;
 
@@ -129,7 +139,9 @@ self.addEventListener('fetch', event => {
 
     // SPA routing.
     if (request.mode === 'navigate') {
-      return await cache.match(`${BASE}/index.html`);
+      // return await cache.match(`${BASE}/index.html`);
+      const page = await cache.match(`${BASE}/index.html`);
+      return page || fetch(request);
     }
 
     // Cache-first for everything else.
