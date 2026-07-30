@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.31';
+const VERSION = 'v1.32';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -53,6 +53,16 @@ const ASSETS = [
   BASE + '/img/home_default.jpg',
   BASE + '/img/list_default.png',
   BASE + '/img/search_default.png',
+  BASE + '/img/slideshow/001.jpg',
+  BASE + '/img/slideshow/002.jpg',
+  BASE + '/img/slideshow/003.jpg',
+  BASE + '/img/slideshow/004.jpg',
+  BASE + '/img/slideshow/005.jpg',
+  BASE + '/img/slideshow/006.jpg',
+  BASE + '/img/slideshow/007.jpg',
+  BASE + '/img/slideshow/008.jpg',
+  BASE + '/img/slideshow/009.jpg',
+  BASE + '/img/slideshow/010.jpg',
   BASE + '/js/dependencies/fuse.min.js',
   BASE + '/js/dependencies/offline-onsenui.js',
   BASE + '/js/dependencies/Sortable.min.js',

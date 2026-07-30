@@ -1063,6 +1063,7 @@ ons-list-item .list-item__subtitle span.no_right {
 /* #verseList */
 #verseList b {
   text-decoration: bold;
+  color: var(--highlight-color);
 }
 
 #verseList span {
@@ -1514,4 +1515,145 @@ ons-list-item .center.search-result {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ═══ Intro slideshow frame ═══ */
+.intro-thumb {
+  width: 80%;
+  max-width: 720px;
+  min-width: 320px;
+  aspect-ratio: 1 / 1;
+  margin: 20px auto;
+  border-radius: 16px;
+  box-shadow: var(--thumbnail-shadow);
+}
+
+/* Each slide-layer now wraps an <img> + its own caption, so image
+   opacity (crossfade) and caption slide-in/out can be controlled
+   independently but toggled together via the same .slide-visible class. */
+.ken-burns-frame .slide-layer {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.ken-burns-frame .slide-layer.slide-visible {
+  opacity: 1;
+  z-index: 1;
+}
+
+.ken-burns-frame .slide-layer .slideshow {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Caption overlay: bottom third, dark 60%-opacity scrim, white text,
+   left-aligned. Starts translated fully below the frame and slides up
+   into place; .slide-visible on the parent .slide-layer triggers the
+   transform, so it's driven by the same class toggle as the crossfade. */
+.slide-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  transform: translateY(100%);
+  transition: transform 0.8s ease-in-out;
+  z-index: 2; /* above the <img> within the same layer */
+}
+
+.slide-layer.slide-visible .slide-caption {
+  transform: translateY(0%);
+}
+
+.slide-caption-heading {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.slide-caption-body {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  line-height: 1.3;
+  /* Prevent an unusually long body from overflowing the fixed-height
+     bottom third — clip with ellipsis rather than pushing the frame. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 520px) {
+  .slide-caption { height: 30%; }
+  .slide-caption-heading { font-size: 0.85rem; }
+  .slide-caption-body { font-size: 0.65rem; }
+}
+
+/* When alt="" has no caption text, hide the scrim entirely rather than
+   showing an empty dark bar. */
+.slide-caption.slide-caption-empty {
+  display: none;
+}
+
+/* ═══ Ken Burns frame ═══ */
+.ken-burns-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Base layers — hidden by default */
+.ken-burns-frame .slide-a,
+.ken-burns-frame .slide-b {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+/* Visible layer — fades in */
+.ken-burns-frame .slide-visible {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* The zoom/pan animation */
+.ken-burns {
+  --kb-duration: 9s;
+  --kb-scale: 1.2;
+  --kb-origin: center;
+  --kb-pan-x: 0%;
+  --kb-pan-y: 0%;
+
+  display: block;
+  transform-origin: var(--kb-origin);
+  will-change: transform;
+  animation: wo-ken-burns var(--kb-duration) ease-in-out infinite alternate;
+}
+
+@keyframes wo-ken-burns {
+  from { transform: scale(1) translate(0, 0); }
+  to   { transform: scale(var(--kb-scale)) translate(var(--kb-pan-x), var(--kb-pan-y)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns { animation: none; }
 }

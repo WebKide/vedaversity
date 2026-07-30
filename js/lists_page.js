@@ -378,7 +378,7 @@ function render_tattvaLists(page) {
       { 
         title: 'tumi ta’ dayāra sindhu, adhama janāra bandhu', 
         firstline: 'tumi ta dayara sindhu adhama janara bandhu', 
-        ile: 'e6.json' },
+        file: 'e6.json' },
       { 
         title: 'mora prabhu madana-gopāla, govinda gopīnātha', 
         firstline: 'mora prabhu madana gopala govinda gopinatha', 
@@ -457,8 +457,44 @@ function render_tattvaLists(page) {
   const warned = document.createElement('div');
   warned.className = 'list-header--material';
   warned.style.cssText = 'text-align:center; opacity:.6; font-size:16px; font-width:700; width:100%; margin-top:8px; color: var(--highlight-color);';
-  warned.textContent = 'Songs grouped and ordered by tattva';
+  warned.textContent = 'Songs arranged by tattva';
   container.appendChild(warned);
+
+  // ── Always-visible intro songs — same "glassy" ons-list-item styling
+  // as the songs inside each tattva's expandable-content, but rendered
+  // directly into `container` (not inside an <ons-list-item expandable>),
+  // so there's nothing to tap open to reach them.
+  const introSongs = [
+    {
+      title: 'maṅgalācaraṇa [auspicious invocation]',
+      firstline: 'mangalacarana auspicious invocation',
+      file: '00.json'
+    },
+    {
+      title: 'svasti-vācana [prayer for auspiciousness]',
+      firstline: 'svasti vacana prayer for auspiciousness',
+      file: '0a.json'
+    },
+    {
+      title: 'jaya-dhvani [collective roar of glories]',
+      firstline: 'jaya dhvani collective roar of glories',
+      file: '0b.json'
+    }
+  ];
+
+  const introList = document.createElement('div');
+  introList.className = 'glassy';
+
+  introSongs.forEach(({ title, file }) => {
+    const rec = window.INDEX[file];
+    if (rec) {
+      introList.appendChild(gen_listItem(title, () => showSongViewUI(file, null)));
+    } else {
+      console.warn(`File not found in index: ${file}`);
+    }
+  });
+
+  container.appendChild(introList);
 
   tattvaLists.forEach((tattva) => {
     const item = ons.createElement(`
@@ -488,4 +524,189 @@ function render_tattvaLists(page) {
 
     container.appendChild(item);
   });
+
+// ── Ken Burns slideshow — appended once, after all tattva groups ──
+  const slideshow = ons.createElement(`
+    <div class="intro-thumb ken-burns-frame" data-progressive-load>
+      <div class="slide-layer slide-a">
+        <img class="slideshow ken-burns" alt="" style="--kb-scale:1.08;">
+        <div class="slide-caption">
+          <div class="slide-caption-heading"></div>
+          <div class="slide-caption-body"></div>
+        </div>
+      </div>
+      <div class="slide-layer slide-b">
+        <img class="slideshow ken-burns" alt="" style="--kb-scale:1.08;">
+        <div class="slide-caption">
+          <div class="slide-caption-heading"></div>
+          <div class="slide-caption-body"></div>
+        </div>
+      </div>
+    </div>
+  `);
+  container.appendChild(slideshow);
+  initSlideshow(slideshow);
+}
+
+// ---------------------------------------------------------------------
+// Ken Burns slideshow — cycles through a fixed list of photos.
+//
+// A static PWA can't enumerate a folder at runtime (no server-side
+// directory listing, and the service worker only caches URLs it's
+// explicitly given) — so each photo is declared here, the same way the
+// tattva song lists above are hardcoded rather than auto-discovered.
+//
+// One entry per photo — file, starting crop position, and caption text
+// (formatted "Heading | Body", split by parseSlideCaption below) all
+// live together, instead of three separate dicts keyed by filename that
+// have to be kept in sync by hand. Caption suport: 140 char
+// ---------------------------------------------------------------------
+const SLIDESHOW_ITEMS = [
+  { file: '001.jpg', position: 'top center', caption: 'A.C. Bhaktivedānta Swami Prabhupāda | the Founder-Ācārya of ISKCON and greatest exponent of Kṛṣṇa consciousness in the western world.' },
+  { file: '002.jpg', position: 'top center', caption: 'Bhakti Prajñana Keśava Gosvāmī | Ācārya Keśarī, the founder of the Gauḍīya Vedānta Samiti and sannyāsa-guru of BV Nārāyaṇa Gosvāmī, A.C. Bhaktivedānta Swami' },
+  { file: '003.jpg', position: 'top center', caption: 'Bhakti Siddhānta Sarasvatī Ṭhākura | prominent religious scholar, astronomer, mathematician and the founder of sixty-four Gauḍīya Maṭhas (Vedic institutes)' },
+  { file: '004.jpg', position: 'top center', caption: 'Bhaktivedānta Nārāyaṇa Gosvāmī | Honored as Yugācārya, revealed the inner reasons for the advent of Mahāprabhu and taught about pure bhakti around the world.' },
+  { file: '005.jpg', position: 'top center', caption: 'AC Bhaktivedānta Swami Prabhupāda | Studio recording session' },
+  { file: '006.jpg', position: 'top center', caption: 'Bhaktivedānta Vāmana Gosvāmī | Founder-Ācārya of the Gauḍīya Vedānta Samiti and renowned preacher of pure Gauḍīya siddhānta.' },
+  { file: '007.jpg', position: 'top center', caption: 'Sannyāsa ceremony | [from left to right] Bhaktivedānta Muni Mahārāja, Bhakti Prajñana Keśava Gosvāmī Mahārāja, BV Swami Prabhupāda' },
+  { file: '009.jpg', position: 'top center', caption: 'Bhaktivedānta Nārāyaṇa Gosvāmī | Honored as Yugācārya, revealed the inner reasons for the advent of Mahāprabhu and taught about pure bhakti around the world.' },
+  { file: '010.jpg', position: 'top center', caption: 'Bhaktivedānta Nārāyaṇa Gosvāmī | Honored as Yugācārya, revealed the inner reasons for the advent of Mahāprabhu and taught about pure bhakti around the world.' },
+  { file: '008.jpg', position: 'top center', caption: 'Nitāi Gaurāṅga | In the Age of Kali, intelligent persons perform congregational chanting to worship the incarnation of Godhead who constantly sings the names of Kṛṣṇa.' }
+];
+
+// Single source of truth for how long each photo stays on screen. The
+// Ken Burns pan/zoom (--kb-duration) is derived from this in JS below,
+// so the animation always finishes exactly as the crossfade begins —
+// change this one value only; never hardcode a duration anywhere else.
+const SLIDESHOW_DURATION_MS = 14000; // was 9000 — slower now
+
+let _slideshowIntervalId = null;
+
+// small shuffle helper
+function shuffleArray(arr) {
+  const a = arr.slice(); // copy so we don't mutate the original
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Parses "Heading | Body text" into { heading, body }. If there's no
+// "|", the whole string is treated as heading-only. Empty/whitespace-only
+// caption means no overlay at all for that photo.
+function parseSlideCaption(captionText) {
+  const raw = (captionText || '').trim();
+  if (!raw) return null;
+
+  const parts = raw.split('|');
+  const heading = (parts[0] || '').trim();
+  const body = parts.slice(1).join('|').trim(); // rejoin in case body itself contains "|"
+
+  if (!heading && !body) return null;
+  return { heading, body };
+}
+
+function initSlideshow(wrapper) {
+  const layerA = wrapper.querySelector('.slide-a');
+  const layerB = wrapper.querySelector('.slide-b');
+
+  if (!layerA || !layerB || SLIDESHOW_ITEMS.length === 0) {
+    console.warn('[slideshow] missing layers or no images', {
+      layerA, layerB, count: SLIDESHOW_ITEMS.length
+    });
+    return;
+  }
+
+  // Random order every time the page opens
+  const items = shuffleArray(SLIDESHOW_ITEMS);
+
+  if (_slideshowIntervalId !== null) {
+    clearInterval(_slideshowIntervalId);
+    _slideshowIntervalId = null;
+  }
+
+  // All photos pan straight up — set directly on each layer's <img>
+  // (custom properties would inherit from the parent .slide-layer too,
+  // but setting them on the actual img being animated is clearer).
+  [layerA, layerB].forEach((layer) => {
+    const img = layer.querySelector('.slideshow');
+    img.style.setProperty('--kb-pan-x', '0%');
+    img.style.setProperty('--kb-pan-y', '-8%');
+    img.style.setProperty('--kb-duration', (SLIDESHOW_DURATION_MS / 1000) + 's');
+  });
+
+  let i = 0;
+  let front = layerA;
+  let back = layerB;
+
+  // `layer` here is a .slide-layer wrapper div (containing both the
+  // <img> and its .slide-caption) — NOT the <img> itself, so every
+  // element we touch is looked up as a child of `layer`.
+  const setSlide = (layer, item) => {
+    const img = layer.querySelector('.slideshow');
+    const captionEl = layer.querySelector('.slide-caption');
+    const headingEl = layer.querySelector('.slide-caption-heading');
+    const bodyEl = layer.querySelector('.slide-caption-body');
+
+    img.src = `img/slideshow/${item.file}`;
+    img.alt = item.caption || '';
+    img.style.objectPosition = item.position || 'center';
+
+    // Anchor the zoom to the same point as the static crop above. Without
+    // this, --kb-origin falls back to its CSS default of "center", so the
+    // zoom crops inward from the middle of the frame regardless of where
+    // object-position put the face — on a portrait photo squeezed into a
+    // square frame there's very little headroom to begin with, so a
+    // center-anchored zoom reliably crops the face out as it scales up.
+    // Anchoring the zoom origin to "top center" keeps the top of the
+    // photo fixed in place as the reference point while it scales, so
+    // the face stays in frame throughout the animation instead of
+    // sliding out as it zooms.
+    img.style.setProperty('--kb-origin', item.position || 'center');
+
+    // Restart the Ken Burns pan/zoom animation cleanly on this layer's
+    // image (fixed offsetWidth typo — offsetWith isn't a real property
+    // and silently did nothing, so the animation never actually reset).
+    img.style.animation = 'none';
+    void img.offsetWidth; // force reflow
+    img.style.animation = '';
+
+    const parsed = parseSlideCaption(item.caption);
+    if (parsed) {
+      headingEl.textContent = parsed.heading;
+      bodyEl.textContent = parsed.body;
+      captionEl.classList.remove('slide-caption-empty');
+    } else {
+      headingEl.textContent = '';
+      bodyEl.textContent = '';
+      captionEl.classList.add('slide-caption-empty');
+    }
+  };
+
+  // Preload the next photo so it's ready before we fade to it
+  const preloadNext = (idx) => {
+    const nextItem = items[(idx + 1) % items.length];
+    new Image().src = `img/slideshow/${nextItem.file}`;
+  };
+
+  // Show first slide immediately
+  setSlide(front, items[i]);
+  front.classList.add('slide-visible');
+  preloadNext(i);
+
+  if (items.length > 1) {
+    const showNext = () => {
+      i = (i + 1) % items.length;
+      setSlide(back, items[i]);
+      back.classList.add('slide-visible');
+      front.classList.remove('slide-visible');
+
+      // Swap pointers
+      [front, back] = [back, front];
+      preloadNext(i);
+    };
+
+    _slideshowIntervalId = setInterval(showNext, SLIDESHOW_DURATION_MS);
+  }
 }

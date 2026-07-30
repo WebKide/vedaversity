@@ -138,7 +138,7 @@ function setupMenuButtons(page, songId, songTitle) {
 
       // 2. Replace tags (<b>, <highlight>, <i>, <em>) and their closing counterparts with '*'
       // This regex matches any of those tags, case-insensitive
-      formattedVerses = formattedVerses.replace(/<\/?(b|highlight|i|em)>/gi, '*');
+      formattedVerses = formattedVerses.replace(/<\/?(b|highlight|i|em|mark)>/gi, '*');
 
       // 3. Remove the special dot character and construct final text
       const text = `${titleLine}\n${authorLine}\n\n${formattedVerses.replace(/⋅/g, '')}`;
@@ -235,6 +235,7 @@ function gestureInit(verseList, page) {
   });
 
   // Dynamic Alignment, Context Awareness, Visual Consistency
+  /*
   gestureDetector.on('dragend', (event) => {
     if (isPinching) return;
 
@@ -257,7 +258,7 @@ function gestureInit(verseList, page) {
       const targetScroll = pageContent.scrollTop + (verseRect.top - snapPoint);
       pageContent.scrollTo({ top: targetScroll, behavior: 'smooth' });
     }
-  });
+  }); */
 
   // Swipe left/right navigates to next/prev song (only meaningful in list context)
   gestureDetector.on('swipeleft swiperight', (event) => {

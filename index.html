@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.31</title>
+  <title>Kīrtan App v1.32</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -156,7 +156,7 @@
             <div class="default_img_container" style="display:block; padding-top:15px; text-align:center;">
               <img style="display:block; width:160px; height:160px; margin:0 auto; box-shadow:var(--outer-shadow);" src="img/home_default.jpg">
               <p style="margin-top:10px;" 
-                 id="appVersion">Kirtan v1.31</p>
+                 id="appVersion">Kirtan v1.32</p>
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@
         <ons-list>
           <ons-list-item id="btn-clear-recents" tappable modifier="nodivider">
             <div class="left">
-              <svg viewBox="0 -960 960 960" width="20" height="20" fill="var(--highlight-color)">
+              <svg viewBox="0 -960 960 960" width="32" height="32" fill="var(--highlight-color)">
                 <path d="M600-240v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120-640H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440-200H200q-33 0-56.5-23.5T120-280v-360Zm80 0v360h240v-360H200Zm0 0v360-360Z"/>
               </svg>
             </div>
@@ -223,7 +223,7 @@
           </ons-list-item>
           <ons-list-item id="btn-create-list-from-recents" tappable modifier="nodivider">
             <div class="left">
-              <svg viewBox="0 -960 960 960" width="20" height="20" fill="var(--highlight-color)">
+              <svg viewBox="0 -960 960 960" width="32" height="32" fill="var(--highlight-color)">
                 <path d="M120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Zm520 480v-160H480v-80h160v-160h80v160h160v80H720v160h-80Z"/>
               </svg>
             </div>
@@ -460,7 +460,6 @@
       <div class="page__content">
         <span id="transAvail" class="list-header list-header--material"></span>
         <div class="list-header--material" style="text-align:center; opacity:.6; font-size:12px;">
-          TAP VERSE FOR TRANSLATION,<br/>
           DOUBLE TAP TO TOGGLE FULL TRANSLATION.
         </div>
         <ons-list id="verseList"></ons-list>

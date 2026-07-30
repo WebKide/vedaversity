@@ -160,7 +160,7 @@
     #all_songs_page ons-fab[position="bottom right"],
     #songView_page .fab--bottom__right,
     #songView_page ons-fab[position="bottom right"] {
-      bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+      bottom: calc(env(safe-area-inset-bottom) + 0px) !important;
     }
 
     /* ----------------------------------------------------------
