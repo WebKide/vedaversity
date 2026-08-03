@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.32';
+const VERSION = 'v1.33';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
