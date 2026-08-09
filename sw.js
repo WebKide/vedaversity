@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.33';
+const VERSION = 'v1.35';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -42,6 +42,9 @@ const ASSETS = [
   BASE + '/fonts/tiro-devanagari-sanskrit-v7-latin-ext-italic.woff2',
   BASE + '/fonts/tiro-devanagari-sanskrit-v7-latin-ext-regular.woff2',
   BASE + '/img/icons/apple-touch-icon.png',
+  BASE + '/img/icons/earati.png',
+  BASE + '/img/icons/marati.png',
+  BASE + '/img/icons/narati.png',
   BASE + '/img/icons/nitaig.png',
   BASE + '/img/icons/radhak.png',
   BASE + '/img/icons/sgaura.png',

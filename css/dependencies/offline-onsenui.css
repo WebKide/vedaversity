@@ -2175,22 +2175,22 @@ h4, h5, h6 {
 
   /* mixin: toolbar--material-font */
   /* mixin: material-font */
-font-family: var(--font-family);
--webkit-font-smoothing: antialiased;
-font-size: 20px;
-font-weight: 500;
-color: rgb(255, 255, 255);
-color: var(--material-toolbar-text-color);
-height: 56px;
-height: var(--toolbar-material-height);
-width: auto;
--webkit-flex-grow: 1;
-flex-grow: 1;
-overflow: hidden;
-text-overflow: ellipsis;
-/* text-align: left; */
-line-height: 56px;
-line-height: var(--toolbar-material-height);
+font-family: var(--font-family);
+-webkit-font-smoothing: antialiased;
+font-size: 20px;
+font-weight: 500;
+color: rgb(255, 255, 255);
+color: var(--material-toolbar-text-color);
+height: 56px;
+height: var(--toolbar-material-height);
+width: auto;
+-webkit-flex-grow: 1;
+flex-grow: 1;
+overflow: hidden;
+text-overflow: ellipsis;
+/* text-align: left; */
+line-height: 56px;
+line-height: var(--toolbar-material-height);
 }
 .toolbar--material__center:first-child {
   margin-left: 16px;
@@ -5382,7 +5382,7 @@ h4, h5, h6 {
   padding: 8px 16px;
 }
 .list-header--material:not(:first-of-type) {
-  border-top: none;
+  border-top: none !important;
   background-size: 100% 1px;
   background-repeat: no-repeat;
   background-position: top;

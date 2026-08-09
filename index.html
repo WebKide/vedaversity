@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.33</title>
+  <title>Kīrtan App v1.35</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -65,20 +65,11 @@
         <!-- ===== Home tab ===== -->
         <div id="tab-home">
           <div class="gutter">
-            <div class="glassy search-container">
-              <div class="left">
-                <svg class="search-icon"
-                     viewBox="0 0 24 24"
-                     height="32px" 
-                     width="32px" 
-                     fill="var(--highlight-color)"
-                     aria-hidden="true"
-                     focusable="false">
-                  <path d="M9.5,3C13.1,3,16,5.9,16,9.5c0,1.6-0.6,3.1-1.6,4.2l0.3,0.3h0.8l5,5L19,20.5l-5-5v-0.8l-0.3-0.3 c-2.7,2.3-6.8,2-9.2-0.7C3.6,12.6,3,11.1,3,9.5C3,5.9,5.9,3,9.5,3z M9.5,5C7,5,5,7,5,9.5S7,14,9.5,14S14,12,14,9.5S12,5,9.5,5z"/>
-                </svg>
-              </div>
-              <ons-input id="search-input" class="search-box" placeholder="Search"
-                autocapitalize="off" autocomplete="off" spellcheck="false" autocorrect="off"></ons-input>
+            <div id="search-trigger" class="search-bar">
+              <svg class="search-icon" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+              </svg>
+              <span class="search-placeholder">Search</span>
             </div>
             <ons-list>
               <ons-list-header id="recentHeader" 
@@ -154,25 +145,54 @@
               </ons-list-item>
             </ons-list>
             <div class="default_img_container" style="display:block; padding-top:15px; text-align:center;">
-              <img style="display:block; width:160px; height:160px; margin:0 auto; box-shadow:var(--outer-shadow);" src="img/home_default.jpg">
-              <p style="margin-top:10px;" 
-                 id="appVersion">Kirtan v1.33</p>
+              <div class="home-image-wrap">
+                <img src="img/home_default.jpg" alt="Home">
+                <div class="home-image-caption">
+                  <span class="home-image-heading" id="appVersionCaption">Kirtan v1.35</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <!-- ===== Lists tab ===== -->
         <div id="tab-lists" style="display:none;">
           <div class="gutter">
+            <!-- 1. CREATE A LIST -->
             <ons-list style="margin-top: 15px;">
-              <div id="custom-lists" class="glassy"></div>
               <ons-list-item id="createListBtn" tappable modifier="md-outline" style="margin-top: 10px;">
                 <ons-icon icon="md-collection-plus"></ons-icon>
                 Create a new list
               </ons-list-item>
+              <div id="custom-lists" class="glassy"></div>
             </ons-list>
+
+            <!-- 2. LISTS BY TATTVA — plain title, outside every box
+            <div class="list-header--material" style="text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:16px; color: var(--highlight-color);">
+              Lists by tattva
+            </div> -->
+
+            <!-- 3. QUICK SHORTCUTS -->
+            <ons-list style="margin: 15px 0; top:10;right:0;bottom:10;left:0;">
+              <ons-list-header style="text-align:center; opacity:.6; font-size:1.02rem; font-width:700; width:100%; margin:16px 0 8px 0; color: var(--highlight-color);">Quick shortcuts</ons-list-header>
+              <div id="quick-shortcuts" class="glassy"></div>
+            </ons-list>
+
+            <!-- 4. SONGS ARRANGED BY TATTVA -->
             <ons-list style="margin: 15px 0;">
-              <ons-list-header>Lists by tattva</ons-list-header>
-              <div id="tattva-lists" class="glassy"></div>
+              <ons-list-header style="text-align:center; opacity:.6; font-size:1.02rem; font-width:700; width:100%; margin:16px 0 8px 0; color: var(--highlight-color);">Lists by tattva</ons-list-header>
+              <div id="tattva-songs" class="glassy"></div>
+            </ons-list>
+
+            <!-- 5. ĀRATI & PŪJĀ -->
+            <ons-list style="margin: 15px 0;">
+              <ons-list-header style="text-align:center; opacity:.6; font-size:1.02rem; font-width:700; width:100%; margin:16px 0 8px 0; color: var(--highlight-color);">Ārati & Pūjā</ons-list-header>
+              <div id="arati-lists" class="glassy"></div>
+            </ons-list>
+
+            <!-- 6. GALLERY -->
+            <ons-list style="margin: 15px 0;">
+              <ons-list-header style="text-align:center; opacity:.6; font-size:1.02rem; font-width:700; width:100%; margin:16px 0 8px 0; color: var(--highlight-color);">Gauḍīya Gallery</ons-list-header>
+              <div id="gallery-section"></div>
             </ons-list>
           </div>
         </div>
@@ -186,7 +206,7 @@
                    viewBox="0 0 24 24"
                    height="24px" 
                    width="24px" 
-                   fill="var(--highlight-color)"
+                   fill="currentColor"
                    aria-hidden="true"
                    focusable="false">
                 <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8 M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -200,7 +220,7 @@
                    viewBox="0 0 24 24"
                    height="24px" 
                    width="24px" 
-                   fill="var(--highlight-color)"
+                   fill="currentColor"
                    aria-hidden="true"
                    focusable="false">
                 <path d="M3 18c-.6 0-1 .4-1 1s.5 1 1 1 1-.4 1-1-.4-1-1-1m0-7c-.6 0-1 .4-1 1s.5 1 1 1 1-.4 1-1-.4-1-1-1m5.4-4.3h12.2c.8 0 1.4-.6 1.4-1.4 0-.7-.7-1.3-1.4-1.3H8.4C7.6 4 7 4.6 7 5.4c0 .7.6 1.3 1.4 1.3m0 6.7h12.3c.8 0 1.4-.6 1.4-1.4s-.6-1.4-1.4-1.4H8.4c-.8 0-1.4.6-1.4 1.4s.6 1.4 1.4 1.4M3 4c-.6 0-1 .4-1 1s.5 1 1 1 1-.4 1-1-.4-1-1-1m17.6 13.3H8.4c-.8 0-1.4.6-1.4 1.4 0 .7.6 1.3 1.4 1.3h12.3c.8 0 1.4-.6 1.4-1.4-.1-.7-.7-1.3-1.5-1.3"/>
@@ -252,7 +272,7 @@
           </svg>
         </div>
          Back</button></div>
-        <div class="center"><ons-icon icon="md-sort-asc"></ons-icon> Songs alphabetized</div>
+        <div class="center"><ons-icon icon="md-sort-asc"></ons-icon> All songs alphabetized</div>
       </ons-toolbar>
 
       <!-- toTop FAB -->
@@ -297,8 +317,10 @@
         </div>
         <div class="center"></div>
       </ons-toolbar>
+
       <div class="page__content">
         <div class="gutter">
+          <div id="group-nav" class="group-nav"></div>
           <ons-list id="group-detail-list" class="glassy"></ons-list>
         </div>
       </div>
@@ -310,28 +332,23 @@
     <ons-page class="page" id="search_page" data-init-fn="search_page_init">
       <div class="page__content">
         <div class="gutter">
-          <div class="glassyFloat search-container" 
-               style="position: static; z-index: 100;">
+          <div class="search-header">
             <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
-              <svg
-                class="back-icon"
-                viewBox="0 -960 960 960"
-                width="24"
-                height="24"
-                fill="var(--highlight-color)"
-                aria-hidden="true"
-                focusable="false">
+              <svg class="back-icon" viewBox="0 -960 960 960" width="24" height="24"
+                   fill="var(--highlight-color)" aria-hidden="true" focusable="false">
                 <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
               </svg>
               <span>Back</span>
             </button>
-            <div class="search-input-wrap">
-              <svg class="search-box-icon" viewBox="0 0 24 24" width="20" height="20"
-                   fill="var(--sub-text-color)" aria-hidden="true" focusable="false">
-                <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/>
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
               </svg>
-              <ons-input class="search-box" placeholder="Search"
-                autocapitalize="off" autocomplete="off" spellcheck="false" autocorrect="off"></ons-input>
+              <input type="text" class="search-box" placeholder="Search"
+                autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off">
+              <svg class="search-clear" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+              </svg>
             </div>
           </div>
         </div>
@@ -449,11 +466,31 @@
         </div>
         <div class="center" id="songTitle"></div>
         <div class="right">
+
+          <button id="lb-font-decrease"
+                  class="lb-icon-btn lb-font-btn lb-font-decrease"
+                  title="Decrease text size"
+                  aria-label="Decrease text size">
+            <svg class="tab-icon" viewBox="0 -960 960 960" aria-hidden="true">
+              <path d="m40-200 210-560h100l210 560h-96l-51-143H187l-51 143H40Zm176-224h168l-82-232h-4l-82 232Zm384-16v-80h320v80H600Z"/>
+            </svg>
+          </button>
+          <button id="lb-font-increase"
+                  class="lb-icon-btn lb-font-btn lb-font-increase"
+                  title="Increase text size"
+                  aria-label="Increase text size">
+            <svg class="tab-icon" viewBox="0 -960 960 960" aria-hidden="true">
+              <path d="m40-200 210-560h100l210 560h-96l-51-143H187l-51 143H40Zm176-224h168l-82-232h-4l-82 232Zm504 104v-120H600v-80h120v-120h80v120h120v80H800v120h-80Z"/>
+            </svg>
+          </button>
+
           <ons-toolbar-button id="songViewMenuBtn" ripple="false">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="var(--highlight-color)">
               <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
             </svg>
+            <ons-icon icon="md-more-vert"></ons-icon>
           </ons-toolbar-button>
+
         </div>
       </ons-toolbar>
 

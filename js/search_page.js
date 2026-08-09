@@ -34,29 +34,59 @@ const FUSE_OPTIONS = {
   ]
 };
 
-window.indexPromise.then(() => {
+function initFuseIndex(idx) {
   if (typeof Fuse === 'undefined') {
     console.error('[search_page] Fuse is not loaded. Reload the app.');
+    return;
+  }
+  if (!idx || typeof idx !== 'object') {
+    console.error('[search_page] Index data is missing or invalid:', idx);
+    return;
+  }
+
+  const keys = Object.keys(idx);
+  if (keys.length === 0) {
+    console.error('[search_page] Index is empty, cannot initialize search.');
     return;
   }
 
   // titleNormCache is now keyed by file_name instead of numeric index
   titleNormCache = {};
-  Object.keys(window.INDEX).forEach((fileName) => {
-    titleNormCache[fileName] = normalizeQuery(window.INDEX[fileName].first_line);
+  keys.forEach((fileName) => {
+    titleNormCache[fileName] = normalizeQuery(idx[fileName].first_line);
   });
 
-  // Each fuseData entry carries its own file_name as `id`, so a Fuse
-  // result can be traced straight back to the song without needing an
-  // array index.
-  const fuseData = Object.keys(window.INDEX).map((fileName) => ({
+  const fuseData = keys.map((fileName) => ({
     id: fileName,
-    search: window.INDEX[fileName].search || '',
+    search: idx[fileName].search || '',
     title_norm: titleNormCache[fileName]
   }));
 
   fuse = new Fuse(fuseData, FUSE_OPTIONS);
-});
+  // console.log('[search_page] Fuse index ready with', fuseData.length, 'songs');
+}
+
+// Defensive initialization: window.indexPromise may resolve before or after this module loads
+if (window.indexPromise && typeof window.indexPromise.then === 'function') {
+  window.indexPromise
+    .then((resolvedIdx) => initFuseIndex(resolvedIdx || window.INDEX))
+    .catch((err) => console.error('[search_page] Failed to initialize search index:', err));
+} else {
+  // If app.js hasn't created the promise yet, poll briefly
+  let attempts = 0;
+  const poll = setInterval(() => {
+    attempts++;
+    if (window.indexPromise && typeof window.indexPromise.then === 'function') {
+      clearInterval(poll);
+      window.indexPromise
+        .then((resolvedIdx) => initFuseIndex(resolvedIdx || window.INDEX))
+        .catch((err) => console.error('[search_page] Failed to initialize search index:', err));
+    } else if (attempts > 20) {
+      clearInterval(poll);
+      console.error('[search_page] window.indexPromise never became available');
+    }
+  }, 100);
+}
 
 // ----------------------------------------------------------------------
 
@@ -85,15 +115,52 @@ function search_page_init(page) {
   const SEARCH_DEBOUNCE_MS = 150;
   let debounceTimer = null;
 
-  const searchInput = page.querySelector('.search-box');
-  searchInput.onkeyup = () => {
+  // Robust selector: try the new structure first, fall back to legacy
+  const searchInput = page.querySelector('.search-bar input') || page.querySelector('.search-box') || page.querySelector('input[type="text"]');
+  const searchBar = page.querySelector('.search-bar');
+  const clearBtn = page.querySelector('.search-clear');
+
+  if (!searchInput) {
+    console.error('[search_page] Could not find search input element');
+    return;
+  }
+
+  function doSearch(query) {
+    // console.log('[search_page] doSearch called with:', JSON.stringify(query), 'fuse ready?', !!fuse, 'index size:', Object.keys(window.INDEX || {}).length);
+    if (!fuse) {
+      // If fuse isn't ready yet, wait and retry once
+      setTimeout(() => {
+        if (fuse) render_searchUI(page, query, clickHandler, 'search-list-page', MIN_QUERY_LENGTH);
+        else {
+          console.warn('[search_page] Fuse still not ready');
+          const listElement = page.querySelector('#search-list-page');
+          if (listElement) listElement.innerHTML = "<span style='padding:20px; display:block;'>Loading search index…</span>";
+        }
+      }, 500);
+      return;
+    }
+    render_searchUI(page, query, clickHandler, 'search-list-page', MIN_QUERY_LENGTH);
+  }
+
+  // Use 'input' event (fires on any change: typing, paste, clear) instead of just keyup
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value;
+    if (searchBar) searchBar.classList.toggle('has-value', query.length > 0);
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      render_searchUI(page, searchInput.value, clickHandler, 'search-list-page', MIN_QUERY_LENGTH);
-    }, SEARCH_DEBOUNCE_MS);
-  };
-  // searchInput.focus();
-  setTimeout(() => searchInput.focus(), 0);
+    debounceTimer = setTimeout(() => doSearch(query), SEARCH_DEBOUNCE_MS);
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      searchInput.value = '';
+      if (searchBar) searchBar.classList.remove('has-value');
+      searchInput.focus();
+      doSearch('');
+    });
+  }
+
+  setTimeout(() => searchInput.focus(), 150);
 
   const defaultImg = page.querySelector('.default_img_container');
   if (defaultImg) fitElementToPage(defaultImg);
@@ -143,10 +210,16 @@ function getFallbackSongId() {
  * (typo-tolerance fallback) then restored.
  */
 function search(query) {
-  if (!fuse) return [];
+  if (!fuse) {
+    // console.warn('[search_page] search() called but fuse is not initialized yet');
+    return [];
+  }
 
   const q = normalizeQuery(query);
-  if (!q) return [];
+  if (!q) {
+    // console.log('[search_page] normalizeQuery returned empty for:', JSON.stringify(query));
+    return [];
+  }
 
   /* Tier 1: exact prefix match */
   const prefixIds = [];

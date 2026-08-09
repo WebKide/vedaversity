@@ -66,6 +66,12 @@
   --kirtan-bg: #0d0d0d;
   --kirtan-tabbar-bg: #161616;
 
+  /* Prevent open image in new tab */
+  -webkit-user-drag:     none;
+  -webkit-touch-callout: none;
+  -webkit-user-select:   none;
+  user-select:           none;
+
   /* ---- Safe-area insets ---- */
   --inset-top: env(safe-area-inset-top, 0px);
   --inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -252,7 +258,6 @@
   color-scheme: dark;
 }
 
-
 /* ============================================================
    CLASSES (.class-name)
    ============================================================
@@ -264,7 +269,10 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
  */
-
+/* ============================================================
+   OUTLINE
+   ============================================================
+* { outline: 1px solid red !important; } */
 
 /* Fix for Onsen UI tabbar blocking content clicks */
 ons-tabbar.bottom-tabbar,
@@ -317,24 +325,62 @@ ons-toolbar .center.author-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  max-width: calc(100% - 200px);  /* reserve space for left/right toolbar buttons */
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Individual scrolling lines */
+.author-container .title-line,
+.author-container .author-line {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.author-container .title-line span,
+.author-container .author-line span {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* When a line overflows, left-align its container so the scroll starts from the visible edge */
+.author-container .title-line.scrolls,
+.author-container .author-line.scrolls {
+  text-align: left;
+}
+
+.author-container .title-line span.marquee,
+.author-container .author-line span.marquee {
+  animation: marquee-scroll var(--marquee-duration, 8s) linear infinite alternate;
+  padding-right: 16px;
 }
 
 /* .author-text */
-.author-text {
+.author-line .author-text {
   font-size: .8em;
   color: var(--sub-text-color);
   text-transform: lowercase;
   font-weight: 400;
 }
 
-/* .author-wrapper */
-.author-wrapper {
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  overflow: clip;
+/* Title text styling */
+.title-line .title-text {
   color: var(--highlight-color);
   text-transform: capitalize;
   font-weight: 700;
+  line-height: 1.2;
+}
+
+@keyframes marquee-scroll {
+  0%, 15%   { transform: translateX(0); }
+  85%, 100% { transform: translateX(var(--marquee-offset, -50px)); }
 }
 
 /* .back-btn */
@@ -674,47 +720,84 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* .right  — base styling provided by Onsen UI CDN */
 
-/* .search-box */
-.search-box {
+/* ═══════════════════════════════════════════════════════════
+   UNIFIED SEARCH BAR — Home trigger + Search page input
+   ═══════════════════════════════════════════════════════════ */
+
+/* Base search bar shape — used by both home trigger and search input */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  padding: 14px 18px;
+  box-sizing: border-box;
+  background: var(--glass-gradient);
+  border: var(--glass-border);
+  box-shadow: var(--glass-inset-shadow);
+  border-radius: 16px;
+  font-size: 1.05rem;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.search-bar:hover {
+  box-shadow: 0 0 12px rgba(254, 185, 19, 0.15), var(--glass-inset-shadow);
+}
+
+.search-bar .search-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  fill: var(--highlight-color);
+}
+
+.search-bar .search-placeholder {
+  color: var(--sub-text-color);
+  flex: 1;
+  user-select: none;
+}
+
+/* Active input variant (search page) */
+.search-bar input[type="text"] {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-color);
+  font-size: inherit;
+  font-family: inherit;
+  flex: 1;
+  padding: 0;
+  margin: 0;
   width: 100%;
 }
 
-.search-box > input {
-  font-size: 20px;
-  background-size: 0;
-  margin-bottom: -5px;
+.search-bar input[type="text"]::placeholder {
+  color: var(--sub-text-color);
 }
 
-.search-box span {
-  font-size: 22px;
+.search-bar .search-clear {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: var(--gray-lighter);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
-/* .search-container */
-.search-container {
-  display: flex;
-  padding: 0 12px;
-  margin-top: max(10px, env(safe-area-inset-top));
-  margin: 24px 0;
-  min-height: 58px;
-  max-width: 90%;
-  align-items: center;
+.search-bar.has-value .search-clear {
+  opacity: 1;
 }
 
-.search-container > ons-icon {
-  min-width: 36px;
-  line-height: 26px;
-  font-size: 28px;
-  color: var(--highlight-color);
-  margin-top: 4px;
+/* Home page specific */
+#tab-home .search-bar {
+  margin: 16px 0;
 }
 
-#glassyFloat .search-container {
-  width: auto;
-  min-width: 260px;
-  max-width: 90%;
-}
-
-/* Update in search_page styling */
+/* Search page specific */
 #search_page .page__content {
   position: relative;
   width: 100%;
@@ -723,56 +806,41 @@ ons-list-item .list-item__subtitle span.no_right {
 #search_page .gutter {
   display: block;
   width: 100%;
-  padding: 25px 15px 0 15px;
+  /*padding: 20px 15px 0 15px;*/
   box-sizing: border-box;
-  margin: 0; /* Remove potential negative margin-left */
+  margin: 0;
 }
 
-#search_page .glassyFloat.search-container {
+#search_page .search-bar-wrap {
   position: sticky;
   top: 10px;
-  left: 0; /* Anchors the sticky element within the gutter */
+  left: 0;
   right: 0;
-  margin-left: auto;
-  margin-right: auto;
   z-index: 100;
-  width: 100%;
-  max-width: 100%; /* Ensure it doesn't shrink to 90% if centering is desired */
-  display: flex;
+  padding: 0 15px;
   box-sizing: border-box;
+  margin-bottom: 16px;
 }
 
-/* Search page (tmpl-search) — icon-in-input search bar.
-   Scoped to #search_page so it doesn't affect the home shell's
-   search-box, which already has its icon as a separate flex sibling. */
-#search_page .search-input-wrap {
-  position: relative;
-  flex: 1;
+/* Search page header row: back button + unified search bar */
+.search-header {
   display: flex;
   align-items: center;
+  gap: 10px;
+  padding: 20px 15px 16px 15px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--kirtan-bg, #0d0d0d);
 }
 
-#search_page .search-box-icon {
-  position: absolute;
-  margin-left: 20px;
-  padding-top: 5px;
-  left: 12px;
-  pointer-events: none;
+.search-header .back-btn {
+  flex-shrink: 0;
+  padding: 10px 0 10px 4px;
 }
 
-#search_page .search-box, .glassyFloat.search-container {
-  width: 92%; /* Or a slightly smaller that 100% if you want margins */
-  max-width: 600px; /* Optional: cap it for very wide layouts */
-  margin: 0 auto; /* Center it horizontally */
-}
-
-#search_page .search-box > input {
-  background-color: rgba(0, 0, 0, 0.4);
-  margin-left: 20px;
-  padding-left: 50px;
-  padding-right: 10px;
-  border-radius: 8px;
-  height: 40px;
+.search-header .search-bar {
+  flex: 1;
 }
 
 /* .shell__content */
@@ -830,13 +898,16 @@ ons-list-item .list-item__subtitle span.no_right {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  line-height: 1.86rem;
+  line-height: 1.5;
   font-weight: 400;
   font-style: italic;
   margin: 9px 0 9px 0;
 }
 /* .verse-container  — no static rules; see .trans-container */
 
+#recents-items {
+  overflow-x: hidden;
+}
 
 /* ============================================================
    IDs (#id-name)
@@ -869,16 +940,25 @@ ons-list-item .list-item__subtitle span.no_right {
 /* #group-nav — letter-jump grid above the all-songs list */
 .group-nav {
   display: grid;
-  /* Creates equal columns that fill the screen width */
+  /* Creates equal columns that fill the screen width
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));  */
+  top: 0;
+  z-index: 100;
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+/* Glassy box that actually holds the grid */
+.group-nav > .glassy {
+  display: grid !important;
+  padding: 0 15px !important;
   grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); 
   gap: 6px;
-  margin-bottom: 12px;
-  padding: 0 4px;
 }
 
 /* FIX: Forces headings to break out of the button grid layout */
 .group-nav .list-header--material {
-  grid-column: 1 / -1; /* Spans from the very first column to the very last column */
+  grid-column: 1 / -1; /* Spans from the very first column to the very last */
   width: 100%;
 }
 
@@ -1160,6 +1240,7 @@ ons-list-item .center:not(.isCard) {
   display: inline-block;
   overflow: hidden;
   padding-right: 0;
+  padding-top: 20px;
 }
 
 ons-list-item .center.list-item--chevron__center {
@@ -1338,7 +1419,7 @@ ons-toolbar {
 
 /* Expandable content */
 .list-item__expandable-content {
-  width: 100vw;
+  /* width: 100vw;*/
   padding: 0 5% 0 5%;
   margin-bottom: 12px;
 }
@@ -1463,6 +1544,12 @@ highlight {
   background-color: transparent; !important;
 }
 
+/* Scoped smaller text for the Song View only */
+#songView_page highlight {
+  font-size: 0.83em;
+  color: var(--gray-lighter);
+}
+
 /**/
 footnote {
   font-weight: 400;
@@ -1517,14 +1604,79 @@ ons-list-item .center.search-result {
   white-space: nowrap;
 }
 
+.guide-rest {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.guide-rest.is-open {
+  max-height: 600px; /* adjust to your content length */
+}
+
+/* Home Version Wrapper becomes the positioning context */
+.home-image-wrap {
+  position: relative;
+  display: block;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+  overflow: hidden; /* clips the caption when translated down */
+  box-shadow: var(--outer-shadow);
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.home-image-wrap img {
+  display: inline;
+  object-fit: cover;
+}
+
+/* Re-used caption logic */
+.home-image-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  min-height: 25%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  transform: translateY(100%);
+  transition: transform 0.8s ease-in-out;
+  z-index: 2;
+}
+
+/* Desktop: hover */
+.home-image-wrap:hover .home-image-caption {
+  transform: translateY(0%);
+}
+
+/* Mobile: toggled via JS (see below) */
+.home-image-wrap.is-visible .home-image-caption {
+  transform: translateY(0%);
+}
+
+.home-image-heading {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
 /* ═══ Intro slideshow frame ═══ */
 .intro-thumb {
-  width: 80%;
+  width: 100%;
   max-width: 720px;
   min-width: 320px;
   aspect-ratio: 1 / 1;
   margin: 20px auto;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: var(--thumbnail-shadow);
 }
 
@@ -1562,7 +1714,7 @@ ons-list-item .center.search-result {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 20%;
+  height: 25%;
   background: rgba(0, 0, 0, 0.6);
   color: #ffffff;
   display: flex;
@@ -1583,12 +1735,12 @@ ons-list-item .center.search-result {
 
 .slide-caption-heading {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.85rem;
   margin-bottom: 4px;
 }
 
 .slide-caption-body {
-  font-size: 0.85rem;
+  font-size: 1.25rem;
   opacity: 0.9;
   line-height: 1.3;
   /* Prevent an unusually long body from overflowing the fixed-height
@@ -1600,9 +1752,10 @@ ons-list-item .center.search-result {
 }
 
 @media (max-width: 520px) {
-  .slide-caption { height: 30%; }
+  .slide-caption { height: 20%; }
   .slide-caption-heading { font-size: 0.85rem; }
   .slide-caption-body { font-size: 0.65rem; }
+  .intro-thumb { aspect-ratio: 2 / 3; }
 }
 
 /* When alt="" has no caption text, hide the scrim entirely rather than
@@ -1656,4 +1809,84 @@ ons-list-item .center.search-result {
 
 @media (prefers-reduced-motion: reduce) {
   .ken-burns { animation: none; }
+}
+
+.glassy {
+  padding-left: 16px;  /* Adjust this value as needed */
+  padding-right: 16px;
+  box-sizing: border-box; /* Ensures padding doesn't increase the container's total width */
+}
+
+/* Remove the lists_page container's own top/bottom border gradients */
+#tab-lists .gutter ons-list,
+#tab-lists .gutter ons-list-item,
+#tab-lists .gutter ons-list-header {
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.shortcut-icon {
+  display: block;
+  margin-right: 5px; /* Space between icon and text */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   1. Swipe-to-delete & right-click-to-delete for Recents
+   ═══════════════════════════════════════════════════════════ */
+
+.recent-swipe-item .recent-delete-btn {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  min-width: 44px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.recent-swipe-item.swiped .recent-delete-btn {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.recent-swipe-item.swiped .center {
+  transform: translateX(-8px);
+  transition: transform 0.25s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2. Font-size toolbar buttons (SongView)
+   ═══════════════════════════════════════════════════════════ */
+
+.lb-icon-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--toolbar-button-color, var(--highlight-color));
+}
+
+.lb-icon-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.lb-font-btn {
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.lb-font-btn:hover {
+  opacity: 1;
+}
+
+/* Ensure the buttons sit nicely in the toolbar right area */
+ons-toolbar .right .lb-icon-btn {
+  margin-left: 4px;
 }

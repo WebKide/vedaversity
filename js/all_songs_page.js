@@ -184,36 +184,47 @@ function createSanskritHeader(group) {
 // Letter-jump nav grid — one button per SANSKRIT_GROUPS entry that
 // actually has songs; clicking opens a dedicated page
 // ----------------------------------------------------------------
+
 function render_groupNav(page) {
   const nav = page.querySelector('#group-nav');
   if (!nav || !sortedToc) return;
   nav.innerHTML = '';
 
+  /* ── glassy box (same pattern as lists_page.js) ── */
+  const box = document.createElement('div');
+  box.className = 'glassy';
+  box.style.padding = '8px 4px 12px';
+
   const heading = document.createElement('div');
   heading.className = 'list-header--material';
   heading.style.cssText = 'text-align:center; opacity:.6; font-size:16px; width:100%; margin-bottom:8px;';
   heading.textContent = 'TAP A BUTTON TO JUMP';
-  nav.appendChild(heading);
+  box.appendChild(heading);
+
+  // NEW: choose navigation strategy based on which page we're on
+  const isDetail = page.id === 'group_detail_page';
+  const navMethod  = isDetail ? 'replacePage' : 'pushPage';
 
   SANSKRIT_GROUPS.forEach((g) => {
     const hasSongs = sortedToc.some((row) => row.type === 'header' && row.group.key === g.key);
-    if (!hasSongs) return; // hide unpopulated letters
+    if (!hasSongs) return;
 
     const btn = document.createElement('button');
     btn.className = 'group-nav-btn';
-    // btn.textContent = g.dev;
     btn.textContent = (g.key.length > 1 && g.key.endsWith('a') ? g.key.slice(0, -1) : g.key).toUpperCase();
     btn.onclick = () => {
-      document.getElementById('navigator').pushPage('tmpl-group-detail', { data: { groupKey: g.key } });
+      document.getElementById('navigator')[navMethod]('tmpl-group-detail', { data: { groupKey: g.key } });
     };
-    nav.appendChild(btn);
+    box.appendChild(btn);
   });
 
   const heading2 = document.createElement('div');
   heading2.className = 'list-header--material';
   heading2.style.cssText = 'text-align:center; opacity:.6; font-size:16px; width:100%; margin-top:8px;';
   heading2.textContent = 'SCROLL DOWN TO NAVIGATE';
-  nav.appendChild(heading2);
+  box.appendChild(heading2);
+
+  nav.appendChild(box);
 }
 
 // ----------------------------------------------------------------
@@ -250,6 +261,8 @@ function group_detail_page_init(page) {
 
   const titleEl = page.querySelector('.center');
   if (titleEl) titleEl.textContent = group ? group.dev : '';
+
+  render_groupNav(page);
 
   const listElement = page.querySelector('#group-detail-list');
   if (!listElement) return;

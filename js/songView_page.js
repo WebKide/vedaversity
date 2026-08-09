@@ -62,14 +62,15 @@ async function songView_page_init(page) {
   // 4. Render Header (Title & Author)
   const titleElement = page.querySelector('#songTitle');
   if (titleElement) {
-    // const firstLine = song.first_line || '';
     const firstLine = rec.first_line || '';
     const author = song.author || '';
 
     if (author) {
       titleElement.innerHTML = `
-        <div class="author-wrapper">
-          ${escapeHtml(firstLine)}<br>
+        <div class="title-line">
+          <span class="title-text">${escapeHtml(firstLine)}</span>
+        </div>
+        <div class="author-line">
           <span class="author-text"><i>by ${escapeHtml(author)}</i></span>
         </div>
       `;
@@ -77,6 +78,27 @@ async function songView_page_init(page) {
     } else {
       titleElement.textContent = firstLine;
     }
+
+    // Independent marquee for each line
+    requestAnimationFrame(() => {
+      const measureAndScroll = (lineSelector, textSelector) => {
+        const line = titleElement.querySelector(lineSelector);
+        if (!line) return;
+        const span = line.querySelector(textSelector);
+        if (!span) return;
+        const overflow = span.scrollWidth - line.clientWidth;
+        if (overflow > 0) {
+          const duration = Math.max(5, Math.min(16, overflow / 20));
+          span.style.setProperty('--marquee-offset', `-${overflow}px`);
+          span.style.setProperty('--marquee-duration', `${duration}s`);
+          span.classList.add('marquee');
+          line.classList.add('scrolls');
+        }
+      };
+
+      measureAndScroll('.title-line', '.title-text');
+      measureAndScroll('.author-line', '.author-text');
+    });
   }
 
   // 5. Initialize Core Functionality
@@ -107,7 +129,27 @@ async function songView_page_init(page) {
   setupMenuButtons(page, songId, rec.first_line);
   gestureInit(verseList, page);
 
-  // 6. Lifecycle & Analytics
+  // 6. Desktop listener: Ctrl++ / Ctrl+- to zoom
+  page.addEventListener('keydown', (e) => {
+    if (!e.ctrlKey) return;
+
+    let changed = false;
+    if (e.key === '+' || e.key === '.') {
+      appState.zoomSize = Math.min(42, appState.zoomSize + 2);
+      changed = true;
+    } else if (e.key === '-' || e.key === ',') {
+      appState.zoomSize = Math.max(10, appState.zoomSize - 2);
+      changed = true;
+    }
+
+    if (changed) {
+      e.preventDefault();
+      fontSizeUpdate();
+      dbSetItem('zoomSize', appState.zoomSize);
+    }
+  });
+
+  // 7. Lifecycle & Analytics
   if (typeof addRecent === 'function') addRecent(songId);
 
   page.onShow = (typeof keepAwake === 'function') ? keepAwake : null;
@@ -119,12 +161,38 @@ function setupMenuButtons(page, songId, songTitle) {
   const popover = page.querySelector('#songViewPopover');
   menuBtn.onclick = () => popover.show(menuBtn);
 
+  // Font-size toolbar buttons (+ / −)
+  const decBtn = page.querySelector('#lb-font-decrease');
+  const incBtn = page.querySelector('#lb-font-increase');
+  if (decBtn) {
+    decBtn.onclick = () => {
+      appState.zoomSize = Math.max(10, appState.zoomSize - 2);
+      fontSizeUpdate();
+      dbSetItem('zoomSize', appState.zoomSize);
+    };
+  }
+  if (incBtn) {
+    incBtn.onclick = () => {
+      appState.zoomSize = Math.min(42, appState.zoomSize + 2);
+      fontSizeUpdate();
+      dbSetItem('zoomSize', appState.zoomSize);
+    };
+  }
+
   page.querySelector('#listBtn').onclick = () => {
     popover.hide();
     selectListDialog(songId);
   };
 
   const shareBtn = page.querySelector('#shareBtn');
+  const titleEl = page.querySelector('#songTitle');
+
+  // Tap title to share (helpful when toolbar buttons crowd the menu on small screens)
+  if (titleEl && shareBtn) {
+    titleEl.title = 'Tap to share';
+    titleEl.addEventListener('click', () => shareBtn.click());
+  }
+
   if (shareBtn) {
     shareBtn.onclick = debouncify(async () => {
       popover.hide();
@@ -390,6 +458,16 @@ function selectListDialog(songId) {
 }
 
 function fontSizeUpdate() {
-  document.querySelectorAll('.verse-container').forEach((el) => (el.style.fontSize = appState.zoomSize + 'px'));
-  document.querySelectorAll('.trans-container').forEach((el) => (el.style.fontSize = appState.zoomSize - 2 + 'px'));
+  const verseSize = appState.zoomSize;
+  const transSize = Math.max(10, appState.zoomSize - 2);
+
+  document.querySelectorAll('.verse-container').forEach((el) => {
+    el.style.fontSize = verseSize + 'px';
+    el.style.lineHeight = '1.5';   /* unitless — scales with the font-size */
+  });
+
+  document.querySelectorAll('.trans-container').forEach((el) => {
+    el.style.fontSize = transSize + 'px';
+    el.style.lineHeight = '1.5';
+  });
 }

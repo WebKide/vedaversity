@@ -186,6 +186,13 @@ function removeListFromRecents(listName) {
   dbSetItem('recents', appState.recents);
 }
 
+function removeFromRecents(songId, listName) {
+  appState.recents = appState.recents.filter(
+    (r) => !(r.id === songId && r.listName === listName)
+  );
+  dbSetItem('recents', appState.recents);
+}
+
 // ---------------------------------------------------------------------
 // Song view navigation
 // ---------------------------------------------------------------------

@@ -33,7 +33,7 @@ const PRONOUNCE_GUIDE = [
   ['চ — च', 'ca', '“C” as in “<highlight>ch</highlight>eese”'],
   ['ছ — छ', 'cha', '“CH” as in “mu<highlight>ch-h</highlight>arder”'],
   ['জ — ज', 'ja', '“J” as in “<highlight>j</highlight>oy”'],
-  ['ঝ — झ', 'jha', '“JH” as in “he<highlight>deh</highlight>og”'],
+  ['ঝ — झ', 'jha', '“JH” as in “hed<highlight>geh</highlight>og”'],
   ['ঞ — ञ', 'ña', '“Ñ” as in “ca<highlight>ny</highlight>on”'],
   ['ট — ट', 'ṭa', '“Ṭ” as in “<highlight>t</highlight>ub”'],
   ['ঠ — ठ', 'ṭha', '“ṬH” as in “ligh<highlight>t-h</highlight>ouse”'],
@@ -67,7 +67,7 @@ const PRONOUNCE_GUIDE = [
   ['ज्ञ — জ্ঞ', 'jña', '“JÑA” as in “<highlight>gya</highlight>”'],
   ['श्र — শ্র', 'śra', '“ŚRA” as in “ca<highlight>sh-r</highlight>ing”'],
 
-  ['ঃ — ः', 'ḥ (visarga)', 'aspirate “aḥ” as in “<highlight>uh-oh</highlight>”'],
+  ['ঃ — ः', 'ḥ (visarga)', 'aspirate “aḥ” as in “<highlight>aha</highlight>”'],
   ['ঃ — ः', 'ḥ (visarga)', 'aspirate “iḥ” as in “<highlight>ihi</highlight>”'],
   ['ং — ं', 'ṁ (anusvāra)', 'pure nasal “N” as in (FR) “bo<highlight>n</highlight>”'],
   ['ঁ — ँ', '̐ (candrabindu)', '“M” as in “mu<highlight>m</highlight>”']
@@ -78,31 +78,58 @@ function pronounce_page_init(page) {
   container.innerHTML = '';
 
   const guideIntro = document.createElement('div');
-  guideIntro.className = 'list-item__subtitle';
-  guideIntro.style.cssText = 'text-align:left; opacity:.6; font-size:16px; margin:12px 6px;';
+  guideIntro.className = 'glassy list-item__subtitle';
+  /* touch-action: manipulation prevents the browser from zooming on double-tap */
+  guideIntro.style.cssText = 'text-align:left; font-size:16px; padding:16px; margin:12px 6px; touch-action: manipulation;';
 
-  const fullText = 'Throughout the centuries, the Sanskrit language has been written in a variety of alphabets. The mode of writing most widely used throughout India, however, is called devanāgarī, which literally means “the city writing of the devas, or gods.” [DOUBLETAP TO READ MORE]\n\nThe devanāgarī alphabet consists of forty-eight characters, including thirteen vowels and thirty-five consonants. The ancient Sanskrit grammarians arranged the alphabet according to concise linguistic principles, and this arrangement has been accepted by all Western scholars. The system of transliteration used in this book conforms to a system that scholars in the last fifty years have almost universally accepted to indicate the pronunciation of each Sanskrit sound. Some of the Sanskrit consonants have no exact equivalent in the English language. Wherever possible, the nearest English sound has been chosen to illustrate the pronunciation. In a few instances, however, the closest approximation can be obtained only by combining the final sound of one English word with the initial sound of the next. Thus “gh” is pronounced as in “dig-hard”. These combinations preserve the distinct consonant and following breath that characterize the aspirated sounds of Sanskrit. Since no single English word contains these sounds exactly, the examples are intended merely as practical approximations.';
+  const teaser = 'Throughout the centuries, the Sanskrit language has been written in a variety of alphabets. The mode of writing most widely used throughout India, however, is called <i>devanāgarī</i> <highlight>(देवनागरी)</highlight>, which literally means <b>“the city writing of the <i>devas</i>, or gods.”</b>';
 
-  const parts = fullText.split('\n\n');
-  const teaser = parts[0];
-  const rest  = parts.slice(1).join('\n\n');
+  const rest = 'The <i>devanāgarī</i> alphabet consists of forty-eight characters, including thirteen vowels and thirty-five consonants. The ancient Sanskrit grammarians arranged the alphabet according to concise linguistic principles, and this arrangement has been accepted by all Western scholars. <br/>The system of transliteration used in this songbook conforms to a system that scholars in the last fifty years have almost universally accepted to indicate the pronunciation of each Sanskrit sound. <br/>Some of the Sanskrit consonants have no exact equivalent in the English language. Wherever possible, the nearest English sound has been chosen to illustrate the pronunciation. In a few instances, however, the closest approximation can be obtained only by combining the final sound of one English word with the initial sound of the next. Thus <b>“GH”</b> is pronounced as in “di<highlight>g-h</highlight>ard”. These combinations preserve the distinct consonant and following breath that characterize the aspirated sounds of Sanskrit. <br/>Since no single English word contains these sounds exactly, the examples are intended merely as practical approximations.';
 
-  if (rest) {
-    guideIntro.innerHTML = `
-      <p style="margin:0 0 0.5em 0;">${teaser}</p>
-      <p class="guide-rest" style="margin:0;display:none;">${rest}</p>
-    `;
-    const gd = ons.GestureDetector(guideIntro);
-    gd.on('doubletap', () => {
-      const restEl = guideIntro.querySelector('.guide-rest');
-      if (restEl) restEl.style.display = restEl.style.display === 'none' ? 'block' : 'none';
-    });
-  } else {
-    guideIntro.textContent = fullText;
-  }
+  /* Build DOM — NOTE: no display:none here. We use max-height:0 for the transition. */
+  guideIntro.innerHTML = `
+    <p style="margin:0 0 0.5em 0; color: var(--text-color);">${teaser}</p>
+    <div class="guide-rest" style="max-height:0px; overflow:hidden; transition:max-height 0.4s ease;">
+      <p style="margin:0; color: var(--text-color);">${rest}</p>
+    </div>
+    <p class="guide-prompt" style="margin:0.8em 0 0 0; opacity:.8; font-style:bold; font-size:0.85em; text-align:center; user-select:none; -webkit-user-select:none; color: var(--highlight-color);">[DOUBLETAP TO READ MORE]</p>
+  `;
+
+  const restWrapper = guideIntro.querySelector('.guide-rest');
+  const promptEl    = guideIntro.querySelector('.guide-prompt');
+  let isExpanded   = false;
+
+  const toggleGuide = () => {
+    isExpanded = !isExpanded;
+    if (isExpanded) {
+      restWrapper.style.maxHeight = restWrapper.scrollHeight + 'px';
+      promptEl.textContent = '[DOUBLETAP TO CLOSE]';
+    } else {
+      restWrapper.style.maxHeight = '0px';
+      promptEl.textContent = '[DOUBLETAP TO READ MORE]';
+    }
+  };
+
+  /* Mobile double-tap: track timestamps on touchend */
+  let lastTap = 0;
+  guideIntro.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTap < 350) {
+      e.preventDefault();           /* stop zoom and synthetic click */
+      toggleGuide();
+    }
+    lastTap = now;
+  });
+
+  /* Desktop double-click */
+  guideIntro.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    toggleGuide();
+  });
 
   container.appendChild(guideIntro);
 
+  /* Render pronunciation table */
   PRONOUNCE_GUIDE.forEach(([script, roman, note]) => {
     const item = ons.createElement(`
       <ons-list-item modifier="nodivider">

@@ -31,11 +31,10 @@ function shell_page_init(page) {
   btnLists.onclick = () => activateTab('lists');
 
   // --- Home tab wiring ---
-  const searchInput = page.querySelector('#search-input');
-  searchInput.onfocus = () => {
-    searchInput.blur();
-    navEl.pushPage('tmpl-search');
-  };
+  const searchTrigger = page.querySelector('#search-trigger');
+  if (searchTrigger) {
+    searchTrigger.onclick = () => navEl.pushPage('tmpl-search');
+  }
 
   page.querySelector('#allSongs').onclick = () => navEl.pushPage('tmpl-all-songs');
   page.querySelector('#pronounceGuide').onclick = () => navEl.pushPage('tmpl-pronounce');
@@ -76,6 +75,71 @@ function shell_page_init(page) {
   activateTab('home');
 }
 
+function gen_swipeableRecentItem(text, onClick, onDelete) {
+  const item = document.createElement('ons-list-item');
+  item.setAttribute('tappable', '');
+  item.className = 'recent-swipe-item';
+
+  item.innerHTML = `
+    <div class="center">${text}</div>
+    <div class="right recent-delete-btn">
+      <ons-icon icon="md-delete" style="color:#c62828; font-size: 22px;"></ons-icon>
+    </div>
+  `;
+
+  const deleteBtn = item.querySelector('.recent-delete-btn');
+  deleteBtn.onclick = (e) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
+  let startX = 0;
+  let startY = 0;
+  let isHorizontal = false;
+
+  item.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isHorizontal = false;
+  }, { passive: true });
+
+  item.addEventListener('touchmove', (e) => {
+    const diffX = Math.abs(startX - e.touches[0].clientX);
+    const diffY = Math.abs(startY - e.touches[0].clientY);
+    // Only flag as horizontal if X movement clearly dominates Y
+    if (diffX > diffY && diffX > 10) {
+      isHorizontal = true;
+    }
+  }, { passive: true });
+
+  item.addEventListener('touchend', (e) => {
+    if (!isHorizontal) return; // ignore — let the vertical scroll happen
+
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    if (diff > 60) {
+      item.classList.add('swiped');
+    } else if (diff < -40) {
+      item.classList.remove('swiped');
+    }
+  });
+
+  item.onclick = () => {
+    if (item.classList.contains('swiped')) {
+      item.classList.remove('swiped');
+      return;
+    }
+    onClick();
+  };
+
+  item.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    onDelete();
+  });
+
+  return item;
+}
+
 function render_recentListItems(page) {
   const container = page.querySelector('#recents-items');
   const header = page.querySelector('#recentHeader');
@@ -99,7 +163,20 @@ function render_recentListItems(page) {
     }
 
     if (!label) return;
-    container.appendChild(gen_listItem(label, onClick));
+
+    const el = gen_swipeableRecentItem(label, onClick, () => {
+      removeFromRecents(entry.id, entry.listName || null);
+      render_recentListItems(page);
+      const title = window.getSongTitle(entry.id) || entry.id;
+      if (window.ons) ons.notification.toast(`Removed "${title}" from recents`, { timeout: 1800 });
+    });
+
+    const idValue = entry.id;
+    if (idValue !== undefined && idValue !== null) {
+      el.dataset.songId = idValue;
+    }
+
+    container.appendChild(el);
   });
 
   const hasRecents = container.children.length > 0;
