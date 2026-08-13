@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.35';
+const VERSION = 'v1.37';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -53,7 +53,7 @@ const ASSETS = [
   BASE + '/img/icons/sradha.png',
   BASE + '/img/icons/ssguru.png',
   BASE + '/img/icons/vaishn.png',
-  BASE + '/img/home_default.jpg',
+  BASE + '/img/home_default.png',
   BASE + '/img/list_default.png',
   BASE + '/img/search_default.png',
   BASE + '/img/slideshow/001.jpg',

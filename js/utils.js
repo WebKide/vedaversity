@@ -170,25 +170,34 @@ const RECENTS_MAX = 15;
 
 function addToRecents(songId, listName) {
   listName = listName || null;
-  appState.recents = appState.recents.filter((r) => !(r.id === songId && r.listName === listName));
+  appState.recents = appState.recents.filter(
+    (r) => !(String(r.id) === String(songId) && (r.listName || null) === listName)
+  );
   appState.recents.unshift({ id: songId, listName });
   appState.recents = appState.recents.slice(0, RECENTS_MAX);
   dbSetItem('recents', appState.recents);
 }
 
+function removeFromRecents(songId, listName) {
+  const targetListName = listName || null;
+  appState.recents = appState.recents.filter(
+    (r) => !(String(r.id) === String(songId) && (r.listName || null) === targetListName)
+  );
+  dbSetItem('recents', appState.recents);
+}
+
 function removeListSongFromRecents(listName, songId) {
-  appState.recents = appState.recents.filter((r) => !(r.listName === listName && r.id === songId));
+  const targetListName = listName || null;
+  appState.recents = appState.recents.filter(
+    (r) => !((r.listName || null) === targetListName && String(r.id) === String(songId))
+  );
   dbSetItem('recents', appState.recents);
 }
 
 function removeListFromRecents(listName) {
-  appState.recents = appState.recents.filter((r) => r.listName !== listName);
-  dbSetItem('recents', appState.recents);
-}
-
-function removeFromRecents(songId, listName) {
+  const targetListName = listName || null;
   appState.recents = appState.recents.filter(
-    (r) => !(r.id === songId && r.listName === listName)
+    (r) => (r.listName || null) !== targetListName
   );
   dbSetItem('recents', appState.recents);
 }

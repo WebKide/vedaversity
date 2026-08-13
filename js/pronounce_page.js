@@ -84,7 +84,7 @@ function pronounce_page_init(page) {
 
   const teaser = 'Throughout the centuries, the Sanskrit language has been written in a variety of alphabets. The mode of writing most widely used throughout India, however, is called <i>devanāgarī</i> <highlight>(देवनागरी)</highlight>, which literally means <b>“the city writing of the <i>devas</i>, or gods.”</b>';
 
-  const rest = 'The <i>devanāgarī</i> alphabet consists of forty-eight characters, including thirteen vowels and thirty-five consonants. The ancient Sanskrit grammarians arranged the alphabet according to concise linguistic principles, and this arrangement has been accepted by all Western scholars. <br/>The system of transliteration used in this songbook conforms to a system that scholars in the last fifty years have almost universally accepted to indicate the pronunciation of each Sanskrit sound. <br/>Some of the Sanskrit consonants have no exact equivalent in the English language. Wherever possible, the nearest English sound has been chosen to illustrate the pronunciation. In a few instances, however, the closest approximation can be obtained only by combining the final sound of one English word with the initial sound of the next. Thus <b>“GH”</b> is pronounced as in “di<highlight>g-h</highlight>ard”. These combinations preserve the distinct consonant and following breath that characterize the aspirated sounds of Sanskrit. <br/>Since no single English word contains these sounds exactly, the examples are intended merely as practical approximations.';
+  const rest = 'The <i>devanāgarī</i> alphabet consists of forty-eight characters, including thirteen vowels and thirty-five consonants. The ancient Sanskrit grammarians arranged the alphabet according to concise linguistic principles, and this arrangement has been accepted by all Western scholars. <br/>The system of transliteration used in this songbook conforms to a system that scholars in the last hundred (plus) years have almost universally accepted to indicate the pronunciation of each Sanskrit sound. <br/>Some of the Sanskrit consonants have no exact equivalent in the English language. Wherever possible, the nearest English sound has been chosen to illustrate the pronunciation. In a few instances, however, the closest approximation can be obtained only by combining the final sound of one English word with the initial sound of the next. Thus <b>“GH”</b> is pronounced as in “di<highlight>g-h</highlight>ard”. These combinations preserve the distinct consonant and following breath that characterize the aspirated sounds of Sanskrit. <br/>Since no single English word contains these sounds exactly, the examples are intended merely as practical approximations.';
 
   /* Build DOM — NOTE: no display:none here. We use max-height:0 for the transition. */
   guideIntro.innerHTML = `
@@ -148,4 +148,20 @@ function pronounce_page_init(page) {
     `);
     container.appendChild(item);
   });
+
+  /* scroll-to-top FAB */
+  const scrollArea = page.querySelector(".page__content");
+  const fab = page.querySelector("#toTop");
+  if (scrollArea && fab) {
+    scrollArea.addEventListener('scroll', () => {
+      if (scrollArea.scrollTop > 300) {
+        fab.style.opacity = "1";
+        fab.style.pointerEvents = "auto";
+        fab.style.visibility = "visible";
+      } else {
+        fab.style.opacity = "0";
+        fab.style.pointerEvents = "none";
+      }
+    });
+  }
 }

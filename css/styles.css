@@ -328,9 +328,35 @@ ons-toolbar .center.author-container {
   align-items: center;
   overflow: hidden;
   position: relative;
-  max-width: calc(100% - 200px);  /* reserve space for left/right toolbar buttons */
+  max-width: calc(100% - 180px);  /* reserve space for left/right toolbar buttons */
   min-width: 0;
   cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  /* 1. Force the right section to stay visible and not wrap */
+  ons-toolbar .right {
+    display: flex !important;
+    align-items: center;
+    flex-shrink: 0; /* don’t let the center push this away */
+    flex-wrap: nowrap; /* keep buttons on one line */
+    overflow: visible;
+  }
+
+  /* 2. Shrink the font-size buttons slightly so 3 buttons fit comfortably */
+  ons-toolbar .right .lb-icon-btn {
+    padding: 4px; /* down from 8px */
+  }
+
+  ons-toolbar .right .lb-icon-btn svg {
+    width: 20px; /* down from 24px */
+    height: 20px;
+  }
+
+  /* 3. The menu button (ons-toolbar-button) often has extra internal padding */
+  ons-toolbar .right ons-toolbar-button {
+    padding: 0 4px;
+  }
 }
 
 /* Individual scrolling lines */
@@ -582,8 +608,8 @@ ons-list-item .list-item__subtitle span.no_right {
 .list-item__thumbnail {
   /* box-shadow: var(--thumbnail-shadow);*/
   filter: 
-    drop-shadow(0 0 2px var(--highlight)) 
-    drop-shadow(0 0 4px var(--highlight));
+    drop-shadow(0 0 2px var(--highlight-color)) 
+    drop-shadow(0 0 4px var(--highlight-color));
 }
 
 /* 1. Add spacing to the container */
@@ -591,7 +617,7 @@ ons-list-item .list-item__subtitle span.no_right {
   padding-right: 16px !important;
   display: flex;
   align-items: center;
-  filter: drop-shadow(0 0 2px var(--highlight));
+  filter: drop-shadow(0 0 2px var(--highlight-color));
 }
 
 /* 2. Hide the existing CSS chevron */
@@ -1574,9 +1600,9 @@ footnote {
   background-image: none; 
   padding-top: 12px;
   padding-bottom: 12px;
-  background-color: rgba(0,0,0,0.3);
+  background-color: var(--material-fab-text-color);
   border-radius: 0 0 12px 12px; 
-  margin: 12px; 
+  margin: 0 12px 12px 12px; 
   text-align: center; 
   color: var(--highlight-color);
 }
@@ -1889,4 +1915,126 @@ ons-list-item .center.search-result {
 /* Ensure the buttons sit nicely in the toolbar right area */
 ons-toolbar .right .lb-icon-btn {
   margin-left: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SMART FOOTER NAVIGATION (Song View)
+   ═══════════════════════════════════════════════════════════ */
+
+.song-footer-nav {
+  position: relative;
+  margin: 12px 6px 24px 6px;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  pointer-events: auto;
+}
+
+/* Reuse the exact same row styling as bottom-tabbar__row */
+.song-footer-nav .bottom-tabbar__row {
+  display: flex;
+  width: 95%;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 65px;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Prev / Next buttons — same structure as tabbar-btn */
+.song-footer-nav .footer-nav-prev,
+.song-footer-nav .footer-nav-next {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  padding: 0 12px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Constrained title container — clips marquee, stays between icon and divider */
+.song-footer-nav .footer-nav-prev .footer-nav-title,
+.song-footer-nav .footer-nav-next .footer-nav-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.song-footer-nav .footer-nav-prev {
+  justify-content: flex-start;
+  padding-left: 12px;
+}
+
+.song-footer-nav .footer-nav-next {
+  justify-content: flex-end;
+  padding-right: 12px;
+}
+
+/* Arrow icons */
+.song-footer-nav .footer-nav-icon {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* Song titles — single line, marquee if overflow */
+.song-footer-nav .footer-nav-title {
+  white-space: nowrap;
+  overflow: visible;
+  font-size: 0.85rem;
+  color: var(--text-color);
+  display: inline-block;
+  will-change: transform;
+  min-width: 0;
+}
+
+/* Marquee animation */
+.song-footer-nav .footer-nav-title.marquee {
+  animation: marquee-scroll var(--marquee-duration, 8s) linear infinite alternate;
+  padding-right: 16px;
+}
+
+/* Center divider */
+.song-footer-nav .footer-nav-divider {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  color: var(--highlight-color);
+  font-size: 1.2rem;
+  font-weight: 300;
+  opacity: 0.6;
+  user-select: none;
+  padding: 0 4px;
+}
+
+/* Active / hover feedback */
+.song-footer-nav .footer-nav-prev:active,
+.song-footer-nav .footer-nav-next:active {
+  opacity: 0.6;
+}
+
+/* Mobile adjustments */
+@media (max-width: 520px) {
+  .song-footer-nav {
+    margin: 8px 4px 16px 4px;
+  }
+  .song-footer-nav .bottom-tabbar__row {
+    height: 56px;
+  }
+  .song-footer-nav .footer-nav-title {
+    font-size: 0.8rem;
+  }
 }

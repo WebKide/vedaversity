@@ -5,9 +5,6 @@
  * double-tap-to-toggle-translation, pinch-to-zoom (persisted), swipe/
  * pagination between songs when opened from a list, and add-to-list /
  * copy-share from the toolbar menu.
- *
- * Dropped vs. the original: GunDB "Announce" broadcast feature, Russian
- * translation loading, native-only branching, and per-song file fetching.
  */
 
 const songDataCache = {};
@@ -32,7 +29,8 @@ async function songView_page_init(page) {
   // 1. Data extraction & validation
   const data = page.data || {};
   const songId = data.songId || data.id;
-  const listName = data.list_name;
+  const listName = data.listName;
+  const songList = data.songList;
 
   if (songId === undefined || songId === null) {
     console.error("No songId provided. Data found:", data);
@@ -126,6 +124,7 @@ async function songView_page_init(page) {
   }
 
   setupNavButtons(page, songId, listName);
+  setupFooterNav(page, songId, listName, songList);
   setupMenuButtons(page, songId, rec.first_line);
   gestureInit(verseList, page);
 
@@ -150,10 +149,52 @@ async function songView_page_init(page) {
   });
 
   // 7. Lifecycle & Analytics
-  if (typeof addRecent === 'function') addRecent(songId);
+  if (typeof addRecent === 'function' && !data.skipRecent) addRecent(songId);
 
   page.onShow = (typeof keepAwake === 'function') ? keepAwake : null;
   page.onHide = (typeof allowSleep === 'function') ? allowSleep : null;
+}
+
+function setupNavButtons(page, songId, listName) {
+  page.querySelectorAll('.listSongView').forEach((bar) => bar.remove());
+  if (!listName) return;
+
+  page.querySelector('#listBtn').style.display = 'none';
+
+  const list = appState.lists[listName] || [];
+  const currentIndex = list.indexOf(songId);
+  const navText = `(${currentIndex + 1}/${list.length}) ${listName}`;
+
+  const createNavBar = () => {
+    const isFirst = currentIndex <= 0;
+    const isLast = currentIndex === -1 || currentIndex === list.length - 1;
+
+    const navBar = ons.createElement(`
+      <div class="listSongView">
+        <ons-button class="prevSongBtn" modifier="quiet" ${isFirst ? 'disabled' : ''}>
+          <ons-icon icon="md-caret-left"></ons-icon>
+        </ons-button>
+        <span>${navText}</span>
+        <ons-button class="nextSongBtn" modifier="quiet" ${isLast ? 'disabled' : ''}>
+          <ons-icon icon="md-caret-right"></ons-icon>
+        </ons-button>
+      </div>
+    `);
+
+    navBar.querySelector('.prevSongBtn').onclick = () => {
+      if (currentIndex > 0) showSongViewUI(list[currentIndex - 1], listName, 'nav_prev');
+    };
+    navBar.querySelector('.nextSongBtn').onclick = () => {
+      if (currentIndex > -1 && currentIndex < list.length - 1) {
+        showSongViewUI(list[currentIndex + 1], listName, 'nav_next');
+      }
+    };
+
+    return navBar;
+  };
+
+  const content = page.querySelector('.page__content');
+  content.after(createNavBar());
 }
 
 function setupMenuButtons(page, songId, songTitle) {
@@ -205,7 +246,6 @@ function setupMenuButtons(page, songId, songTitle) {
       let formattedVerses = song.verses;
 
       // 2. Replace tags (<b>, <highlight>, <i>, <em>) and their closing counterparts with '*'
-      // This regex matches any of those tags, case-insensitive
       formattedVerses = formattedVerses.replace(/<\/?(b|highlight|i|em|mark)>/gi, '*');
 
       // 3. Remove the special dot character and construct final text
@@ -225,46 +265,90 @@ function setupMenuButtons(page, songId, songTitle) {
   }
 }
 
-function setupNavButtons(page, songId, listName) {
-  page.querySelectorAll('.listSongView').forEach((bar) => bar.remove());
-  if (!listName) return;
+/**
+ * Smart footer navigation — appears at the bottom of the scrollable
+ * content (after #footerSpacer) so it is only seen once the user has
+ * scrolled through the whole song.
+ */
+function setupFooterNav(page, songId, listName, songList) {
+  // Clean up any previous footer on this page instance
+  page.querySelectorAll('.song-footer-nav').forEach(el => el.remove());
 
-  page.querySelector('#listBtn').style.display = 'none';
+  const list = (listName && appState.lists[listName]) || songList;
+  if (!Array.isArray(list) || list.length === 0) return;
 
-  const list = appState.lists[listName] || [];
   const currentIndex = list.indexOf(songId);
-  const navText = `(${currentIndex + 1}/${list.length}) ${listName}`;
+  if (currentIndex === -1) return;
 
-  const createNavBar = () => {
-    const isFirst = currentIndex <= 0;
-    const isLast = currentIndex === -1 || currentIndex === list.length - 1;
+  // Wrap-around indices
+  const prevIndex = (currentIndex - 1 + list.length) % list.length;
+  const nextIndex = (currentIndex + 1) % list.length;
+  const prevId = list[prevIndex];
+  const nextId = list[nextIndex];
 
-    const navBar = ons.createElement(`
-      <div class="listSongView">
-        <ons-button class="prevSongBtn" modifier="quiet" ${isFirst ? 'disabled' : ''}>
-          <ons-icon icon="md-caret-left"></ons-icon>
-        </ons-button>
-        <span>${navText}</span>
-        <ons-button class="nextSongBtn" modifier="quiet" ${isLast ? 'disabled' : ''}>
-          <ons-icon icon="md-caret-right"></ons-icon>
-        </ons-button>
-      </div>
-    `);
+  const prevRec = window.INDEX[prevId];
+  const nextRec = window.INDEX[nextId];
+  if (!prevRec || !nextRec) return;
 
-    navBar.querySelector('.prevSongBtn').onclick = () => {
-      if (currentIndex > 0) showSongViewUI(list[currentIndex - 1], listName, 'nav_prev');
-    };
-    navBar.querySelector('.nextSongBtn').onclick = () => {
-      if (currentIndex > -1 && currentIndex < list.length - 1) {
-        showSongViewUI(list[currentIndex + 1], listName, 'nav_next');
-      }
-    };
+  // Build footer matching Home | Lists tabbar structure exactly
+  const footer = document.createElement('div');
+  footer.className = 'song-footer-nav tabbar ons-tabbar__footer';
+  
+  footer.innerHTML = `
+    <div class="bottom-tabbar__row">
+      <button class="footer-nav-prev tabbar-btn" data-song-id="${escapeHtml(prevId)}">
+        <div class="left">
+          <svg class="footer-nav-icon" viewBox="0 -960 960 960" height="20px" width="20px" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+          </svg>
+        </div>
+        <span class="footer-nav-title">${escapeHtml(prevRec.first_line || prevRec.title || 'Unknown')}</span>
+      </button>
+      <div class="footer-nav-divider">|</div>
+      <button class="footer-nav-next tabbar-btn" data-song-id="${escapeHtml(nextId)}">
+        <span class="footer-nav-title">${escapeHtml(nextRec.first_line || nextRec.title || 'Unknown')}</span>
+        <div class="left">
+          <svg class="footer-nav-icon" viewBox="0 -960 960 960" height="20px" width="20px" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+  `;
 
-    return navBar;
+  // Tap/click handlers — replacePage to avoid back-history stack
+  footer.querySelector('.footer-nav-prev').onclick = () => {
+    document.getElementById('navigator').replacePage('tmpl-songview', {
+      data: { songId: prevId, listName, songList, skipRecent: true }
+    });
+  };
+  footer.querySelector('.footer-nav-next').onclick = () => {
+    document.getElementById('navigator').replacePage('tmpl-songview', {
+      data: { songId: nextId, listName, songList, skipRecent: true }
+    });
   };
 
-  const content = page.querySelector('.page__content');
-  content.after(createNavBar());
+  // Place immediately after the footer spacer so it sits at the very end
+  const spacer = page.querySelector('#footerSpacer');
+  if (spacer && spacer.parentNode) {
+    spacer.parentNode.insertBefore(footer, spacer.nextSibling);
+  } else {
+    const content = page.querySelector('.page__content');
+    if (content) content.appendChild(footer);
+  }
+
+  // Activate marquee scrolling for long titles
+  requestAnimationFrame(() => {
+    footer.querySelectorAll('.footer-nav-title').forEach(span => {
+      const overflow = span.scrollWidth - span.clientWidth;
+      if (overflow > 0) {
+        const duration = Math.max(5, Math.min(16, overflow / 20));
+        span.style.setProperty('--marquee-offset', `-${overflow}px`);
+        span.style.setProperty('--marquee-duration', `${duration}s`);
+        span.classList.add('marquee');
+      }
+    });
+  });
 }
 
 async function initPageState() {
@@ -302,37 +386,22 @@ function gestureInit(verseList, page) {
     pageContent.scrollTop = startScrollTop + distance;
   });
 
-  // Dynamic Alignment, Context Awareness, Visual Consistency
-  /*
-  gestureDetector.on('dragend', (event) => {
-    if (isPinching) return;
-
-    const snapPoint = toolbarBottom();
-    const verses = Array.from(verseList.querySelectorAll('.verse-container'));
-    let closestVerse = null;
-    let minDistance = Infinity;
-
-    verses.forEach((verse) => {
-      const rect = verse.getBoundingClientRect();
-      const distance = Math.abs(rect.top - snapPoint);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestVerse = verse;
-      }
-    });
-
-    if (closestVerse) {
-      const verseRect = closestVerse.getBoundingClientRect();
-      const targetScroll = pageContent.scrollTop + (verseRect.top - snapPoint);
-      pageContent.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    }
-  }); */
-
   // Swipe left/right navigates to next/prev song (only meaningful in list context)
   gestureDetector.on('swipeleft swiperight', (event) => {
     if (isPinching) return;
-    const btnSelector = event.type === 'swiperight' ? '.prevSongBtn' : '.nextSongBtn';
-    page.querySelector(btnSelector)?.click();
+    
+    // Find the footer nav buttons if they exist, otherwise fall back to old nav
+    const isPrev = event.type === 'swiperight';
+    const footerBtn = page.querySelector(isPrev ? '.footer-nav-prev' : '.footer-nav-next');
+    
+    if (footerBtn) {
+      footerBtn.click();
+    } else {
+      // Legacy fallback for old listSongView nav bar
+      const btnSelector = isPrev ? '.prevSongBtn' : '.nextSongBtn';
+      const btn = page.querySelector(btnSelector);
+      if (btn && !btn.disabled) btn.click();
+    }
   });
 
   gestureDetector.on('pinchstart', () => {
@@ -352,8 +421,7 @@ function gestureInit(verseList, page) {
     dbSetItem('zoomSize', appState.zoomSize);
   });
 
-  // Double-tap toggles translation visibility (only meaningful if a
-  // translation exists — expandable-content is empty otherwise anyway).
+  // Double-tap toggles translation visibility (if translation exists).
   gestureDetector.on('doubletap', () => {
     const expandableItems = verseList.querySelectorAll('ons-list-item[expandable]');
     if (expandableItems.length === 0) return;
@@ -405,7 +473,7 @@ function render_verses(verseList, page, songId, song) {
       </ons-list-item>
     `);
 
-    // Disable single-tap expansion so only double-tap toggles all translations
+    // Double-tap toggles all translations
     item.toggleExpansion = () => {};
 
     fragment.appendChild(item);

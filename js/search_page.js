@@ -164,6 +164,22 @@ function search_page_init(page) {
 
   const defaultImg = page.querySelector('.default_img_container');
   if (defaultImg) fitElementToPage(defaultImg);
+
+  /* scroll-to-top FAB */
+  const scrollArea = page.querySelector(".page__content");
+  const fab = page.querySelector("#toTop");
+  if (scrollArea && fab) {
+    scrollArea.addEventListener('scroll', () => {
+      if (scrollArea.scrollTop > 300) {
+        fab.style.opacity = "1";
+        fab.style.pointerEvents = "auto";
+        fab.style.visibility = "visible";
+      } else {
+        fab.style.opacity = "0";
+        fab.style.pointerEvents = "none";
+      }
+    });
+  }
 }
 
 /**

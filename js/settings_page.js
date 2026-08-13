@@ -1,63 +1,16 @@
 /**
  * js/settings_page.js
- * Song Language preview (sample text only — see utils.js note), Theme
- * (dark default / light opt-in / system), and a contact footer.
+ * Theme (dark default / light opt-in / system), and a contact footer.
  */
 
 function settings_page_init(page) {
   const content = page.querySelector('.gutter');
   content.innerHTML = '';
 
-  /* Choose Language */
-  /* commented till the language support is implemented
-
-  const langHeader = ons.createElement(`
-    <ons-list-header style="text-transform:none; text-align:center; font-size:1.1rem; font-style:italic; margin-top:10px; padding:12px 0 10px 0;">
-      Śrī Śrī Guru Gaurāṅga Jayatāḥ
-    </ons-list-header>
-  `);
-  content.appendChild(langHeader);
-
-  const updateHeader = () => {
-    langHeader.innerText = transliterate('EN', appState.langCode, 'light');
-  };
-
-  const langList = ons.createElement(`
-    <ons-list class="glassy" style="margin-top:5px;">
-      <ons-list-header>Song Language</ons-list-header>
-    </ons-list>
-  `);
-
-  Object.keys(window.LANGUAGES).forEach((langCode) => {
-    const label = window.LANGUAGES[langCode].label || langCode;
-    const isChecked = appState.langCode === langCode ? 'checked' : '';
-
-    const item = ons.createElement(`
-      <ons-list-item tappable>
-        <label class="left">
-          <ons-radio name="lang" input-id="lang-${langCode}" value="${langCode}" ${isChecked}></ons-radio>
-        </label>
-        <label for="lang-${langCode}" class="center">${label}</label>
-      </ons-list-item>
-    `);
-
-    item.querySelector('ons-radio').onclick = () => {
-      appState.langCode = langCode;
-      dbSetItem('langCode', langCode);
-      updateHeader();
-    };
-
-    langList.appendChild(item);
-  });
-
-  content.appendChild(langList);
-  updateHeader();
-  */
-
-  /* Choose Theme */
+  /* ─── Theme ─── */
   const themeList = ons.createElement(`
     <ons-list class="glassy" style="margin:15px 0;">
-      <ons-list-header>Theme</ons-list-header>
+      <ons-list-header modifier="material" style="text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:8px; color:var(--highlight-color);">Theme Colour</ons-list-header>
     </ons-list>
   `);
 
@@ -67,40 +20,60 @@ function settings_page_init(page) {
     { mode: 'dark', label: 'Śyāma (Dark)' }
   ];
 
+  let activeThemeSwitch = null;
+
   themes.forEach((theme) => {
-    const isChecked = appState.themeMode === theme.mode ? 'checked' : '';
-    const idSafe = theme.mode || 'system';
+    const isChecked = appState.themeMode === theme.mode;
 
     const item = ons.createElement(`
       <ons-list-item tappable>
-        <label class="left">
-          <ons-radio name="theme" input-id="theme-${idSafe}" value="${idSafe}" ${isChecked}></ons-radio>
-        </label>
-        <label for="theme-${idSafe}" class="center">${theme.label}</label>
+        <div class="center">${theme.label}</div>
+        <div class="right">
+          <ons-switch ${isChecked ? 'checked' : ''}></ons-switch>
+        </div>
       </ons-list-item>
     `);
 
-    item.querySelector('ons-radio').onclick = () => {
+    const sw = item.querySelector('ons-switch');
+    if (isChecked) activeThemeSwitch = sw;
+
+    sw.addEventListener('change', (e) => {
+      // Prevent unchecking the already-selected option
+      if (!e.target.checked) {
+        if (activeThemeSwitch === e.target) {
+          e.target.checked = true; // bounce back
+        }
+        return;
+      }
+
+      // Uncheck previous
+      if (activeThemeSwitch && activeThemeSwitch !== e.target) {
+        activeThemeSwitch.checked = false;
+      }
+      activeThemeSwitch = e.target;
+
       appState.themeMode = theme.mode;
       dbSetItem('themeMode', theme.mode);
       apply_theme();
-    };
+    });
 
     themeList.appendChild(item);
   });
 
   content.appendChild(themeList);
 
+  /* Footer */
   content.appendChild(ons.createElement(`
-    <ons-list-header style="text-transform:none; background-image:none;">
-      Questions, comments, bugs, or donations? Contact keshto@gmail.com
+    <ons-list-header style="text-transform:none; font-size:.85rem; background-image:none; text-align:center;">
+      ✦ For donations contact: <a href="mailto:keshto@gmail.com">keshto@gmail.com</a><br/>
+      ✦ For questions, suggestions, or bugs contact: <a href="https://github.com/WebKide/vedaversity/tree/main">WebKide</a>
     </ons-list-header>
   `));
 
-  /* Choose Font-family */
+  /* ─── Font ─── */
   const fontList = ons.createElement(`
     <ons-list class="glassy" style="margin:15px 0;">
-      <ons-list-header>Font Style</ons-list-header>
+      <ons-list-header modifier="material" style="text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:8px; color:var(--highlight-color);">Font Style</ons-list-header>
     </ons-list>
   `);
 
@@ -113,36 +86,62 @@ function settings_page_init(page) {
     { value: "'Tiro Devanagari Sanskrit', sans-serif", label: 'Tiro Devanagari (Elegant)' }
   ];
 
+  let activeFontSwitch = null;
+
   fonts.forEach((font) => {
-    const isChecked = appState.fontFamily === font.value ? 'checked' : '';
-    const idSafe = font.label.replace(/\s+/g, '-').toLowerCase();
+    const isChecked = appState.fontFamily === font.value;
 
     const item = ons.createElement(`
       <ons-list-item tappable>
-        <label class="left">
-          <ons-radio name="font" input-id="font-${idSafe}" value="${font.value}" ${isChecked}></ons-radio>
-        </label>
-        <label for="font-${idSafe}" class="center" style="font-family: ${font.value}">${font.label}</label>
+        <div class="center" style="font-family: ${font.value}">${font.label}</div>
+        <div class="right">
+          <ons-switch ${isChecked ? 'checked' : ''}></ons-switch>
+        </div>
       </ons-list-item>
     `);
 
-    item.querySelector('ons-radio').onclick = () => {
+    const sw = item.querySelector('ons-switch');
+    if (isChecked) activeFontSwitch = sw;
+
+    sw.addEventListener('change', (e) => {
+      // Prevent unchecking the already-selected option
+      if (!e.target.checked) {
+        if (activeFontSwitch === e.target) {
+          e.target.checked = true; // bounce back
+        }
+        return;
+      }
+
+      // Uncheck previous
+      if (activeFontSwitch && activeFontSwitch !== e.target) {
+        activeFontSwitch.checked = false;
+      }
+      activeFontSwitch = e.target;
+
       appState.fontFamily = font.value;
       dbSetItem('fontFamily', font.value);
-      apply_font(); // Helper function defined in utils.js 
-    };
+      apply_font();
+    });
 
     fontList.appendChild(item);
   });
 
-    fontList.appendChild(ons.createElement(`
+  fontList.appendChild(ons.createElement(`
+    <ons-list>
+      <ons-list-header
+        modifier="material"
+        style="text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:8px;">
+        Sample Text
+      </ons-list-header>
+
       <ons-list-header class="sample-text">
         khaḍgaḥ śāntaṁ jñānaṁ dadāti ।<br />
         gaṅgāyāṁ ṛṣiḥ kuṇḍe tiṣṭhati ।<br />
         pañca ṭīkāḥ, ṣaḍ granthāḥ ।<br />
         (kḷptaḥ) śubhaṁ bhavatu ॥
       </ons-list-header>
-    `));
+    </ons-list>
+  `));
 
   content.appendChild(fontList);
 }

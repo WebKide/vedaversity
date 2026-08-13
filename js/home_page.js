@@ -79,24 +79,65 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   const item = document.createElement('ons-list-item');
   item.setAttribute('tappable', '');
   item.className = 'recent-swipe-item';
+  item.style.cssText = 'position:relative; overflow:hidden; touch-action:pan-y; user-select:none; -webkit-user-select:none;';
 
   item.innerHTML = `
-    <div class="center">${text}</div>
-    <div class="right recent-delete-btn">
-      <ons-icon icon="md-delete" style="color:#c62828; font-size: 22px;"></ons-icon>
+    <div class="center" style="position:relative; z-index:2; background:inherit; transition:transform .25s ease; padding-right:16px;">${text}</div>
+    <div class="right recent-delete-btn"
+         style="
+           position:absolute;
+           right:0; top:0; bottom:0;
+           width:90px;
+           background:#c62828;
+           display:flex;
+           align-items:center;
+           justify-content:center;
+           gap:6px;
+           z-index:1;
+           transform:translateX(100%);
+           transition:transform .25s ease;
+           color:#fff;
+           font-weight:700;
+           font-size:14px;">
+
+      <svg viewBox="0 -960 960 960"
+           width="20"
+           height="20"
+           fill="#fff"
+           aria-hidden="true"
+           focusable="false">
+        <path d="M600-240v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120-640H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440-200H200q-33 0-56.5-23.5T120-280v-360Zm80 0v360h240v-360H200Zm0 0v360-360Z"/>
+      </svg>
+
+      <span>DEL</span>
     </div>
   `;
 
+  const center   = item.querySelector('.center');
   const deleteBtn = item.querySelector('.recent-delete-btn');
+
   deleteBtn.onclick = (e) => {
     e.stopPropagation();
     onDelete();
   };
 
-  let startX = 0;
-  let startY = 0;
-  let isHorizontal = false;
+  let startX = 0, startY = 0, isHorizontal = false, isOpen = false, longPressTimer = null;
 
+  const openSwipe = () => {
+    isOpen = true;
+    center.style.transform = 'translateX(-90px)';
+    deleteBtn.style.transform = 'translateX(0)';
+    item.classList.add('swiped');
+  };
+
+  const closeSwipe = () => {
+    isOpen = false;
+    center.style.transform = 'translateX(0)';
+    deleteBtn.style.transform = 'translateX(100%)';
+    item.classList.remove('swiped');
+  };
+
+  /* ---- Swipe ---- */
   item.addEventListener('touchstart', (e) => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -106,44 +147,48 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   item.addEventListener('touchmove', (e) => {
     const diffX = Math.abs(startX - e.touches[0].clientX);
     const diffY = Math.abs(startY - e.touches[0].clientY);
-    // Only flag as horizontal if X movement clearly dominates Y
-    if (diffX > diffY && diffX > 10) {
-      isHorizontal = true;
-    }
+    if (diffX > diffY && diffX > 10) isHorizontal = true;
   }, { passive: true });
 
   item.addEventListener('touchend', (e) => {
-    if (!isHorizontal) return; // ignore — let the vertical scroll happen
-
-    const endX = e.changedTouches[0].clientX;
-    const diff = startX - endX;
-    if (diff > 60) {
-      item.classList.add('swiped');
-    } else if (diff < -40) {
-      item.classList.remove('swiped');
-    }
+    if (!isHorizontal) return;
+    const diff = startX - e.changedTouches[0].clientX;
+    if (diff > 60) openSwipe();
+    else if (diff < -40) closeSwipe();
   });
 
-  item.onclick = () => {
-    if (item.classList.contains('swiped')) {
-      item.classList.remove('swiped');
-      return;
-    }
+  /* ---- Tap to navigate, or tap-to-close when open ---- */
+  item.addEventListener('click', (e) => {
+    if (e.target.closest('.recent-delete-btn')) return;
+    if (isOpen) { closeSwipe(); return; }
     onClick();
-  };
+  });
+
+  /* ---- Long-press / right-click to reveal delete button ---- */
+  item.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    longPressTimer = setTimeout(() => {
+      openSwipe();
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 500);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(evt =>
+    item.addEventListener(evt, () => clearTimeout(longPressTimer))
+  );
 
   item.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    onDelete();
+    openSwipe();
   });
 
   return item;
 }
 
 function render_recentListItems(page) {
-  const container = page.querySelector('#recents-items');
-  const header = page.querySelector('#recentHeader');
-  const recentsWrap = page.querySelector('#recents');
+  const scope = page || document;
+  const container = scope.querySelector('#recents-items');
+  const header = scope.querySelector('#recentHeader');
+  const recentsWrap = scope.querySelector('#recents');
   if (!container) return;
 
   container.innerHTML = '';
