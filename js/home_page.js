@@ -40,6 +40,20 @@ function shell_page_init(page) {
   page.querySelector('#pronounceGuide').onclick = () => navEl.pushPage('tmpl-pronounce');
   page.querySelector('#settingsBtn').onclick = () => navEl.pushPage('tmpl-settings');
 
+  // --- Home image version caption tap ---
+  const imgWrap = page.querySelector('.home-image-wrap');
+  let captionTimer;
+  if (imgWrap) {
+    imgWrap.addEventListener('click', () => {
+      imgWrap.classList.add('is-visible');
+      clearTimeout(captionTimer);
+      captionTimer = setTimeout(() => {
+        console.log('Hiding caption...'); // Debug check
+        imgWrap.classList.remove('is-visible');
+      }, 5200);
+    });
+  }
+
   // --- Lists tab wiring ---
   page.querySelector('#createListBtn').onclick = () => inputDialogAddListUI(page);
 
@@ -90,19 +104,20 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
            width:90px;
            background:#c62828;
            display:flex;
+           flex-direction:column;
            align-items:center;
-           justify-content:center;
-           gap:6px;
+           justify-content:space-between;
+           padding:12px 0;
            z-index:1;
            transform:translateX(100%);
            transition:transform .25s ease;
            color:#fff;
-           font-weight:700;
-           font-size:14px;">
+           font-weight:400;
+           font-size:.65rem;">
 
       <svg viewBox="0 -960 960 960"
-           width="20"
-           height="20"
+           width="32"
+           height="32"
            fill="#fff"
            aria-hidden="true"
            focusable="false">

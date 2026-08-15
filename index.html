@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.37</title>
+  <title>Kīrtan App v1.38</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -65,19 +65,21 @@
         <!-- ===== Home tab ===== -->
         <div id="tab-home">
           <div class="gutter">
+
             <div id="search-trigger" class="search-bar">
               <svg class="search-icon" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
                 <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
               </svg>
               <span class="search-placeholder">Search</span>
             </div>
+
             <ons-list>
               <ons-list-header id="recentHeader" style="display:none;">
                 <div class="left">
                   <svg class="sort-icon"
                        viewBox="0 -960 960 960"
-                       height="32px" 
-                       width="32px" 
+                       height="32px"
+                       width="32px"
                        fill="var(--highlight-color)"
                        aria-hidden="true"
                        focusable="false">
@@ -99,14 +101,16 @@
                 <div id="recents-items" class="recents-scroll"></div>
               </div>
             </ons-list>
+
             <ons-list class="glassy" style="margin-top: 15px;">
+
               <ons-list-item modifier="chevron" tappable id="allSongs">
                 <div class="left">
                   <svg class="search-icon"
                        viewBox="0 -960 960 960"
-                       height="32px" 
-                       width="32px" 
-                       style="fill: var(--highlight-color);"
+                       height="32px"
+                       width="32px"
+                       fill="var(--highlight-color)"
                        aria-hidden="true"
                        focusable="false">
                     <path d="m80-280 150-400h86l150 400h-82l-34-96H196l-32 96H80Zm140-164h104l-48-150h-6l-50 150Zm328 164v-76l202-252H556v-72h282v76L638-352h202v72H548ZM360-760l120-120 120 120H360ZM480-80 360-200h240L480-80Z"/>
@@ -114,12 +118,13 @@
                 </div>
                 Songs alphabetized
               </ons-list-item>
+
               <ons-list-item modifier="chevron" tappable id="pronounceGuide">
                 <div class="left">
                   <svg class="eq-icon"
                        viewBox="0 -960 960 960"
-                       height="32px" 
-                       width="32px" 
+                       height="32px"
+                       width="32px"
                        fill="var(--highlight-color)"
                        aria-hidden="true"
                        focusable="false">
@@ -128,12 +133,13 @@
                 </div>
                 Pronunciation Guide
               </ons-list-item>
+
               <ons-list-item modifier="chevron" tappable id="settingsBtn">
                 <div class="left">
                   <svg class="settings-icon"
                        viewBox="0 0 24 24"
-                       height="32px" 
-                       width="32px" 
+                       height="32px"
+                       width="32px"
                        fill="var(--highlight-color)"
                        aria-hidden="true"
                        focusable="false">
@@ -142,12 +148,15 @@
                 </div>
                 Settings
               </ons-list-item>
+
             </ons-list>
             <div class="default_img_container" style="display:block; padding-top:15px; text-align:center;">
               <div class="home-image-wrap">
                 <img src="img/home_default.png" alt="Home">
                 <div class="home-image-caption">
-                  <span class="home-image-heading" id="appVersionCaption">Kirtan v1.37</span>
+                  <span class="home-image-heading" 
+                        id="appVersionCaption">Kīrtan App v1.38</span>
+                  <span class="home-image-subtitle">fork by WebKide</span>
                 </div>
               </div>
             </div>
@@ -203,8 +212,8 @@
             <div class="left">
               <svg class="home-icon"
                    viewBox="0 0 24 24"
-                   height="24px" 
-                   width="24px" 
+                   height="24px"
+                   width="24px"
                    fill="currentColor"
                    aria-hidden="true"
                    focusable="false">
@@ -217,8 +226,8 @@
             <div class="left">
               <svg class="lists-icon"
                    viewBox="0 0 24 24"
-                   height="24px" 
-                   width="24px" 
+                   height="24px"
+                   width="24px"
                    fill="currentColor"
                    aria-hidden="true"
                    focusable="false">
@@ -262,8 +271,8 @@
         <div class="left">
           <svg class="back-icon"
                viewBox="0 -960 960 960"
-               height="24px" 
-               width="24px" 
+               height="24px"
+               width="24px"
                fill="var(--highlight-color)"
                aria-hidden="true"
                focusable="false">

@@ -106,9 +106,9 @@
   --tabbar-text-color: var(--gray-lighter);
   --tabbar-highlight-text-color: var(--highlight-color);
   --tabbar-border-color: var(--border-color);
-  --switch-highlight-color: var(--highlight-color);
-  --switch-border-color: var(--border-color);
-  --switch-background-color: transparent;
+  --switch-highlight-color: #4caf50;
+  --switch-border-color: rgba(255, 255, 255, 0.2);
+  --switch-background-color: #424242;
   --range-track-background-color: var(--gray-dark);
   --range-track-background-color-active: var(--highlight-color);
   --range-thumb-background-color: var(--highlight-color);
@@ -146,10 +146,10 @@
   --material-text-color: var(--text-color);
   --material-notification-background-color: var(--second-highlight-color);
   --material-notification-color: var(--text-color);
-  --material-switch-active-thumb-color: var(--highlight-color);
-  --material-switch-active-background-color: transparent;
-  --material-switch-inactive-thumb-color: var(--gray-light);
-  --material-switch-inactive-background-color: transparent;
+  --material-switch-active-thumb-color: #4caf50;
+  --material-switch-active-background-color: #2e7d32;
+  --material-switch-inactive-thumb-color: #bdbdbd;
+  --material-switch-inactive-background-color: #424242;
   --material-range-track-color: var(--range-track-background-color);
   --material-range-thumb-color: var(--highlight-color);
   --material-range-disabled-thumb-color: var(--gray-darker);
@@ -220,6 +220,13 @@
   --text-color: #1f1f21;
   --sub-text-color: #444;
   --highlight-color: #0077b6;
+  --switch-highlight-color: #4caf50;
+  --switch-border-color: rgba(0, 0, 0, 0.15);
+  --switch-background-color: #bdbdbd;
+  --material-switch-active-thumb-color: #4caf50;
+  --material-switch-active-background-color: #66bb6a;
+  --material-switch-inactive-thumb-color: #f5f5f5;
+  --material-switch-inactive-background-color: #bdbdbd;
   --second-highlight-color: #25a6d9;
   --border-color: #ccc;
   --active-overlay: #d9d9d9;
@@ -1392,6 +1399,41 @@ ons-toolbar {
    ADDITIONAL APP-SPECIFIC HELPERS STYLES.CSS
    ============================================================ */
 
+/* Force-update spinner */
+@keyframes spin-360 {
+  to { transform: rotate(360deg); }
+}
+#forceUpdateBtn.is-working .update-icon {
+  animation: spin-360 1s linear infinite;
+}
+
+/* Sharp, glow-free switches */
+.switch,
+.switch__toggle,
+.switch__handle {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Crisp thumb — flat white like modern iOS */
+.switch__handle {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Subtle border on the track for edge definition */
+.switch__toggle {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Light theme track border override */
+:root.theme-light .switch__toggle {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
 /* SortableJS helpers */
 .sortable-chosen {
   background-color: var(--sortable-chosen-bg);
@@ -1665,7 +1707,8 @@ ons-list-item .center.search-result {
   bottom: 0;
   height: auto;
   min-height: 25%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.6);
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -1679,20 +1722,23 @@ ons-list-item .center.search-result {
   z-index: 2;
 }
 
-/* Desktop: hover */
-.home-image-wrap:hover .home-image-caption {
-  transform: translateY(0%);
-}
-
-/* Mobile: toggled via JS (see below) */
+/* Toggled via JS only */
 .home-image-wrap.is-visible .home-image-caption {
   transform: translateY(0%);
 }
 
 .home-image-heading {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: .85rem;
   line-height: 1.2;
+}
+
+.home-image-subtitle {
+  font-weight: 400;
+  font-size: .65rem;
+  line-height: 1.3;
+  opacity: 0.75;
+  margin-top: 2px;
 }
 
 /* ═══ Intro slideshow frame ═══ */

@@ -144,4 +144,110 @@ function settings_page_init(page) {
   `));
 
   content.appendChild(fontList);
+
+  /* ─── App Update ─── */
+  const updateBlock = ons.createElement(`
+    <ons-list class="glassy" style="margin:15px 0;">
+      <ons-list-header modifier="material" style="text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:8px; color:var(--highlight-color);">App Update</ons-list-header>
+      <ons-list-item id="forceUpdateBtn" tappable>
+        <div class="left">
+          <svg class="update-icon" viewBox="0 -960 960 960" width="32" height="32" fill="var(--highlight-color)">
+            <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q82 0 155.5 35T760-706v-94h80v240H600v-80h110q-41-56-101-88t-129-32q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200q105 0 182.5-67T755-418h82q-15 137-117.5 227.5T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/>
+          </svg>
+        </div>
+        <div class="center">
+          <div class="update-title" style="font-weight:600;">Check for updates</div>
+          <div class="update-subtitle" style="font-size:0.8rem; opacity:0.7;">manually check for new version</div>
+        </div>
+      </ons-list-item>
+    </ons-list>
+  `);
+  content.appendChild(updateBlock);
+
+  const updateBtn = updateBlock.querySelector('#forceUpdateBtn');
+  const uTitle    = updateBtn.querySelector('.update-title');
+  const uSub      = updateBtn.querySelector('.update-subtitle');
+  const uIcon     = updateBtn.querySelector('.update-icon');
+
+  const resetUpdate = () => {
+    updateBtn.classList.remove('is-working', 'is-success', 'is-error');
+    uTitle.textContent = 'Check for updates';
+    uSub.textContent   = 'manually check for new version';
+    uIcon.style.fill   = 'var(--highlight-color)';
+  };
+
+  updateBtn.addEventListener('click', async () => {
+    if (updateBtn.classList.contains('is-working')) return;
+
+    /* Second tap when update is ready → install & reload */
+    if (updateBtn.classList.contains('is-success')) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg && reg.waiting) {
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        return;
+      }
+    }
+
+    if (!('serviceWorker' in navigator)) {
+      updateBtn.classList.add('is-error');
+      uTitle.textContent = 'Update Unavailable';
+      uSub.textContent   = 'service workers not supported';
+      uIcon.style.fill   = '#f44336';
+      setTimeout(resetUpdate, 2500);
+      return;
+    }
+
+    updateBtn.classList.add('is-working');
+    uTitle.textContent = 'Checking for Update';
+    uSub.textContent   = 'please wait';
+
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) throw new Error('no registration');
+
+      await reg.update();
+      await new Promise(r => setTimeout(r, 800));
+
+      updateBtn.classList.remove('is-working');
+
+      if (reg.waiting) {
+        updateBtn.classList.add('is-success');
+        uTitle.textContent = 'Update Ready';
+        uSub.textContent   = 'tap to install and restart';
+        uIcon.style.fill   = '#4caf50';
+      } else if (reg.installing) {
+        updateBtn.classList.add('is-working');
+        uTitle.textContent = 'Downloading Update';
+        uSub.textContent   = 'please wait';
+        await new Promise(r => setTimeout(r, 2000));
+        updateBtn.classList.remove('is-working');
+        if (reg.waiting) {
+          updateBtn.classList.add('is-success');
+          uTitle.textContent = 'Update Ready';
+          uSub.textContent   = 'tap to install and restart';
+          uIcon.style.fill   = '#4caf50';
+        } else {
+          updateBtn.classList.add('is-success');
+          uTitle.textContent = 'No New Version Found';
+          uSub.textContent   = 'you are currently up to date';
+          uIcon.style.fill   = '#4caf50';
+          setTimeout(resetUpdate, 2500);
+        }
+      } else {
+        updateBtn.classList.add('is-success');
+        uTitle.textContent = 'No New Version Found';
+        uSub.textContent   = 'you are currently up to date';
+        uIcon.style.fill   = '#4caf50';
+        setTimeout(resetUpdate, 2500);
+      }
+    } catch (err) {
+      console.error('[ForceUpdate]', err);
+      updateBtn.classList.remove('is-working');
+      updateBtn.classList.add('is-error');
+      uTitle.textContent = 'Check failed';
+      uSub.textContent   = 'try again later';
+      uIcon.style.fill   = '#f44336';
+      setTimeout(resetUpdate, 2500);
+    }
+  });
 }

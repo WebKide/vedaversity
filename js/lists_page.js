@@ -154,7 +154,7 @@ function render_tattvaLists(page) {
       {
         title: 'kirūpe pāiba sevā mui durācāra',
         firstline: 'kirupe paiba seva mui duracara',
-        file: 'dz.json' },
+        file: 'eE.json' },
       {
         title: 'sakala vaiṣṇava gosāī dayā kara more',
         firstline: 'sakala vaisnava gosai daya kara more',
