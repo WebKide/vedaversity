@@ -373,7 +373,8 @@ function gestureInit(verseList, page) {
   let pinchStartSize = 0;
 
   const gestureDetector = ons.GestureDetector(verseList);
-  const toolbarBottom = () => page.querySelector('ons-toolbar')?.getBoundingClientRect().bottom || 0;
+  const toolbarBottom = () =>
+    page.querySelector('ons-toolbar')?.getBoundingClientRect().bottom || 0;
 
   gestureDetector.on('dragstart', () => {
     if (!isPinching) startScrollTop = pageContent.scrollTop;
@@ -382,24 +383,29 @@ function gestureInit(verseList, page) {
   gestureDetector.on('dragmove', (event) => {
     if (isPinching) return;
     event.gesture.preventDefault();
-    const distance = event.gesture.distance * (event.gesture.direction === 'down' ? -1 : 1);
+
+    const distance =
+      event.gesture.distance *
+      (event.gesture.direction === 'down' ? -1 : 1);
+
     pageContent.scrollTop = startScrollTop + distance;
   });
 
-  // Swipe left/right navigates to next/prev song (only meaningful in list context)
+  // Swipe left/right navigates to next/prev song
   gestureDetector.on('swipeleft swiperight', (event) => {
     if (isPinching) return;
-    
-    // Find the footer nav buttons if they exist, otherwise fall back to old nav
+
     const isPrev = event.type === 'swiperight';
-    const footerBtn = page.querySelector(isPrev ? '.footer-nav-prev' : '.footer-nav-next');
-    
+    const footerBtn = page.querySelector(
+      isPrev ? '.footer-nav-prev' : '.footer-nav-next'
+    );
+
     if (footerBtn) {
       footerBtn.click();
     } else {
-      // Legacy fallback for old listSongView nav bar
       const btnSelector = isPrev ? '.prevSongBtn' : '.nextSongBtn';
       const btn = page.querySelector(btnSelector);
+
       if (btn && !btn.disabled) btn.click();
     }
   });
@@ -411,8 +417,14 @@ function gestureInit(verseList, page) {
 
   gestureDetector.on('pinch', (event) => {
     if (!isPinching) return;
+
     const scale = 1 + 0.5 * (event.gesture.scale - 1);
-    appState.zoomSize = Math.min(42, Math.max(10, Math.round(pinchStartSize * scale)));
+
+    appState.zoomSize = Math.min(
+      42,
+      Math.max(10, Math.round(pinchStartSize * scale))
+    );
+
     fontSizeUpdate();
   });
 
@@ -421,17 +433,84 @@ function gestureInit(verseList, page) {
     dbSetItem('zoomSize', appState.zoomSize);
   });
 
-  // Double-tap toggles translation visibility (if translation exists).
-  gestureDetector.on('doubletap', () => {
-    const expandableItems = verseList.querySelectorAll('ons-list-item[expandable]');
-    if (expandableItems.length === 0) return;
+  // Double-tap toggles ALL translations while keeping
+  // the tapped verse fixed at the same screen position.
+  gestureDetector.on('doubletap', (event) => {
+    const expandableItems =
+      verseList.querySelectorAll('ons-list-item[expandable]');
 
-    appState.trans = !expandableItems[0].hasAttribute('expanded');
+    if (expandableItems.length === 0 || !pageContent) return;
+
+    const tapEl =
+      event.target instanceof Element
+        ? event.target
+        : event.target?.parentElement;
+
+    const targetItem =
+      tapEl?.closest('ons-list-item[expandable]');
+
+    if (!targetItem) return;
+
+    // Remember the exact visual position of the tapped verse.
+    const anchorY =
+      targetItem.getBoundingClientRect().top;
+
+    // Prevent the browser from independently moving the scroll
+    // position while the list changes height.
+    const previousOverflowAnchor =
+      pageContent.style.overflowAnchor;
+
+    pageContent.style.overflowAnchor = 'none';
+
+    const willExpand =
+      !targetItem.hasAttribute('expanded');
+
+    appState.trans = willExpand;
+
     expandableItems.forEach((item) => {
-      if (appState.trans) item.setAttribute('expanded', '');
-      else item.removeAttribute('expanded');
+      if (willExpand) {
+        item.setAttribute('expanded', '');
+      } else {
+        item.removeAttribute('expanded');
+      }
     });
+
     dbSetItem('trans', appState.trans);
+
+    // Wait until the target's position has stopped changing.
+    let lastY = null;
+    let stableFrames = 0;
+    const requiredStableFrames = 3;
+
+    function settle() {
+      const currentY =
+        targetItem.getBoundingClientRect().top;
+
+      if (lastY !== null && Math.abs(currentY - lastY) < 0.5) {
+        stableFrames++;
+      } else {
+        stableFrames = 0;
+      }
+
+      lastY = currentY;
+
+      if (stableFrames < requiredStableFrames) {
+        requestAnimationFrame(settle);
+        return;
+      }
+
+      // How far did the anchor move?
+      const delta = currentY - anchorY;
+
+      // Move the scroll position by exactly that amount.
+      pageContent.scrollTop += delta;
+
+      // Restore normal browser scroll anchoring.
+      pageContent.style.overflowAnchor =
+        previousOverflowAnchor;
+    }
+
+    requestAnimationFrame(settle);
   });
 }
 

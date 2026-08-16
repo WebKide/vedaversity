@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.38';
+const VERSION = 'v1.39';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -71,6 +71,7 @@ const ASSETS = [
   BASE + '/js/dependencies/Sortable.min.js',
   BASE + '/js/all_songs_page.js',
   BASE + '/js/app.js',
+  BASE + '/js/author_page.js',
   BASE + '/js/home_page.js',
   BASE + '/js/list_page.js',
   BASE + '/js/lists_page.js',

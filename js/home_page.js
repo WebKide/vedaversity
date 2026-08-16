@@ -37,6 +37,7 @@ function shell_page_init(page) {
   }
 
   page.querySelector('#allSongs').onclick = () => navEl.pushPage('tmpl-all-songs');
+  page.querySelector('#authorsBtn').onclick = () => navEl.pushPage('tmpl-authors');
   page.querySelector('#pronounceGuide').onclick = () => navEl.pushPage('tmpl-pronounce');
   page.querySelector('#settingsBtn').onclick = () => navEl.pushPage('tmpl-settings');
 
@@ -96,7 +97,7 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   item.style.cssText = 'position:relative; overflow:hidden; touch-action:pan-y; user-select:none; -webkit-user-select:none;';
 
   item.innerHTML = `
-    <div class="center" style="position:relative; z-index:2; background:inherit; transition:transform .25s ease; padding-right:16px;">${text}</div>
+    <div class="center" style="position:relative; z-index:2; background:inherit; transition:margin-right .25s ease; padding-right:16px;">${text}</div>
     <div class="right recent-delete-btn"
          style="
            position:absolute;
@@ -137,17 +138,21 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   };
 
   let startX = 0, startY = 0, isHorizontal = false, isOpen = false, longPressTimer = null;
+  let suppressNextClick = false;
 
   const openSwipe = () => {
+    if (isOpen) return;
     isOpen = true;
-    center.style.transform = 'translateX(-90px)';
+    center.style.marginRight = '90px';
     deleteBtn.style.transform = 'translateX(0)';
     item.classList.add('swiped');
+    suppressNextClick = true;
   };
 
   const closeSwipe = () => {
+    if (!isOpen) return;
     isOpen = false;
-    center.style.transform = 'translateX(0)';
+    center.style.marginRight = '0';
     deleteBtn.style.transform = 'translateX(100%)';
     item.classList.remove('swiped');
   };
@@ -175,6 +180,10 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   /* ---- Tap to navigate, or tap-to-close when open ---- */
   item.addEventListener('click', (e) => {
     if (e.target.closest('.recent-delete-btn')) return;
+    if (suppressNextClick) {
+      suppressNextClick = false;
+      return;
+    }
     if (isOpen) { closeSwipe(); return; }
     onClick();
   });
@@ -194,6 +203,11 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   item.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     openSwipe();
+  });
+
+  /* Tap elsewhere on the page to close this swipe */
+  document.addEventListener('click', (e) => {
+    if (isOpen && !item.contains(e.target)) closeSwipe();
   });
 
   return item;

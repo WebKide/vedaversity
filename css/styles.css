@@ -1928,6 +1928,24 @@ ons-list-item .center.search-result {
   transition: transform 0.25s ease;
 }
 
+/* Alternating row tint for list-detail songs */
+#list-list .recent-swipe-item:nth-child(even) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+#list-list .recent-swipe-item:nth-child(even) .center {
+  background: transparent;
+}
+
+/* Alternating row tint for home-page recents */
+#recents-items .recent-swipe-item:nth-child(even) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+#recents-items .recent-swipe-item:nth-child(even) .center {
+  background: transparent;
+}
+
 /* ═══════════════════════════════════════════════════════════
    2. Font-size toolbar buttons (SongView)
    ═══════════════════════════════════════════════════════════ */

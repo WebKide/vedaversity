@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.38</title>
+  <title>Kīrtan App v1.39</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -119,6 +119,21 @@
                 Songs alphabetized
               </ons-list-item>
 
+              <ons-list-item modifier="chevron" tappable id="authorsBtn">
+                <div class="left">
+                  <svg class="author-icon"
+                       viewBox="0 -960 960 960"
+                       height="32px"
+                       width="32px"
+                       fill="var(--highlight-color)"
+                       aria-hidden="true"
+                       focusable="false">
+                    <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/>
+                  </svg>
+                </div>
+                Vaiṣṇava Authors
+              </ons-list-item>
+
               <ons-list-item modifier="chevron" tappable id="pronounceGuide">
                 <div class="left">
                   <svg class="eq-icon"
@@ -155,7 +170,7 @@
                 <img src="img/home_default.png" alt="Home">
                 <div class="home-image-caption">
                   <span class="home-image-heading" 
-                        id="appVersionCaption">Kīrtan App v1.38</span>
+                        id="appVersionCaption">Kīrtan App v1.39</span>
                   <span class="home-image-subtitle">forked by WebKide</span>
                 </div>
               </div>
@@ -414,6 +429,36 @@
     </ons-page>
   </template>
 
+  <template id="tmpl-authors">
+    <ons-page class="page" id="authors_page" data-init-fn="author_page_init">
+      <ons-toolbar modifier="cover-content transparent">
+        <div class="left">
+          <button class="back-btn" onclick="document.getElementById('navigator').popPage()">
+            <svg class="back-icon" viewBox="0 -960 960 960" width="24" height="24" fill="var(--highlight-color)" aria-hidden="true" focusable="false">
+              <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+            </svg>
+            <span>Back</span>
+          </button>
+        </div>
+        <div class="center">Authors</div>
+      </ons-toolbar>
+      <div class="page__content">
+        <div class="gutter">
+          <ons-list id="author-list" class="glassyEach"></ons-list>
+        </div>
+      </div>
+      <ons-fab id="toTop"
+               style="opacity: 0; pointer-events: none; transition: all 0.3s;"
+               position="bottom right"
+               class="glassyFloat"
+               onclick='document.querySelector("#authors_page .page__content").scrollTo({top:0,behavior:"smooth"})'>
+        <svg class="to-top-icon" viewBox="0 0 24 24" height="24px" width="24px" fill="var(--highlight-color)" aria-hidden="true" focusable="false">
+          <path d="M11 16h2v-4.2l1.6 1.6L16 12l-4-4-4 4 1.4 1.4 1.6-1.6zm1 6c-1.4 0-2.7-.3-3.9-.8S5.8 20 4.9 19.1s-1.6-2-2.1-3.2S2 13.4 2 12s.3-2.7.8-3.9S4 5.8 4.9 4.9s2-1.6 3.2-2.1S10.6 2 12 2s2.7.3 3.9.8 2.3 1.2 3.2 2.1 1.6 2 2.1 3.2.8 2.5.8 3.9-.3 2.7-.8 3.9-1.2 2.3-2.1 3.2-2 1.6-3.2 2.1-2.5.8-3.9.8m0-2c2.2 0 4.1-.8 5.7-2.3 1.5-1.5 2.3-3.4 2.3-5.7s-.8-4.1-2.3-5.7C16.1 4.8 14.2 4 12 4s-4.1.8-5.7 2.3S4 9.8 4 12s.8 4.1 2.3 5.7C7.9 19.2 9.8 20 12 20"/>
+        </svg>
+      </ons-fab>
+    </ons-page>
+  </template>
+
   <!-- Pronunciation guide (static, no audio) -->
   <template id="tmpl-pronounce">
     <ons-page class="page" id="pronounce_page" data-init-fn="pronounce_page_init">
@@ -606,6 +651,7 @@
   <script src="js/search_page.js"></script>
   <script src="js/settings_page.js"></script>
   <script src="js/pronounce_page.js"></script>
+  <script src="js/author_page.js"></script>
   <script src="js/songView_page.js"></script>
 </body>
 </html>
