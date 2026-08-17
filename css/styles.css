@@ -403,12 +403,15 @@ ons-toolbar .center.author-container {
   font-weight: 400;
 }
 
+.author-line { padding-bottom: 8px; }
+
 /* Title text styling */
 .title-line .title-text {
   color: var(--highlight-color);
   text-transform: capitalize;
   font-weight: 700;
   line-height: 1.2;
+  font-size: 1rem;
 }
 
 @keyframes marquee-scroll {
@@ -1125,6 +1128,20 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* #songViewMenuBtn  — no direct styles; styled via ons-toolbar */
 
+/* Centre the song-view menu popover like a true modal */
+#songViewPopover {
+  top: 25% !important;
+  left: 65% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  position: fixed !important;
+}
+
+#songViewPopover .popover__arrow {
+  display: none !important;
+}
+
 /* #songViewPopover */
 #songViewPopover ons-list-item {
   color: var(--highlight-color);
@@ -1326,13 +1343,13 @@ ons-popover div.popover__content {
 
 /* ons-tabbar  — replaced by custom .bottom-tabbar in this SPA */
 
-/* ons-toolbar */
+/* ons-toolbar
 ons-toolbar .center.author-container {
   line-height: unset;
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
+} */
 
 .toolbar {
   border-top-left-radius: 0;
@@ -1501,36 +1518,57 @@ ons-toolbar {
 
 /* 1. Reset: Remove the default Onsen UI chevron borders for these specific items */
 #allSongs::before,
+#authorsBtn::before,
 #pronounceGuide::before,
 #settingsBtn::before {
   content: "";
   position: absolute;
   top: 50%;
   right: 14px; /* Adjust distance from right edge */
+
   width: 28px;  /* Adjust icon size */
   height: 28px; /* Adjust icon size */
+
   transform: translateY(-50%);
-  border: none !important; /* This is the critical part to remove the old chevron */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+
+  background-color: var(--highlight-color);
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  border: none !important;
 }
 
 /* 2. Assign the specific SVG icons */
 
 /* Alphabetized Icon */
 #allSongs::before {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23feb913"><path d="m298-262-56-56 121-122H80v-80h283L242-642l56-56 218 218-218 218Zm222-18v-80h360v80H520Zm0-320v-80h360v80H520Zm120 160v-80h240v80H640Z"/></svg>');
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="m298-262-56-56 121-122H80v-80h283L242-642l56-56 218 218-218 218Zm222-18v-80h360v80H520Zm0-320v-80h360v80H520Zm120 160v-80h240v80H640Z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="m298-262-56-56 121-122H80v-80h283L242-642l56-56 218 218-218 218Zm222-18v-80h360v80H520Zm0-320v-80h360v80H520Zm120 160v-80h240v80H640Z"/></svg>');
+}
+
+/* Authors Icon */
+#authorsBtn::before {
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="m298-262-56-56 121-122H80v-80h283L242-642l56-56 218 218-218 218Zm222-18v-80h360v80H520Zm0-320v-80h360v80H520Zm120 160v-80h240v80H640Z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="m298-262-56-56 121-122H80v-80h283L242-642l56-56 218 218-218 218Zm222-18v-80h360v80H520Zm0-320v-80h360v80H520Zm120 160v-80h240v80H640Z"/></svg>');
 }
 
 /* Pronunciation Icon */
 #pronounceGuide::before {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23feb913"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
 }
 
 /* Settings Icon */
 #settingsBtn::before {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23feb913"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
 }
 
 /* The container for the buttons */
@@ -2101,4 +2139,69 @@ ons-toolbar .right .lb-icon-btn {
   .song-footer-nav .footer-nav-title {
     font-size: 0.8rem;
   }
+}
+
+.song-file-name {
+  color: var(--sub-text-color);
+  font-size: .5rem;
+  font-family: 'Ubuntu Sans', sans-serif;
+  vertical-align: .25em;
+  font-style: normal;
+  font-weight: 400;
+  margin-left: 6px;
+  opacity: .6;
+}
+
+.total-songs-num {
+  font-family: 'Ubuntu Sans', sans-serif;
+  color: var(--sub-text-color);
+  font-size: .85rem;
+  vertical-align: .25em;
+  margin-left: 6px;
+}
+
+.sanskrit-header-wrapper {
+  min-height: 56px;
+  padding: 0;
+  background: transparent;
+}
+
+.sanskrit-header {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 6px;
+  padding-bottom: 18px;
+  margin-bottom: -18px !important;
+
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--highlight-color);
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.16) 30%,
+    rgba(255, 255, 255, 0.10) 70%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.28);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+
+  letter-spacing: 3px;
 }

@@ -12,13 +12,22 @@ function render_customLists(page) {
   container.innerHTML = '';
   const names = Object.keys(appState.lists);
 
-  appendListItems(
-    container,
-    names,
-    (name) => name,
-    (name) => showListUI(name),
-    (element, name, index) => showListContextMenu(page, element, name, index)
-  );
+  names.forEach((name) => {
+    const el = gen_swipeableListItem(
+      name,
+      name, // use listName as the ID/key
+      () => showListUI(name),
+      () => {
+        ons.notification.confirm(`Delete list "${name}"?`, { buttonLabels: ['Cancel', 'Delete'] }).then((idx) => {
+          if (idx === 1) {
+            deleteList(name);
+            render_customLists(page);
+          }
+        });
+      }
+    );
+    container.appendChild(el);
+  });
 
   container.classList.toggle('glassy', names.length > 0);
 
@@ -59,23 +68,6 @@ function inputDialogAddListUI(page, defaultValue) {
     // Jump straight into the new list, ready to add a song via Search.
     showListUI(name);
   });
-}
-
-function showListContextMenu(page, element, listName, index) {
-  const { popover, shareButton, deleteButton } = setupPopover(element, index);
-  shareButton.style.display = 'none'; // list sharing isn't part of this build
-
-  deleteButton.onclick = () => {
-    popover.hide();
-    ons.notification.confirm(`Delete list "${listName}"?`, { buttonLabels: ['Cancel', 'Delete'] }).then((idx) => {
-      if (idx === 1) {
-        deleteList(listName);
-        render_customLists(page);
-      }
-    });
-  };
-
-  popover.show(element);
 }
 
 function render_tattvaLists(page) {

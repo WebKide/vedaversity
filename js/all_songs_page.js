@@ -141,39 +141,10 @@ function buildSortedToc() {
 function createSanskritHeader(group) {
   const wrapper = document.createElement('ons-list-item');
   wrapper.setAttribute('modifier', 'nodivider');
-  wrapper.style.cssText = 'min-height:56px; padding:0; background:transparent;';
+  wrapper.className = 'sanskrit-header-wrapper';
 
   const inner = document.createElement('div');
-  inner.style.cssText = `
-    width: 100%;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 6px;
-    padding-bottom: 18px;
-    margin-bottom: -18px !important;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 0px;
-    border-bottom-left-radius: 0px;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--highlight);
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.22) 0%,
-      rgba(255, 255, 255, 0.16) 30%,
-      rgba(255, 255, 255, 0.10) 70%,
-      rgba(255, 255, 255, 0.14) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(25px) saturate(180%);
-    -webkit-backdrop-filter: blur(25px) saturate(180%);
-    letter-spacing: 3px;
-  `;
+  inner.className = 'sanskrit-header';
   inner.textContent = group.dev;
 
   wrapper.appendChild(inner);

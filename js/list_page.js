@@ -6,17 +6,69 @@
  */
 
 function list_page_init(page) {
-  const listName = page.data.listName;
-  page.querySelector('.center').innerText = listName;
+  let listName = page.data.listName;
+  const titleEl = page.querySelector('.center');
+  titleEl.innerText = listName;
+  titleEl.style.cursor = 'pointer';
+  titleEl.title = 'Tap to rename list';
+
+  titleEl.onclick = () => {
+    ons.notification.prompt({
+      title: 'Rename List',
+      message: 'Enter a new name for this list:',
+      defaultValue: listName,
+      buttonLabels: ['Cancel', 'Rename'],
+      primaryButtonIndex: 1,
+      cancelable: true
+    }).then((input) => {
+      if (input === null || input === undefined) return;
+      const newName = input.trim();
+      if (!newName || newName === listName) return;
+
+      if (appState.lists[newName]) {
+        ons.notification.toast(`A list named "${newName}" already exists`, { timeout: 2500 });
+        return;
+      }
+
+      // Perform rename
+      appState.lists[newName] = appState.lists[listName];
+      delete appState.lists[listName];
+      saveListsToDB();
+
+      // Update recents that reference this list
+      appState.recents = appState.recents.map(r => {
+        if (r.listName === listName) return { ...r, listName: newName };
+        return r;
+      });
+      dbSetItem('recents', appState.recents);
+
+      // Update local variable and page data so all closures see the new name
+      listName = newName;
+      page.data.listName = newName;
+      titleEl.innerText = newName;
+
+      ons.notification.toast(`Renamed to "${newName}"`, { timeout: 2000 });
+    });
+  };
 
   const menuBtn = page.querySelector('#listMenuBtn');
-  menuBtn.onclick = () => showListContextMenu(page, menuBtn, listName, 0);
-
-  render_songsInList(page, listName);
+  menuBtn.onclick = () => {
+    ons.notification.confirm(`Delete list "${listName}"?`, {
+      buttonLabels: ['Cancel', 'Delete']
+    }).then((idx) => {
+      if (idx === 1) {
+        deleteList(listName);
+        document.getElementById('navigator').popPage();
+      }
+    });
+  };
 
   const listElement = page.querySelector('#list-list');
-  if (window.Sortable) {
-    Sortable.create(listElement, {
+
+  function initSortable() {
+    if (!window.Sortable || !listElement) return;
+    if (listElement._sortable) listElement._sortable.destroy();
+    listElement._sortable = Sortable.create(listElement, {
       delay: 400,
       handle: '.drag-handle',
       filter: '.no-drag',
@@ -29,6 +81,15 @@ function list_page_init(page) {
       onEnd: () => saveCurrentListOrder(listElement, listName)
     });
   }
+
+  function refreshList() {
+    render_songsInList(page, listName);
+    initSortable();
+  }
+
+  refreshList();
+
+  page.onShow = refreshList;
 }
 
 function gen_addBtn(listName) {

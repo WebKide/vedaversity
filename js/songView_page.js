@@ -62,6 +62,7 @@ async function songView_page_init(page) {
   if (titleElement) {
     const firstLine = rec.first_line || '';
     const author = song.author || '';
+    const fileName = rec.file_name || songId || '';
 
     if (author) {
       titleElement.innerHTML = `
@@ -69,7 +70,10 @@ async function songView_page_init(page) {
           <span class="title-text">${escapeHtml(firstLine)}</span>
         </div>
         <div class="author-line">
-          <span class="author-text"><i>by ${escapeHtml(author)}</i></span>
+          <span class="author-text">
+            <i>by ${escapeHtml(author)}</i>
+            <span class="song-file-name"> “${escapeHtml(fileName)}”</span>
+          </span>
         </div>
       `;
       titleElement.classList.add('author-container');
@@ -152,7 +156,19 @@ async function songView_page_init(page) {
   if (typeof addRecent === 'function' && !data.skipRecent) addRecent(songId);
 
   page.onShow = (typeof keepAwake === 'function') ? keepAwake : null;
-  page.onHide = (typeof allowSleep === 'function') ? allowSleep : null;
+
+  const _origOnHide = (typeof allowSleep === 'function') ? allowSleep : null;
+  page.onHide = () => {
+    if (_origOnHide) _origOnHide();
+    // Clean up outside-click listener
+    if (page._closePopoverOnOutside) {
+      document.removeEventListener('click', page._closePopoverOnOutside);
+      page._closePopoverOnOutside = null;
+    }
+    // Also close popover if still open when leaving the page
+    const popover = page.querySelector('#songViewPopover');
+    if (popover && popover.visible) popover.hide();
+  };
 }
 
 function setupNavButtons(page, songId, listName) {
@@ -201,6 +217,17 @@ function setupMenuButtons(page, songId, songTitle) {
   const menuBtn = page.querySelector('#songViewMenuBtn');
   const popover = page.querySelector('#songViewPopover');
   menuBtn.onclick = () => popover.show(menuBtn);
+
+  // Close centered popover when tapping outside its content
+  const closeOnOutside = (e) => {
+    if (!popover.visible) return;
+    if (menuBtn.contains(e.target)) return;
+    const content = popover.querySelector('.popover__content');
+    if (content && content.contains(e.target)) return;
+    popover.hide();
+  };
+  document.addEventListener('click', closeOnOutside);
+  page._closePopoverOnOutside = closeOnOutside;
 
   // Font-size toolbar buttons (+ / −)
   const decBtn = page.querySelector('#lb-font-decrease');

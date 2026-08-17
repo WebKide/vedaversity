@@ -57,35 +57,6 @@ function appendListItems(container, items, getLabel, getOnClick, getContextMenu)
 }
 
 // ---------------------------------------------------------------------
-// Context-menu popover (share/delete), reused by lists + list-detail
-// ---------------------------------------------------------------------
-
-function createContextPopover() {
-  const popover = document.createElement('ons-popover');
-  popover.className = 'context-popover';
-  popover.setAttribute('cancelable', '');
-  popover.setAttribute('direction', 'left');
-  popover.innerHTML = `
-    <ons-button class="shareBtn" modifier="quiet"><ons-icon size="24px" icon="md-share"></ons-icon></ons-button>
-    <ons-button class="deleteBtn" modifier="quiet"><ons-icon size="24px" style="color:red;" icon="md-delete"></ons-icon></ons-button>
-  `;
-  document.body.appendChild(popover);
-  return popover;
-}
-
-let _sharedContextPopover = null;
-function setupPopover(anchorElement, index) {
-  if (!_sharedContextPopover) _sharedContextPopover = createContextPopover();
-  // Reset any stale handlers/visibility from the previous use
-  const shareButton = _sharedContextPopover.querySelector('.shareBtn');
-  const deleteButton = _sharedContextPopover.querySelector('.deleteBtn');
-  shareButton.style.display = '';
-  shareButton.onclick = null;
-  deleteButton.onclick = null;
-  return { popover: _sharedContextPopover, shareButton, deleteButton, anchorElement, index };
-}
-
-// ---------------------------------------------------------------------
 // Misc small helpers
 // ---------------------------------------------------------------------
 
