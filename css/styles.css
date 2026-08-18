@@ -1977,7 +1977,7 @@ ons-list-item .center.search-result {
 
 /* Alternating row tint for home-page recents */
 #recents-items .recent-swipe-item:nth-child(even) {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(55, 55, 55, 0.02);
 }
 
 #recents-items .recent-swipe-item:nth-child(even) .center {
@@ -2158,6 +2158,41 @@ ons-toolbar .right .lb-icon-btn {
   font-size: .85rem;
   vertical-align: .25em;
   margin-left: 6px;
+}
+
+/* ── Author list row marquee ── */
+
+/* Keep the icon fixed on the left. */
+.author-row-center {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* This is the fixed viewport between icon and chevron. */
+.author-marquee-viewport {
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Author name + [song count] scroll together. */
+.author-marquee-text {
+  display: inline-block;
+  white-space: nowrap;
+  min-width: max-content;
+  will-change: transform;
+}
+
+/* Reuse the same marquee animation as song footer titles. */
+.author-marquee-text.marquee {
+  animation: marquee-scroll var(--marquee-duration, 8s) linear infinite alternate;
+  padding-right: 16px;
+}
+
+/* Keep the chevron fixed on the right. */
+.author-chevron {
+  flex-shrink: 0;
 }
 
 .sanskrit-header-wrapper {
