@@ -91,6 +91,9 @@ if (window.indexPromise && typeof window.indexPromise.then === 'function') {
 // ----------------------------------------------------------------------
 
 function search_page_init(page) {
+  // reset the module-level global first
+  let last_query = '';
+
   let clickHandler;
   const listName = page.data && page.data.listName;
 
@@ -258,10 +261,15 @@ function search(query) {
     fuse.options.threshold = originalThreshold;
   }
 
-  return results.slice(0, 30).map((result) => {
-    // result.item is the fuseData object we built above, which carries
-    // the real file_name as `id` — use that instead of refIndex
-    const fileName = result.item.id;
+  // Exact prefix matches first, then fuzzy results (skipping anything
+  // already surfaced via prefix match), capped at 30 total.
+  const fuzzyIds = results
+    .map((result) => result.item.id)
+    .filter((fileName) => !prefixSeen.has(fileName));
+
+  const orderedIds = prefixIds.concat(fuzzyIds).slice(0, 30);
+
+  return orderedIds.map((fileName) => {
     const rec = window.INDEX[fileName];
     return {
       id: fileName,

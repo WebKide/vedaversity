@@ -116,13 +116,13 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
            font-weight:400;
            font-size:.65rem;">
 
-      <svg viewBox="0 -960 960 960"
+      <svg viewBox="0 0 24 24"
            width="32"
            height="32"
            fill="#fff"
            aria-hidden="true"
            focusable="false">
-        <path d="M600-240v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120-640H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440-200H200q-33 0-56.5-23.5T120-280v-360Zm80 0v360h240v-360H200Zm0 0v360-360Z"/>
+        <path d="M15.6 19.5v-2.4h4.8v2.4zm0-9.6V7.5H24v2.4zm0 4.8v-2.4h7.2v2.4zM1.2 7.5H0V5.1h4.8V3.3h4.8v1.8h4.8v2.4h-1.2v10.8c0 .7-.2 1.2-.7 1.7s-1 .7-1.7.7H3.6c-.7 0-1.2-.2-1.7-.7s-.7-1-.7-1.7zm2.4 0v10.8h7.2V7.5zm0 0v10.8z"/>
       </svg>
 
       <span>DEL</span>
@@ -205,12 +205,24 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
     openSwipe();
   });
 
-  /* Tap elsewhere on the page to close this swipe */
-  document.addEventListener('click', (e) => {
-    if (isOpen && !item.contains(e.target)) closeSwipe();
-  });
+  /* Tap elsewhere on the page to close this swipe — delegated to a single
+     document-level listener (below) instead of one per item, so listeners
+     don't accumulate across re-renders. */
+  item._closeSwipe = closeSwipe;
 
   return item;
+}
+
+// Single delegated listener for all swipeable recent-items, installed once.
+if (!window._recentSwipeOutsideListenerInstalled) {
+  window._recentSwipeOutsideListenerInstalled = true;
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll('#recents-items .recent-swipe-item.swiped').forEach((el) => {
+      if (!el.contains(e.target) && typeof el._closeSwipe === 'function') {
+        el._closeSwipe();
+      }
+    });
+  });
 }
 
 function render_recentListItems(page) {

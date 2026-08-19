@@ -153,7 +153,7 @@ async function songView_page_init(page) {
   });
 
   // 7. Lifecycle & Analytics
-  if (typeof addRecent === 'function' && !data.skipRecent) addRecent(songId);
+  // if (typeof addRecent === 'function' && !data.skipRecent) addRecent(songId);
 
   page.onShow = (typeof keepAwake === 'function') ? keepAwake : null;
 
@@ -535,6 +535,56 @@ function gestureInit(verseList, page) {
       // Restore normal browser scroll anchoring.
       pageContent.style.overflowAnchor =
         previousOverflowAnchor;
+    }
+
+    requestAnimationFrame(settle);
+  });
+
+  // Desktop fallback: native dblclick doesn't depend on Hammer's gesture
+  // state machine, so it still fires even when dragstart/dragmove has
+  // already consumed the gesture (very easy with a mouse — a 1-2px move
+  // between mousedown/mouseup gets read as a drag before doubletap gets
+  // a chance to register).
+  verseList.addEventListener('dblclick', (event) => {
+    event.preventDefault(); // stop text selection on the double-click
+
+    const expandableItems =
+      verseList.querySelectorAll('ons-list-item[expandable]');
+    if (expandableItems.length === 0 || !pageContent) return;
+
+    const targetItem = event.target.closest('ons-list-item[expandable]');
+    if (!targetItem) return;
+
+    const anchorY = targetItem.getBoundingClientRect().top;
+    const previousOverflowAnchor = pageContent.style.overflowAnchor;
+    pageContent.style.overflowAnchor = 'none';
+
+    const willExpand = !targetItem.hasAttribute('expanded');
+    appState.trans = willExpand;
+
+    expandableItems.forEach((item) => {
+      if (willExpand) item.setAttribute('expanded', '');
+      else item.removeAttribute('expanded');
+    });
+
+    dbSetItem('trans', appState.trans);
+
+    let lastY = null;
+    let stableFrames = 0;
+    const requiredStableFrames = 3;
+
+    function settle() {
+      const currentY = targetItem.getBoundingClientRect().top;
+      if (lastY !== null && Math.abs(currentY - lastY) < 0.5) stableFrames++;
+      else stableFrames = 0;
+      lastY = currentY;
+      if (stableFrames < requiredStableFrames) {
+        requestAnimationFrame(settle);
+        return;
+      }
+      const delta = currentY - anchorY;
+      pageContent.scrollTop += delta;
+      pageContent.style.overflowAnchor = previousOverflowAnchor;
     }
 
     requestAnimationFrame(settle);

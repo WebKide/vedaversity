@@ -151,8 +151,8 @@ function settings_page_init(page) {
       <ons-list-header modifier="material" style="text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:8px; color:var(--highlight-color);">App Update</ons-list-header>
       <ons-list-item id="forceUpdateBtn" tappable>
         <div class="left">
-          <svg class="update-icon" viewBox="0 -960 960 960" width="32" height="32" fill="var(--highlight-color)">
-            <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q82 0 155.5 35T760-706v-94h80v240H600v-80h110q-41-56-101-88t-129-32q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200q105 0 182.5-67T755-418h82q-15 137-117.5 227.5T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/>
+          <svg class="update-icon" viewBox="0 0 24 24" width="32" height="32" fill="var(--highlight-color)">
+            <path d="M11 7v5.4l3.8 3.8 1.4-1.4-3.2-3.2V7zm10-3h-2v2.3c-1.6-2-4.2-3.3-7-3.3-5 0-9 4-9 9s4 9 9 9c4.4 0 8.1-3.2 8.9-7.5h-2c-.7 3.1-3.5 5.5-6.9 5.5-3.9 0-7-3.1-7-7s3.1-7 7-7c2.4 0 4.5 1.2 5.7 3H15v2h6z"/>
           </svg>
         </div>
         <div class="center">

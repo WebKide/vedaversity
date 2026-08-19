@@ -228,12 +228,24 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
     openSwipe();
   });
 
-  /* Tap elsewhere on the page to close this swipe */
-  document.addEventListener('click', (e) => {
-    if (isOpen && !item.contains(e.target)) closeSwipe();
-  });
+  /* Tap elsewhere on the page to close this swipe — delegated to a single
+     document-level listener (below) instead of one per item, so listeners
+     don't accumulate across re-renders. */
+  item._closeSwipe = closeSwipe;
 
   return item;
+}
+
+// Single delegated listener for all swipeable list-items, installed once.
+if (!window._listSwipeOutsideListenerInstalled) {
+  window._listSwipeOutsideListenerInstalled = true;
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll('#list-list .recent-swipe-item.swiped').forEach((el) => {
+      if (!el.contains(e.target) && typeof el._closeSwipe === 'function') {
+        el._closeSwipe();
+      }
+    });
+  });
 }
 
 function render_songsInList(page, listName) {

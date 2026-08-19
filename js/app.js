@@ -10,7 +10,8 @@
 window.songCache = {}; // in-memory cache
 
 window.getSongById = async function(id) {
-  return (window.INDEX && window.INDEX[id]) || null;
+  // return (window.INDEX && window.INDEX[id]) || null;
+  return (appState.index && appState.index[id]) || null;
 };
 
 // ---------------------------------------------------------------------
@@ -114,6 +115,7 @@ window.createListFromRecents = async function() {
 };
 
 window.appState = {
+  index: {}, // Initialize index in the global appState
   lists: {},
   recents: [],
   langCode: 'EN',
@@ -160,13 +162,16 @@ window.indexPromise = fetch('SO/IDX_db.json')
   .then((data) => {
     const list = data.IDX || [];
     // Convert array to a Map/Object for easy lookup by file_name
-    window.INDEX = {};
+    appState.index = {};
+    // window.INDEX = {};
     list.forEach(item => {
       if (item.file_name) {
-        window.INDEX[item.file_name] = item;
+        appState.index[item.file_name] =item;
+        // window.INDEX[item.file_name] = item;
       }
     });
-    return window.INDEX;
+    return appState.index;
+    // return window.INDEX;
   })
   .catch((err) => {
     console.error('Failed to load song index (SO/IDX_db.json):', err);
@@ -175,15 +180,18 @@ window.indexPromise = fetch('SO/IDX_db.json')
   });
 
 window.getSongTitle = function (id) {
-  const rec = window.INDEX && window.INDEX[id];
+  // const rec = window.INDEX && window.INDEX[id];
+  const rec = appState.index && appState.index[id];
   // Access the named property 'first_line' from the object
   return rec ? (rec.first_line || '') : '';
 };
 
+/*
 function apply_font() {
   const font = appState.fontFamily;
   document.documentElement.style.setProperty('--font-family', font);
 }
+*/
 
 // ---------------------------------------------------------------------
 // Theme

@@ -70,6 +70,23 @@ function inputDialogAddListUI(page, defaultValue) {
   });
 }
 
+function showListContextMenu(page, element, listName, index) {
+  const { popover, shareButton, deleteButton } = setupPopover(element, index);
+  shareButton.style.display = 'none'; // list sharing isn't part of this build
+
+  deleteButton.onclick = () => {
+    popover.hide();
+    ons.notification.confirm(`Delete list "${listName}"?`, { buttonLabels: ['Cancel', 'Delete'] }).then((idx) => {
+      if (idx === 1) {
+        deleteList(listName);
+        render_customLists(page);
+      }
+    });
+  };
+
+  popover.show(element);
+}
+
 function render_tattvaLists(page) {
   const shortcutsContainer = page.querySelector('#quick-shortcuts');
   const tattvaContainer    = page.querySelector('#tattva-songs');
@@ -690,10 +707,16 @@ function render_tattvaLists(page) {
   /* ================================================================
      4. GALLERY
      ================================================================ */
+  // Reuse the existing slideshow element if this page instance already
+  // built one — we still want a fresh shuffle + restarted timer on every
+  // visit to the Lists tab, but initSlideshow() already handles both of
+  // those internally, so calling it again on the same element is enough.
+  // Only the rest of the gallery section (which doesn't need to reshuffle)
+  // gets cleared and rebuilt.
+  const existingSlideshow = galleryContainer.querySelector('.ken-burns-frame');
   galleryContainer.innerHTML = '';
 
-  // ── Ken Burns slideshow — appended once, after all tattva groups ──
-  const slideshow = ons.createElement(`
+  const slideshow = existingSlideshow || ons.createElement(`
     <div class="intro-thumb ken-burns-frame" data-progressive-load>
       <div class="slide-layer slide-a">
         <img class="slideshow ken-burns" alt="" style="--kb-scale:1.25;" draggable="false">
