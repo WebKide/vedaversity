@@ -2,24 +2,23 @@
  * js/app.js
  * Global app state, persistence, song index loading, theme, and boot sequence.
  */
-
+ 
 // ---------------------------------------------------------------------
 // Global state
 // ---------------------------------------------------------------------
-
+ 
 window.songCache = {}; // in-memory cache
-
+ 
 window.getSongById = async function(id) {
-  // return (window.INDEX && window.INDEX[id]) || null;
-  return (appState.index && appState.index[id]) || null;
+  return (window.INDEX && window.INDEX[id]) || null;
 };
-
+ 
 // ---------------------------------------------------------------------
 // localStorage-backed key/value store
 // ---------------------------------------------------------------------
-
+ 
 const DB_PREFIX = 'kirtan:';
-
+ 
 async function dbGetItem(key) {
   try {
     const raw = localStorage.getItem(DB_PREFIX + key);
@@ -29,7 +28,7 @@ async function dbGetItem(key) {
     return null;
   }
 }
-
+ 
 async function dbSetItem(key, value) {
   try {
     localStorage.setItem(DB_PREFIX + key, JSON.stringify(value));
@@ -39,24 +38,24 @@ async function dbSetItem(key, value) {
     return false;
   }
 }
-
+ 
 /* to add to history */
 window.addRecent = async function(songId, filename) {
   // Remove if already exists to move it to the top/front
   appState.recents = appState.recents.filter(item => item.id !== songId);
-
+ 
   // Add to the beginning of the array
   appState.recents.unshift({ id: songId, time: Date.now() });
-
+ 
   // Limit to most recent 50 items
   if (appState.recents.length > 50) {
     appState.recents = appState.recents.slice(0, 50);
   }
-
+ 
   // Persist to localStorage
   await dbSetItem('recents', appState.recents);
 };
-
+ 
 // Clear all recent items
 window.clearRecents = async function() {
   const confirmed = await ons.notification.confirm({
@@ -65,27 +64,27 @@ window.clearRecents = async function() {
     buttonLabels: ['Cancel', 'Clear'],
     primaryButtonIndex: 1
   });
-
+ 
   if (confirmed === 1) { // 1 corresponds to 'Clear' (index 1 in buttonLabels)
     appState.recents = [];
     await dbSetItem('recents', []);
-
+ 
     // Refresh the UI
     if (typeof renderRecents === 'function') {
       renderRecents();
     }
-
+ 
     ons.notification.toast('History cleared', { timeout: 2000 });
   }
 };
-
+ 
 // Create a new list and clear recents
 window.createListFromRecents = async function() {
   if (appState.recents.length === 0) {
     ons.notification.alert("No recent songs to create a list from.");
     return;
   }
-
+ 
   const listName = await ons.notification.prompt({
     title: 'New List',
     message: 'Enter a name for your list:',
@@ -94,28 +93,27 @@ window.createListFromRecents = async function() {
     primaryButtonIndex: 1,  // Makes 'Create' the bold/primary choice
     cancelable: true        // Allows closing by tapping outside
   });
-
+ 
   // Important: When there are two buttons, listName will be null if 'Cancel' is pressed
   if (listName === null || listName === undefined) {
     return; // User cancelled
   }
-
+ 
   if (listName) {
     // Save to lists
     appState.lists[listName] = appState.recents.map(item => item.id);
     await dbSetItem('lists', appState.lists);
-
+ 
     // Clear history
     appState.recents = [];
     await dbSetItem('recents', []);
-
+ 
     ons.notification.toast(`List "${listName}" created!`, { timeout: 2000 });
     if (typeof renderRecents === 'function') renderRecents();
   }
 };
-
+ 
 window.appState = {
-  index: {}, // Initialize index in the global appState
   lists: {},
   recents: [],
   langCode: 'EN',
@@ -125,7 +123,7 @@ window.appState = {
   trans: false,
   deviceInfo: null
 };
-
+ 
 async function loadPersistedState() {
   const [lists, recents, langCode, themeMode, zoomSize, trans, fontFamily] = await Promise.all([
     dbGetItem('lists'),
@@ -136,7 +134,7 @@ async function loadPersistedState() {
     dbGetItem('trans'),
     dbGetItem('fontFamily')
   ]);
-
+ 
   if (lists) appState.lists = lists;
   if (recents) appState.recents = recents;
   if (langCode) appState.langCode = langCode;
@@ -145,7 +143,7 @@ async function loadPersistedState() {
   if (trans !== null && trans !== undefined) appState.trans = trans;
   if (fontFamily) appState.fontFamily = fontFamily;
 }
-
+ 
 // ---------------------------------------------------------------------
 // Song index
 // window.INDEX[i] = [title, slug, searchBlob, firstLineRomanized, filename]
@@ -156,47 +154,41 @@ window.IDX_TITLE_NORM  = 1;  // "hegovindahegopala"
 window.IDX_SEARCHBLOB  = 2;  // "hegovindahegopalakesavamadhava...."
 window.IDX_FIRSTLINE   = 3;  // "he govinda he gopāla"
 window.IDX_FILE        = 4;  // "5G.json"*/
-
+ 
 window.indexPromise = fetch('SO/IDX_db.json')
   .then((r) => r.json())
   .then((data) => {
     const list = data.IDX || [];
     // Convert array to a Map/Object for easy lookup by file_name
-    appState.index = {};
-    // window.INDEX = {};
+    window.INDEX = {};
     list.forEach(item => {
       if (item.file_name) {
-        appState.index[item.file_name] =item;
-        // window.INDEX[item.file_name] = item;
+        window.INDEX[item.file_name] = item;
       }
     });
-    return appState.index;
-    // return window.INDEX;
+    return window.INDEX;
   })
   .catch((err) => {
     console.error('Failed to load song index (SO/IDX_db.json):', err);
     window.INDEX = {};
     return {};
   });
-
+ 
 window.getSongTitle = function (id) {
-  // const rec = window.INDEX && window.INDEX[id];
-  const rec = appState.index && appState.index[id];
+  const rec = window.INDEX && window.INDEX[id];
   // Access the named property 'first_line' from the object
   return rec ? (rec.first_line || '') : '';
 };
-
-/*
+ 
 function apply_font() {
   const font = appState.fontFamily;
   document.documentElement.style.setProperty('--font-family', font);
 }
-*/
-
+ 
 // ---------------------------------------------------------------------
 // Theme
 // ---------------------------------------------------------------------
-
+ 
 function apply_theme() {
   const mode = appState.themeMode; // 'dark' | 'light' | null (system)
   let effective = mode;
@@ -205,22 +197,22 @@ function apply_theme() {
   }
   document.documentElement.classList.remove('theme-light', 'theme-dark');
   document.documentElement.classList.add('theme-' + effective);
-
+ 
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', effective === 'light' ? '#ffffff' : '#0d0d0d');
 }
-
+ 
 if (window.matchMedia) {
   const mq = window.matchMedia('(prefers-color-scheme: light)');
   const onChange = () => { if (!appState.themeMode) apply_theme(); };
   if (mq.addEventListener) mq.addEventListener('change', onChange);
   else if (mq.addListener) mq.addListener(onChange); // older Safari
 }
-
+ 
 // ---------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------
-
+ 
 async function boot() {
   await loadPersistedState();
   apply_theme();
@@ -228,5 +220,5 @@ async function boot() {
   await window.indexPromise;
   document.getElementById('navigator').resetToPage('tmpl-shell');
 }
-
+ 
 document.addEventListener('DOMContentLoaded', boot);

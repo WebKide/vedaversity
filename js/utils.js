@@ -5,11 +5,11 @@
  * (gen_listItem, appendListItems, list/recents persistence, popovers,
  * showSongViewUI, etc.) lives here now, in the open.
  */
-
+ 
 // ---------------------------------------------------------------------
 // Basic list-item construction
 // ---------------------------------------------------------------------
-
+ 
 function gen_listItem(text, onClick) {
   const item = document.createElement('ons-list-item');
   item.setAttribute('tappable', '');
@@ -17,11 +17,11 @@ function gen_listItem(text, onClick) {
   if (onClick) item.onclick = onClick;
   return item;
 }
-
+ 
 function midEllipsisSpanLabel(text) {
   return `<span class="mid-ellipsis">${text}</span>`;
 }
-
+ 
 /**
  * Renders a list of arbitrary items into `container` as ons-list-items.
  * - getLabel(item) -> string (falsy label skips the item)
@@ -34,14 +34,14 @@ function appendListItems(container, items, getLabel, getOnClick, getContextMenu)
   items.forEach((item, index) => {
     const label = getLabel(item);
     if (!label) return;
-
+ 
     const el = gen_listItem(label, () => getOnClick(item));
-
+ 
     const idValue = item && typeof item === 'object' && 'id' in item ? item.id : item;
     if (idValue !== undefined && idValue !== null) {
       el.dataset.songId = idValue;
     }
-
+ 
     if (getContextMenu) {
       let pressTimer;
       el.addEventListener('pointerdown', () => {
@@ -51,15 +51,15 @@ function appendListItems(container, items, getLabel, getOnClick, getContextMenu)
         el.addEventListener(evt, () => clearTimeout(pressTimer))
       );
     }
-
+ 
     container.appendChild(el);
   });
 }
-
+ 
 // ---------------------------------------------------------------------
 // Misc small helpers
 // ---------------------------------------------------------------------
-
+ 
 function fitElementToPage(el) {
   requestAnimationFrame(() => {
     const scrollHost = el.closest('.page__content') || el.closest('.page');
@@ -70,7 +70,7 @@ function fitElementToPage(el) {
     if (available > 0) el.style.minHeight = available + 'px';
   });
 }
-
+ 
 function debouncify(fn, wait) {
   wait = wait || 400;
   let locked = false;
@@ -80,12 +80,12 @@ function debouncify(fn, wait) {
     Promise.resolve(fn(...args)).finally(() => setTimeout(() => (locked = false), wait));
   };
 }
-
+ 
 function alertError(err) {
   console.error(err);
   if (window.ons) ons.notification.toast(String((err && err.message) || err), { timeout: 2500 });
 }
-
+ 
 // Screen Wake Lock (web standard) replaces the old native keepAwake/allowSleep
 let _wakeLock = null;
 async function keepAwake() {
@@ -103,26 +103,26 @@ async function allowSleep() {
   }
   _wakeLock = null;
 }
-
+ 
 // ---------------------------------------------------------------------
 // Lists persistence (appState.lists: { [name]: songId[] })
 // ---------------------------------------------------------------------
-
+ 
 function saveListsToDB() {
   dbSetItem('lists', appState.lists);
 }
-
+ 
 function addList(name) {
   if (!appState.lists[name]) appState.lists[name] = [];
   saveListsToDB();
 }
-
+ 
 function deleteList(listName) {
   delete appState.lists[listName];
   saveListsToDB();
   removeListFromRecents(listName);
 }
-
+ 
 function addSongToList(songId, listName) {
   if (!appState.lists[listName]) appState.lists[listName] = [];
   if (!appState.lists[listName].includes(songId)) {
@@ -132,13 +132,13 @@ function addSongToList(songId, listName) {
   const title = window.getSongTitle(songId) || songId;
   if (window.ons) ons.notification.toast(`Added "${title}" to "${listName}"`, { timeout: 1800 });
 }
-
+ 
 // ---------------------------------------------------------------------
 // Recents persistence (appState.recents: { songId, listName }[], capped at 15)
 // ---------------------------------------------------------------------
-
+ 
 const RECENTS_MAX = 15;
-
+ 
 function addToRecents(songId, listName) {
   listName = listName || null;
   appState.recents = appState.recents.filter(
@@ -148,7 +148,7 @@ function addToRecents(songId, listName) {
   appState.recents = appState.recents.slice(0, RECENTS_MAX);
   dbSetItem('recents', appState.recents);
 }
-
+ 
 function removeFromRecents(songId, listName) {
   const targetListName = listName || null;
   appState.recents = appState.recents.filter(
@@ -156,7 +156,7 @@ function removeFromRecents(songId, listName) {
   );
   dbSetItem('recents', appState.recents);
 }
-
+ 
 function removeListSongFromRecents(listName, songId) {
   const targetListName = listName || null;
   appState.recents = appState.recents.filter(
@@ -164,7 +164,7 @@ function removeListSongFromRecents(listName, songId) {
   );
   dbSetItem('recents', appState.recents);
 }
-
+ 
 function removeListFromRecents(listName) {
   const targetListName = listName || null;
   appState.recents = appState.recents.filter(
@@ -172,11 +172,11 @@ function removeListFromRecents(listName) {
   );
   dbSetItem('recents', appState.recents);
 }
-
+ 
 // ---------------------------------------------------------------------
 // Song view navigation
 // ---------------------------------------------------------------------
-
+ 
 /**
  * Opens the song view. `mode` controls how it lands in the page stack:
  *  - default / undefined -> pushPage (normal "open a song" tap)
@@ -188,14 +188,14 @@ function showSongViewUI(songId, listName, mode) {
   addToRecents(songId, listName);
   const navEl = document.getElementById('navigator');
   const data = { songId, listName: listName || null };
-
+ 
   if (mode === 'replace' || mode === 'nav_prev' || mode === 'nav_next') {
     navEl.replacePage('tmpl-songview', { data });
   } else {
     navEl.pushPage('tmpl-songview', { data });
   }
 }
-
+ 
 // ---------------------------------------------------------------------
 // Settings: language preview text
 //
@@ -207,29 +207,29 @@ function showSongViewUI(songId, listName, mode) {
 // duplicate song directory to be useful beyond this preview line, so it's
 // out of scope for v1 per the brief.
 // ---------------------------------------------------------------------
-
+ 
 window.LANGUAGES = {
   EN: { label: 'English' },
   EN_PLAIN: { label: 'English (no diacritics)' },
   BN: { label: 'Bengali' },
   DE: { label: 'Devanagari' }
 };
-
+ 
 const SETTINGS_SAMPLE_TEXT = {
   EN: "Śrī Śrī Guru Gaurāṅga Jayatāḥ",
   EN_PLAIN: 'Sri Sri Guru Gauranga Jayatah',
   BN: 'শ্রী শ্রী গুরু গৌরাঙ্গ জয়তঃ',
   DE: 'श्री श्री गुरु गौराङ्ग जयतः'
 };
-
+ 
 function transliterate(fromCode, toCode /*, mode */) {
   return SETTINGS_SAMPLE_TEXT[toCode] || SETTINGS_SAMPLE_TEXT.EN;
 }
-
+ 
 function getScriptCode(langCode) {
   return langCode || 'EN';
 }
-
+ 
 function apply_font() {
   const font = appState.fontFamily || "'Ubuntu Sans', sans-serif";
   document.documentElement.style.setProperty('--font-family', font);

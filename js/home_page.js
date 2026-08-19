@@ -3,22 +3,22 @@
  * The persistent root "shell" — Home and Lists tabs, plus the search box,
  * recents list, and the 3-item grid (All Songs / Pronunciation / Settings).
  */
-
+ 
 function shell_page_init(page) {
   const navEl = document.getElementById('navigator');
-
+ 
   const tabHome = page.querySelector('#tab-home');
   const tabLists = page.querySelector('#tab-lists');
   const btnHome = page.querySelector('#tabBtnHome');
   const btnLists = page.querySelector('#tabBtnLists');
-
+ 
   function activateTab(name) {
     const isHome = name === 'home';
     tabHome.style.display = isHome ? 'block' : 'none';
     tabLists.style.display = isHome ? 'none' : 'block';
     btnHome.classList.toggle('active', isHome);
     btnLists.classList.toggle('active', !isHome);
-
+ 
     if (isHome) {
       render_recentListItems(page);
     } else {
@@ -26,21 +26,21 @@ function shell_page_init(page) {
       render_tattvaLists(page);
     }
   }
-
+ 
   btnHome.onclick = () => activateTab('home');
   btnLists.onclick = () => activateTab('lists');
-
+ 
   // --- Home tab wiring ---
   const searchTrigger = page.querySelector('#search-trigger');
   if (searchTrigger) {
     searchTrigger.onclick = () => navEl.pushPage('tmpl-search');
   }
-
+ 
   page.querySelector('#allSongs').onclick = () => navEl.pushPage('tmpl-all-songs');
   page.querySelector('#authorsBtn').onclick = () => navEl.pushPage('tmpl-authors');
   page.querySelector('#pronounceGuide').onclick = () => navEl.pushPage('tmpl-pronounce');
   page.querySelector('#settingsBtn').onclick = () => navEl.pushPage('tmpl-settings');
-
+ 
   // --- Home image version caption tap ---
   const imgWrap = page.querySelector('.home-image-wrap');
   let captionTimer;
@@ -54,30 +54,30 @@ function shell_page_init(page) {
       }, 5200);
     });
   }
-
+ 
   // --- Lists tab wiring ---
   page.querySelector('#createListBtn').onclick = () => inputDialogAddListUI(page);
-
+ 
   // Recents can change while we're away (e.g. song viewed from a list),
   // so refresh whenever the shell comes back into view.
   page.onShow = () => {
     if (btnHome.classList.contains('active')) render_recentListItems(page);
     else { render_customLists(page); render_tattvaLists(page); }
   };
-
+ 
   // --- Recents action buttons (popover) ---
   const menuBtn = page.querySelector('#recentsMenuBtn');
   const popover = page.querySelector('#recentsPopover');
-
+ 
   if (menuBtn && popover) {
     menuBtn.onclick = () => {
       popover.show(menuBtn);
     };
   }
-
+ 
   const clearBtn = page.querySelector('#btn-clear-recents');
   const createBtn = page.querySelector('#btn-create-list-from-recents');
-
+ 
   if (clearBtn) clearBtn.onclick = () => {
     popover.hide();
     window.clearRecents();
@@ -86,16 +86,16 @@ function shell_page_init(page) {
     popover.hide();
     window.createListFromRecents();
   };
-
+ 
   activateTab('home');
 }
-
+ 
 function gen_swipeableRecentItem(text, onClick, onDelete) {
   const item = document.createElement('ons-list-item');
   item.setAttribute('tappable', '');
   item.className = 'recent-swipe-item';
   item.style.cssText = 'position:relative; overflow:hidden; touch-action:pan-y; user-select:none; -webkit-user-select:none;';
-
+ 
   item.innerHTML = `
     <div class="center" style="position:relative; z-index:2; background:inherit; transition:margin-right .25s ease; padding-right:16px;">${text}</div>
     <div class="right recent-delete-btn"
@@ -115,7 +115,7 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
            color:#fff;
            font-weight:400;
            font-size:.65rem;">
-
+ 
       <svg viewBox="0 0 24 24"
            width="32"
            height="32"
@@ -124,22 +124,22 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
            focusable="false">
         <path d="M15.6 19.5v-2.4h4.8v2.4zm0-9.6V7.5H24v2.4zm0 4.8v-2.4h7.2v2.4zM1.2 7.5H0V5.1h4.8V3.3h4.8v1.8h4.8v2.4h-1.2v10.8c0 .7-.2 1.2-.7 1.7s-1 .7-1.7.7H3.6c-.7 0-1.2-.2-1.7-.7s-.7-1-.7-1.7zm2.4 0v10.8h7.2V7.5zm0 0v10.8z"/>
       </svg>
-
+ 
       <span>DEL</span>
     </div>
   `;
-
+ 
   const center   = item.querySelector('.center');
   const deleteBtn = item.querySelector('.recent-delete-btn');
-
+ 
   deleteBtn.onclick = (e) => {
     e.stopPropagation();
     onDelete();
   };
-
+ 
   let startX = 0, startY = 0, isHorizontal = false, isOpen = false, longPressTimer = null;
   let suppressNextClick = false;
-
+ 
   const openSwipe = () => {
     if (isOpen) return;
     isOpen = true;
@@ -148,7 +148,7 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
     item.classList.add('swiped');
     suppressNextClick = true;
   };
-
+ 
   const closeSwipe = () => {
     if (!isOpen) return;
     isOpen = false;
@@ -156,27 +156,27 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
     deleteBtn.style.transform = 'translateX(100%)';
     item.classList.remove('swiped');
   };
-
+ 
   /* ---- Swipe ---- */
   item.addEventListener('touchstart', (e) => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     isHorizontal = false;
   }, { passive: true });
-
+ 
   item.addEventListener('touchmove', (e) => {
     const diffX = Math.abs(startX - e.touches[0].clientX);
     const diffY = Math.abs(startY - e.touches[0].clientY);
     if (diffX > diffY && diffX > 10) isHorizontal = true;
   }, { passive: true });
-
+ 
   item.addEventListener('touchend', (e) => {
     if (!isHorizontal) return;
     const diff = startX - e.changedTouches[0].clientX;
     if (diff > 60) openSwipe();
     else if (diff < -40) closeSwipe();
   });
-
+ 
   /* ---- Tap to navigate, or tap-to-close when open ---- */
   item.addEventListener('click', (e) => {
     if (e.target.closest('.recent-delete-btn')) return;
@@ -187,7 +187,7 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
     if (isOpen) { closeSwipe(); return; }
     onClick();
   });
-
+ 
   /* ---- Long-press / right-click to reveal delete button ---- */
   item.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -199,44 +199,32 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(evt =>
     item.addEventListener(evt, () => clearTimeout(longPressTimer))
   );
-
+ 
   item.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     openSwipe();
   });
-
-  /* Tap elsewhere on the page to close this swipe — delegated to a single
-     document-level listener (below) instead of one per item, so listeners
-     don't accumulate across re-renders. */
-  item._closeSwipe = closeSwipe;
-
+ 
+  /* Tap elsewhere on the page to close this swipe */
+  document.addEventListener('click', (e) => {
+    if (isOpen && !item.contains(e.target)) closeSwipe();
+  });
+ 
   return item;
 }
-
-// Single delegated listener for all swipeable recent-items, installed once.
-if (!window._recentSwipeOutsideListenerInstalled) {
-  window._recentSwipeOutsideListenerInstalled = true;
-  document.addEventListener('click', (e) => {
-    document.querySelectorAll('#recents-items .recent-swipe-item.swiped').forEach((el) => {
-      if (!el.contains(e.target) && typeof el._closeSwipe === 'function') {
-        el._closeSwipe();
-      }
-    });
-  });
-}
-
+ 
 function render_recentListItems(page) {
   const scope = page || document;
   const container = scope.querySelector('#recents-items');
   const header = scope.querySelector('#recentHeader');
   const recentsWrap = scope.querySelector('#recents');
   if (!container) return;
-
+ 
   container.innerHTML = '';
-
+ 
   appState.recents.forEach((entry) => {
     let label, onClick;
-
+ 
     if (entry.listName && appState.lists[entry.listName]) {
       const list = appState.lists[entry.listName];
       const pos = list.indexOf(entry.id);
@@ -247,28 +235,28 @@ function render_recentListItems(page) {
       label = window.getSongTitle(entry.id);
       onClick = () => showSongViewUI(entry.id, null);
     }
-
+ 
     if (!label) return;
-
+ 
     const el = gen_swipeableRecentItem(label, onClick, () => {
       removeFromRecents(entry.id, entry.listName || null);
       render_recentListItems(page);
       const title = window.getSongTitle(entry.id) || entry.id;
       if (window.ons) ons.notification.toast(`Removed "${title}" from recents`, { timeout: 1800 });
     });
-
+ 
     const idValue = entry.id;
     if (idValue !== undefined && idValue !== null) {
       el.dataset.songId = idValue;
     }
-
+ 
     container.appendChild(el);
   });
-
+ 
   const hasRecents = container.children.length > 0;
   header.style.display = hasRecents ? '' : 'none';
   recentsWrap.classList.toggle('glassy', hasRecents);
 }
-
+ 
 // Alias for backward compatibility with app.js
 window.renderRecents = render_recentListItems;

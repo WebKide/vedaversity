@@ -73,15 +73,19 @@
 
     popPage() {
       if (stack.length <= 1) return Promise.resolve();
+      
       const top = stack.pop();
       callHide(top);
       top.el.remove();
       applyVisibility();
       callShow(stack[stack.length - 1]);
-      if (history.state && history.state.depth === stack.length + 1) {
+
+      // Check if we actually have history to go back to
+      if (history.state && history.state.depth > 0) {
         suppressNextPopState = true;
         history.back();
       }
+      
       return Promise.resolve();
     },
 

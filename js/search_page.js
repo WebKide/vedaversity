@@ -17,11 +17,11 @@
  * a precomputed title_norm field. Array order/length match window.INDEX
  * 1:1, so result.refIndex still maps straight to the real song id.
  */
-
+ 
 // --- Fuse wiring --------------------------------------------------
 let fuse = null;
 let titleNormCache = null; // parallel array: normalized first_line per song
-
+ 
 const FUSE_OPTIONS = {
   includeScore: true,
   ignoreLocation: true, /* "search" is one long concatenated blob per song, not a bag of separately-located words — location-constrained matching would miss hits deep in the blob. */
@@ -33,7 +33,7 @@ const FUSE_OPTIONS = {
     { name: 'title_norm', weight: 0.4 }
   ]
 };
-
+ 
 function initFuseIndex(idx) {
   if (typeof Fuse === 'undefined') {
     console.error('[search_page] Fuse is not loaded. Reload the app.');
@@ -43,29 +43,29 @@ function initFuseIndex(idx) {
     console.error('[search_page] Index data is missing or invalid:', idx);
     return;
   }
-
+ 
   const keys = Object.keys(idx);
   if (keys.length === 0) {
     console.error('[search_page] Index is empty, cannot initialize search.');
     return;
   }
-
+ 
   // titleNormCache is now keyed by file_name instead of numeric index
   titleNormCache = {};
   keys.forEach((fileName) => {
     titleNormCache[fileName] = normalizeQuery(idx[fileName].first_line);
   });
-
+ 
   const fuseData = keys.map((fileName) => ({
     id: fileName,
     search: idx[fileName].search || '',
     title_norm: titleNormCache[fileName]
   }));
-
+ 
   fuse = new Fuse(fuseData, FUSE_OPTIONS);
   // console.log('[search_page] Fuse index ready with', fuseData.length, 'songs');
 }
-
+ 
 // Defensive initialization: window.indexPromise may resolve before or after this module loads
 if (window.indexPromise && typeof window.indexPromise.then === 'function') {
   window.indexPromise
@@ -87,16 +87,13 @@ if (window.indexPromise && typeof window.indexPromise.then === 'function') {
     }
   }, 100);
 }
-
+ 
 // ----------------------------------------------------------------------
-
+ 
 function search_page_init(page) {
-  // reset the module-level global first
-  let last_query = '';
-
   let clickHandler;
   const listName = page.data && page.data.listName;
-
+ 
   if (listName) {
     // PICKER MODE: Adding a song to a specific list
     clickHandler = (song) => {
@@ -113,21 +110,21 @@ function search_page_init(page) {
       showSongViewUI(songId, null, 'replace');
     };
   }
-
+ 
   const MIN_QUERY_LENGTH = 3;
   const SEARCH_DEBOUNCE_MS = 150;
   let debounceTimer = null;
-
+ 
   // Robust selector: try the new structure first, fall back to legacy
   const searchInput = page.querySelector('.search-bar input') || page.querySelector('.search-box') || page.querySelector('input[type="text"]');
   const searchBar = page.querySelector('.search-bar');
   const clearBtn = page.querySelector('.search-clear');
-
+ 
   if (!searchInput) {
     console.error('[search_page] Could not find search input element');
     return;
   }
-
+ 
   function doSearch(query) {
     // console.log('[search_page] doSearch called with:', JSON.stringify(query), 'fuse ready?', !!fuse, 'index size:', Object.keys(window.INDEX || {}).length);
     if (!fuse) {
@@ -144,7 +141,7 @@ function search_page_init(page) {
     }
     render_searchUI(page, query, clickHandler, 'search-list-page', MIN_QUERY_LENGTH);
   }
-
+ 
   // Use 'input' event (fires on any change: typing, paste, clear) instead of just keyup
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value;
@@ -152,7 +149,7 @@ function search_page_init(page) {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => doSearch(query), SEARCH_DEBOUNCE_MS);
   });
-
+ 
   if (clearBtn) {
     clearBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -162,12 +159,12 @@ function search_page_init(page) {
       doSearch('');
     });
   }
-
+ 
   setTimeout(() => searchInput.focus(), 150);
-
+ 
   const defaultImg = page.querySelector('.default_img_container');
   if (defaultImg) fitElementToPage(defaultImg);
-
+ 
   /* scroll-to-top FAB */
   const scrollArea = page.querySelector(".page__content");
   const fab = page.querySelector("#toTop");
@@ -184,7 +181,7 @@ function search_page_init(page) {
     });
   }
 }
-
+ 
 /**
  * Normalizes a raw query the same way title_norm/searchBlob were built:
  * lowercase, strip diacritics (NFD decompose + drop combining marks),
@@ -200,13 +197,13 @@ function normalizeQuery(str) {
     .replace(/\s+/g, ' ')
     .trim();
 }
-
+ 
 function truncateWords(str, maxWords) {
   const words = String(str || '').trim().split(/\s+/);
   if (words.length <= maxWords) return str;
   return words.slice(0, maxWords).join(' ') + ' ॥';
 }
-
+ 
 /**
  * dp.json's index-array position isn't fixed/known ahead of time (IDX.json
  * is regenerated from the SO/ directory), so we look it up by filename
@@ -216,12 +213,12 @@ let _fallbackSongId = null;
 function getFallbackSongId() {
   if (_fallbackSongId !== null) return _fallbackSongId;
   if (!window.INDEX) return null;
-
+ 
   // window.INDEX is now keyed by file_name — direct lookup instead of a scan
   _fallbackSongId = window.INDEX['dp.json'] ? 'dp.json' : -1;
   return _fallbackSongId;
 }
-
+ 
 /**
  * Searches window.INDEX via Fuse over searchBlob (+ title_norm boost).
  * Returns [{ id, title }], capped to 30, ranked by Fuse score.
@@ -233,13 +230,13 @@ function search(query) {
     // console.warn('[search_page] search() called but fuse is not initialized yet');
     return [];
   }
-
+ 
   const q = normalizeQuery(query);
   if (!q) {
     // console.log('[search_page] normalizeQuery returned empty for:', JSON.stringify(query));
     return [];
   }
-
+ 
   /* Tier 1: exact prefix match */
   const prefixIds = [];
   const prefixSeen = new Set();
@@ -250,26 +247,21 @@ function search(query) {
       prefixSeen.add(fileName);
     }
   });
-
+ 
   /* Tier 2: fuzzy fallback (typo tolerance, mid-lyric matches, etc */
   let results = fuse.search(q);
-
+ 
   if (results.length < 2) {
     const originalThreshold = fuse.options.threshold;
     fuse.options.threshold = originalThreshold + 0.2;
     results = fuse.search(q);
     fuse.options.threshold = originalThreshold;
   }
-
-  // Exact prefix matches first, then fuzzy results (skipping anything
-  // already surfaced via prefix match), capped at 30 total.
-  const fuzzyIds = results
-    .map((result) => result.item.id)
-    .filter((fileName) => !prefixSeen.has(fileName));
-
-  const orderedIds = prefixIds.concat(fuzzyIds).slice(0, 30);
-
-  return orderedIds.map((fileName) => {
+ 
+  return results.slice(0, 30).map((result) => {
+    // result.item is the fuseData object we built above, which carries
+    // the real file_name as `id` — use that instead of refIndex
+    const fileName = result.item.id;
     const rec = window.INDEX[fileName];
     return {
       id: fileName,
@@ -278,9 +270,9 @@ function search(query) {
     };
   });
 }
-
+ 
 let last_query = '';
-
+ 
 function gen_searchResultItem(item, onClick) {
   const el = document.createElement('ons-list-item');
   el.setAttribute('tappable', '');
@@ -293,37 +285,37 @@ function gen_searchResultItem(item, onClick) {
   el.onclick = onClick;
   return el;
 }
-
+ 
 function renderSearchResults(listElement, results, clickHandler) {
   listElement.innerHTML = '';
   results.forEach((item) => {
     listElement.appendChild(gen_searchResultItem(item, () => clickHandler(item)));
   });
 }
-
+ 
 function render_searchUI(page, query, clickHandler, listId, minLength) {
   minLength = minLength || 1;
   if (query === last_query) return;
   last_query = query;
-
+ 
   const listElement = page.querySelector('#' + listId);
   if (!listElement) return;
-
+ 
   // Below the character threshold: keep the default placeholder up rather
   // than running Fuse or showing a "no match" fallback prematurely.
   if (query.trim().length < minLength) {
     listElement.innerHTML = `<div class="default_img_container"><img src="img/search_default.png"></div>`;
     return;
   }
-
+ 
   const results = search(query);
-
+ 
   if (results && results.length > 0) {
     renderSearchResults(listElement, results, clickHandler);
   } else {
     listElement.innerHTML =
       "<span style='padding:20px; display:block; background-color: var(--gray-darker); color: var(--highlight);'>Found this match for your query:</span>";
-
+ 
     const fallbackId = getFallbackSongId();
     if (fallbackId !== -1) {
       const fallbackRec = window.INDEX[fallbackId];

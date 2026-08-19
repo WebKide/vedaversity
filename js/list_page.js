@@ -4,14 +4,14 @@
  * delete individual songs, add more via Search, and a toolbar menu to
  * rename/delete the whole list.
  */
-
+ 
 function list_page_init(page) {
   let listName = page.data.listName;
   const titleEl = page.querySelector('.center');
   titleEl.innerText = listName;
   titleEl.style.cursor = 'pointer';
   titleEl.title = 'Tap to rename list';
-
+ 
   titleEl.onclick = () => {
     ons.notification.prompt({
       title: 'Rename List',
@@ -24,33 +24,33 @@ function list_page_init(page) {
       if (input === null || input === undefined) return;
       const newName = input.trim();
       if (!newName || newName === listName) return;
-
+ 
       if (appState.lists[newName]) {
         ons.notification.toast(`A list named "${newName}" already exists`, { timeout: 2500 });
         return;
       }
-
+ 
       // Perform rename
       appState.lists[newName] = appState.lists[listName];
       delete appState.lists[listName];
       saveListsToDB();
-
+ 
       // Update recents that reference this list
       appState.recents = appState.recents.map(r => {
         if (r.listName === listName) return { ...r, listName: newName };
         return r;
       });
       dbSetItem('recents', appState.recents);
-
+ 
       // Update local variable and page data so all closures see the new name
       listName = newName;
       page.data.listName = newName;
       titleEl.innerText = newName;
-
+ 
       ons.notification.toast(`Renamed to "${newName}"`, { timeout: 2000 });
     });
   };
-
+ 
   const menuBtn = page.querySelector('#listMenuBtn');
   menuBtn.onclick = () => {
     ons.notification.confirm(`Delete list "${listName}"?`, {
@@ -62,9 +62,9 @@ function list_page_init(page) {
       }
     });
   };
-
+ 
   const listElement = page.querySelector('#list-list');
-
+ 
   function initSortable() {
     if (!window.Sortable || !listElement) return;
     if (listElement._sortable) listElement._sortable.destroy();
@@ -81,17 +81,17 @@ function list_page_init(page) {
       onEnd: () => saveCurrentListOrder(listElement, listName)
     });
   }
-
+ 
   function refreshList() {
     render_songsInList(page, listName);
     initSortable();
   }
-
+ 
   refreshList();
-
+ 
   page.onShow = refreshList;
 }
-
+ 
 function gen_addBtn(listName) {
   const btn = ons.createElement(`
     <ons-list-item id="addSongToListBtn" class="no-drag" tappable modifier="md-outline">
@@ -112,14 +112,14 @@ function gen_addBtn(listName) {
   };
   return btn;
 }
-
+ 
 function gen_swipeableListItem(text, songId, onClick, onDelete) {
   const item = document.createElement('ons-list-item');
   item.setAttribute('tappable', '');
   item.className = 'recent-swipe-item';
   item.style.cssText = 'position:relative; overflow:hidden; touch-action:pan-y; user-select:none; -webkit-user-select:none;';
   item.dataset.songId = songId;
-
+ 
   item.innerHTML = `
     <div class="left drag-handle" style="display:flex;align-items:center;justify-content:center;padding:0 8px;z-index:3;cursor:grab;touch-action:none;">
       <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--sub-text-color)">
@@ -150,18 +150,18 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
       <span>DEL</span>
     </div>
   `;
-
+ 
   const center    = item.querySelector('.center');
   const deleteBtn = item.querySelector('.recent-delete-btn');
-
+ 
   deleteBtn.onclick = (e) => {
     e.stopPropagation();
     onDelete();
   };
-
+ 
   let startX = 0, startY = 0, isHorizontal = false, isOpen = false, longPressTimer = null;
   let suppressNextClick = false;
-
+ 
   const openSwipe = () => {
     if (isOpen) return;
     isOpen = true;
@@ -170,7 +170,7 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
     item.classList.add('swiped');
     suppressNextClick = true;
   };
-
+ 
   const closeSwipe = () => {
     if (!isOpen) return;
     isOpen = false;
@@ -178,27 +178,27 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
     deleteBtn.style.transform = 'translateX(100%)';
     item.classList.remove('swiped');
   };
-
+ 
   /* Swipe on the item body */
   item.addEventListener('touchstart', (e) => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     isHorizontal = false;
   }, { passive: true });
-
+ 
   item.addEventListener('touchmove', (e) => {
     const diffX = Math.abs(startX - e.touches[0].clientX);
     const diffY = Math.abs(startY - e.touches[0].clientY);
     if (diffX > diffY && diffX > 10) isHorizontal = true;
   }, { passive: true });
-
+ 
   item.addEventListener('touchend', (e) => {
     if (!isHorizontal) return;
     const diff = startX - e.changedTouches[0].clientX;
     if (diff > 60) openSwipe();
     else if (diff < -40) closeSwipe();
   });
-
+ 
   /* Tap: navigate, close swipe, or ignore the first click after long-press */
   item.addEventListener('click', (e) => {
     if (e.target.closest('.recent-delete-btn')) return;
@@ -210,7 +210,7 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
     if (isOpen) { closeSwipe(); return; }
     onClick();
   });
-
+ 
   /* Long-press / right-click on the text area only → DEL swipe */
   center.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -222,45 +222,33 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(evt =>
     center.addEventListener(evt, () => clearTimeout(longPressTimer))
   );
-
+ 
   center.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     openSwipe();
   });
-
-  /* Tap elsewhere on the page to close this swipe — delegated to a single
-     document-level listener (below) instead of one per item, so listeners
-     don't accumulate across re-renders. */
-  item._closeSwipe = closeSwipe;
-
+ 
+  /* Tap elsewhere on the page to close this swipe */
+  document.addEventListener('click', (e) => {
+    if (isOpen && !item.contains(e.target)) closeSwipe();
+  });
+ 
   return item;
 }
-
-// Single delegated listener for all swipeable list-items, installed once.
-if (!window._listSwipeOutsideListenerInstalled) {
-  window._listSwipeOutsideListenerInstalled = true;
-  document.addEventListener('click', (e) => {
-    document.querySelectorAll('#list-list .recent-swipe-item.swiped').forEach((el) => {
-      if (!el.contains(e.target) && typeof el._closeSwipe === 'function') {
-        el._closeSwipe();
-      }
-    });
-  });
-}
-
+ 
 function render_songsInList(page, listName) {
   const listElement = page.querySelector('#list-list');
   const infoBlurb = page.querySelector('#infoBlurb');
   if (!listElement) return;
-
+ 
   const songs = appState.lists[listName] || [];
   listElement.innerHTML = '';
-
+ 
   if (songs.length === 0) {
     infoBlurb.style.display = 'none';
     listElement.classList.remove('glassy');
     listElement.appendChild(gen_addBtn(listName));
-
+ 
     const emptyState = document.createElement('div');
     emptyState.className = 'default_img_container';
     emptyState.innerHTML = `<img src="img/list_default.png">`;
@@ -269,55 +257,55 @@ function render_songsInList(page, listName) {
   } else {
     infoBlurb.style.display = '';
     listElement.classList.add('glassy');
-
+ 
     songs.forEach((songId) => {
       const title = window.getSongTitle(songId);
       if (!title) return;
-
+ 
       const el = gen_swipeableListItem(
         title,
         songId,
         () => showSongViewUI(songId, listName),
         () => deleteSongFromList(songId, listName, page)
       );
-
+ 
       listElement.appendChild(el);
     });
-
+ 
     listElement.appendChild(gen_addBtn(listName));
   }
 }
-
+ 
 function showListSongContextMenu(page, element, songId, listName, index) {
   const { popover, shareButton, deleteButton } = setupPopover(element, index);
   shareButton.style.display = 'none';
-
+ 
   deleteButton.onclick = () => {
     popover.hide();
     deleteSongFromList(songId, listName, page);
   };
-
+ 
   popover.show(element);
 }
-
+ 
 function deleteSongFromList(songId, listName, page) {
   const list = appState.lists[listName];
   if (list) appState.lists[listName] = list.filter((id) => id !== songId);
-
+ 
   const title = window.getSongTitle(songId) || songId;
   ons.notification.toast(`Deleted "${title}" from "${listName}"`, { timeout: 2000 });
-
+ 
   saveListsToDB();
   removeListSongFromRecents(listName, songId);
   render_songsInList(page, listName);
 }
-
+ 
 function saveCurrentListOrder(listElement, listName) {
   const order = Array.from(listElement.children)
     .map((child) => child.dataset.songId)
     .filter((id) => id !== undefined)
     .map((id) => (isNaN(id) ? id : Number(id)));
-
+ 
   if (order.length) {
     appState.lists[listName] = order;
     saveListsToDB();

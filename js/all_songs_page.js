@@ -8,9 +8,9 @@
  *   gen_listItem(text, onClick)
  *   showSongViewUI(songId, listName, mode)
  */
-
+ 
 let sortedToc = null;
-
+ 
 // ----------------------------------------------------------------
 // Sanskrit alphabet groups (Devanagari | Bengali (Romanized))
 // ----------------------------------------------------------------
@@ -67,35 +67,35 @@ const SANSKRIT_GROUPS = [
   { key: 'jña', dev: 'JÑA - ज्ञ - জ্ঞ', rom: 'jña', match: t => t.startsWith('jñ') },
   { key: 'śra', dev: 'ŚRA - श्र - শ্র', rom: 'śra', match: t => t.startsWith('śr') }
 ];
-
+ 
 // ----------------------------------------------------------------
 // Build the grouped, sorted TOC
 // ----------------------------------------------------------------
 function buildSortedToc() {
   if (sortedToc) return sortedToc;
-
+ 
   if (window.INDEX === undefined) {
     console.error('window.INDEX not loaded!');
     return [];
   }
-
+ 
   // 1. Collect all songs with titles — window.INDEX is now an object keyed
   // by file_name, so iterate its keys instead of array indices.
   const songs = Object.keys(window.INDEX)
     .map((fileName) => ({ id: fileName, title: window.getSongTitle(fileName) }))
     .filter((item) => item.title);
-
+ 
   // 2. Sort alphabetically, ignoring leading punctuation
   songs.sort((a, b) => {
     const aClean = a.title.replace(/^\p{P}+/u, '');
     const bClean = b.title.replace(/^\p{P}+/u, '');
     return aClean.localeCompare(bClean);
   });
-
+ 
   // 3. Group by Sanskrit alphabet
   const groupMap = new Map();
   SANSKRIT_GROUPS.forEach(g => groupMap.set(g.key, { group: g, songs: [] }));
-
+ 
   songs.forEach(song => {
     const clean = song.title.replace(/^\p{P}+/u, '').trim().toLowerCase();
     let placed = false;
@@ -114,7 +114,7 @@ function buildSortedToc() {
       groupMap.get('#').songs.push(song);
     }
   });
-
+ 
   // 4. Build flat list: header + songs for each non-empty group
   const flat = [];
   SANSKRIT_GROUPS.forEach(g => {
@@ -124,17 +124,17 @@ function buildSortedToc() {
       entry.songs.forEach(s => flat.push({ type: 'song', ...s }));
     }
   });
-
+ 
   // Append uncategorized if any
   if (groupMap.has('#') && groupMap.get('#').songs.length > 0) {
     flat.push({ type: 'header', group: { key: '#', dev: '#', rom: '#' } });
     groupMap.get('#').songs.forEach(s => flat.push({ type: 'song', ...s }));
   }
-
+ 
   sortedToc = flat;
   return sortedToc;
 }
-
+ 
 // ----------------------------------------------------------------
 // Header factory — lighter glass, centered Devanagari character
 // ----------------------------------------------------------------
@@ -142,44 +142,44 @@ function createSanskritHeader(group) {
   const wrapper = document.createElement('ons-list-item');
   wrapper.setAttribute('modifier', 'nodivider');
   wrapper.className = 'sanskrit-header-wrapper';
-
+ 
   const inner = document.createElement('div');
   inner.className = 'sanskrit-header';
   inner.textContent = group.dev;
-
+ 
   wrapper.appendChild(inner);
   return wrapper;
 }
-
+ 
 // ----------------------------------------------------------------
 // Letter-jump nav grid — one button per SANSKRIT_GROUPS entry that
 // actually has songs; clicking opens a dedicated page
 // ----------------------------------------------------------------
-
+ 
 function render_groupNav(page) {
   const nav = page.querySelector('#group-nav');
   if (!nav || !sortedToc) return;
   nav.innerHTML = '';
-
+ 
   /* ── glassy box (same pattern as lists_page.js) ── */
   const box = document.createElement('div');
   box.className = 'glassy';
   box.style.padding = '8px 4px 12px';
-
+ 
   const heading = document.createElement('div');
   heading.className = 'list-header--material';
   heading.style.cssText = 'text-align:center; opacity:.6; font-size:16px; width:100%; margin-bottom:8px;';
   heading.textContent = 'TAP A BUTTON TO JUMP';
   box.appendChild(heading);
-
+ 
   // NEW: choose navigation strategy based on which page we're on
   const isDetail = page.id === 'group_detail_page';
   const navMethod  = isDetail ? 'replacePage' : 'pushPage';
-
+ 
   SANSKRIT_GROUPS.forEach((g) => {
     const hasSongs = sortedToc.some((row) => row.type === 'header' && row.group.key === g.key);
     if (!hasSongs) return;
-
+ 
     const btn = document.createElement('button');
     btn.className = 'group-nav-btn';
     btn.textContent = (g.key.length > 1 && g.key.endsWith('a') ? g.key.slice(0, -1) : g.key).toUpperCase();
@@ -188,16 +188,16 @@ function render_groupNav(page) {
     };
     box.appendChild(btn);
   });
-
+ 
   const heading2 = document.createElement('div');
   heading2.className = 'list-header--material';
   heading2.style.cssText = 'text-align:center; opacity:.6; font-size:16px; width:100%; margin-top:8px;';
   heading2.textContent = 'SCROLL DOWN TO NAVIGATE';
   box.appendChild(heading2);
-
+ 
   nav.appendChild(box);
 }
-
+ 
 // ----------------------------------------------------------------
 // Pulls a single group's header + songs out of sortedToc.
 // ----------------------------------------------------------------
@@ -206,7 +206,7 @@ function getGroupData(groupKey) {
   let group = null;
   const songs = [];
   let inGroup = false;
-
+ 
   for (const row of sortedToc) {
     if (row.type === 'header') {
       if (inGroup) break; // we've reached the next group — stop
@@ -218,10 +218,10 @@ function getGroupData(groupKey) {
     }
     if (inGroup && row.type === 'song') songs.push(row);
   }
-
+ 
   return { group, songs };
 }
-
+ 
 // ----------------------------------------------------------------
 // Group-detail page init — plain ons-list, no lazy-repeat needed since
 // a single letter's song count is small.
@@ -229,23 +229,23 @@ function getGroupData(groupKey) {
 function group_detail_page_init(page) {
   const groupKey = page.data && page.data.groupKey;
   const { group, songs } = getGroupData(groupKey);
-
+ 
   const titleEl = page.querySelector('.center');
   if (titleEl) titleEl.textContent = group ? group.dev : '';
-
+ 
   render_groupNav(page);
-
+ 
   const listElement = page.querySelector('#group-detail-list');
   if (!listElement) return;
   listElement.innerHTML = '';
-
+ 
   songs.forEach((song) => {
     listElement.appendChild(
       gen_listItem(song.title, () => showSongViewUI(song.id, null, 'replace'))
     );
   });
 }
-
+ 
 // ----------------------------------------------------------------
 // Page init
 // ----------------------------------------------------------------
@@ -254,10 +254,10 @@ function all_songs_page_init(page) {
     console.error('window.INDEX not loaded!');
     return;
   }
-
+ 
   buildSortedToc();
   render_groupNav(page);
-
+ 
   /* ── scroll-to-top FAB wiring ── */
   const scrollArea = page.querySelector(".page__content");
   const fab = page.querySelector("#toTop");
@@ -273,16 +273,16 @@ function all_songs_page_init(page) {
       }
     });
   }
-
+ 
   render_songList(sortedToc);
 }
-
+ 
 // ----------------------------------------------------------------
 // Render the lazy-repeat list
 // ----------------------------------------------------------------
 const render_songList = (songs) => {
   const listElement = document.getElementById('all-songs-list');
-
+ 
   listElement.delegate = {
     createItemContent: (index) => {
       const entry = songs[index];
@@ -297,6 +297,6 @@ const render_songList = (songs) => {
       return entry.type === 'header' ? 56 : 62;
     }
   };
-
+ 
   listElement.refresh();
 };
