@@ -357,25 +357,14 @@ function setupFooterNav(page, songId, listName, songList) {
  
   // Place immediately after the footer spacer so it sits at the very end
   const spacer = page.querySelector('#footerSpacer');
+  // Place footer immediately before the spacer.
+  // This keeps the existing reading space underneath the footer.
   if (spacer && spacer.parentNode) {
-    spacer.parentNode.insertBefore(footer, spacer.nextSibling);
+    spacer.parentNode.insertBefore(footer, spacer);
   } else {
     const content = page.querySelector('.page__content');
     if (content) content.appendChild(footer);
   }
- 
-  // Activate marquee scrolling for long titles
-  requestAnimationFrame(() => {
-    footer.querySelectorAll('.footer-nav-title').forEach(span => {
-      const overflow = span.scrollWidth - span.clientWidth;
-      if (overflow > 0) {
-        const duration = Math.max(5, Math.min(16, overflow / 20));
-        span.style.setProperty('--marquee-offset', `-${overflow}px`);
-        span.style.setProperty('--marquee-duration', `${duration}s`);
-        span.classList.add('marquee');
-      }
-    });
-  });
 }
  
 async function initPageState() {

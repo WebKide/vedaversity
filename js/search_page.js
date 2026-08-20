@@ -250,18 +250,23 @@ function search(query) {
  
   /* Tier 2: fuzzy fallback (typo tolerance, mid-lyric matches, etc */
   let results = fuse.search(q);
- 
+
   if (results.length < 2) {
     const originalThreshold = fuse.options.threshold;
     fuse.options.threshold = originalThreshold + 0.2;
     results = fuse.search(q);
     fuse.options.threshold = originalThreshold;
   }
- 
-  return results.slice(0, 30).map((result) => {
-    // result.item is the fuseData object we built above, which carries
-    // the real file_name as `id` — use that instead of refIndex
-    const fileName = result.item.id;
+
+  // Exact prefix matches first, then fuzzy results (skipping anything
+  // already surfaced via prefix match), capped at 30 total.
+  const fuzzyIds = results
+    .map((result) => result.item.id)
+    .filter((fileName) => !prefixSeen.has(fileName));
+
+  const orderedIds = prefixIds.concat(fuzzyIds).slice(0, 30);
+
+  return orderedIds.map((fileName) => {
     const rec = window.INDEX[fileName];
     return {
       id: fileName,

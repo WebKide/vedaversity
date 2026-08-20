@@ -4,14 +4,14 @@
  * custom lists (with create/delete), and the hardcoded tattva (theme)
  * groups with their icons.
  */
- 
+
 function render_customLists(page) {
   const container = page.querySelector('#custom-lists');
   if (!container) return;
- 
+
   container.innerHTML = '';
   const names = Object.keys(appState.lists);
- 
+
   names.forEach((name) => {
     const el = gen_swipeableListItem(
       name,
@@ -28,15 +28,15 @@ function render_customLists(page) {
     );
     container.appendChild(el);
   });
- 
+
   container.classList.toggle('glassy', names.length > 0);
- 
+
   /* ---- visibility / height rules ---- */
   const createBtn = document.getElementById('createListBtn');
   if (createBtn) {
     createBtn.style.display = '';               // always visible
   }
- 
+
   if (names.length > 3) {
     container.style.maxHeight = '180px';        // roughly 3 items
     container.style.overflowY  = 'auto';
@@ -45,11 +45,11 @@ function render_customLists(page) {
     container.style.overflowY = '';
   }
 }
- 
+
 function showListUI(listName) {
   document.getElementById('navigator').pushPage('tmpl-list', { data: { listName } });
 }
- 
+
 function inputDialogAddListUI(page, defaultValue) {
   const options = {
     title: 'New List',
@@ -59,7 +59,7 @@ function inputDialogAddListUI(page, defaultValue) {
     defaultValue: defaultValue || '',
     placeholder: 'List name'
   };
- 
+
   ons.notification.prompt('Enter a name for the new list:', options).then((input) => {
     if (!input || !input.trim()) return;
     const name = input.trim();
@@ -69,15 +69,15 @@ function inputDialogAddListUI(page, defaultValue) {
     showListUI(name);
   });
 }
- 
+
 function render_tattvaLists(page) {
   const shortcutsContainer = page.querySelector('#quick-shortcuts');
   const tattvaContainer    = page.querySelector('#tattva-songs');
   const aratiContainer     = page.querySelector('#arati-lists');
   const galleryContainer   = page.querySelector('#gallery-section');
- 
+
   if (!shortcutsContainer || !tattvaContainer || !aratiContainer || !galleryContainer) return;
- 
+
   // Use filenames instead of hex IDs
   const tattvaLists = [
     { icon: "ssguru", label: "Śrī Guru", files: [
@@ -461,7 +461,7 @@ function render_tattvaLists(page) {
         file: '0W.json' },
     ] }
   ];
- 
+
   const aratiLists = [
     { icon: "marati", label: "Predawn | Maṅgala Ārati", files: [
       {
@@ -501,7 +501,7 @@ function render_tattvaLists(page) {
         firstline: 'hari haraye namaḥ kṛṣṇa yādavāya namaḥ',
         file: '5L.json' },
     ] },
- 
+
     { icon: "narati", label: "Noon | Rāja Bhoga Ārati", files: [
       {
         title: 'Śrī Madhyāhna Bhoga Ārati',
@@ -516,7 +516,7 @@ function render_tattvaLists(page) {
         firstline: 'jaya rādhā mādhava kuñja vihārī',
         file: 'f5.json' },
     ] },
- 
+
     { icon: "earati", label: "Evening | Gaura Ārati", files: [
       {
         title: 'Śrī Gaura Ārati',
@@ -526,7 +526,7 @@ function render_tattvaLists(page) {
         title: 'Śrī Yugala Ārati',
         firstline: 'jaya jaya rādhā kṛṣṇa yugala milana',
         file: 'fa.json' },
- 
+
       {
         title: 'Śrī Tulasī Parikramā & Ārati (1)',
         firstline: 'jaya jaya rādhā kṛṣṇa yugala milana',
@@ -541,12 +541,12 @@ function render_tattvaLists(page) {
         file: '5L.json' }
     ] }
   ];
- 
+
   /* ================================================================
      1. QUICK SHORTCUTS  (rendered into its own material box)
      ================================================================ */
   shortcutsContainer.innerHTML = '';
- 
+
   // ── Always-visible intro songs — same "glassy" ons-list-item styling
   // as the songs inside each tattva's expandable-content, but rendered
   // directly into `container` (not inside an <ons-list-item expandable>),
@@ -568,9 +568,9 @@ function render_tattvaLists(page) {
       file: '0b.json'
     },
     {
-      title: 'stava-stutis [selected prayers]',
+      title: 'selected stava-stutis [prayers]',
       firstline: 'yat kiṅkarīṣu bahuśaḥ khalu kāku vāṇī',
-      file: 'en.json'
+      file: 'ai.json'
     },
     {
       title: 'mahā-mantra [hare kṛṣṇa]',
@@ -578,46 +578,50 @@ function render_tattvaLists(page) {
       file: 'dp.json'
     }
   ];
- 
+
   const introList = document.createElement('div');
   introList.className = 'glassy';
- 
-  introList.style.margin = '15px 0'; 
- 
+
+  introList.style.margin = '15px 0';
+
   const svgIcon = `
     <div class="left">
-      <svg class="shortcut-icon" 
-           viewBox="0 -960 960 960" 
-           height="24px" 
-           width="24px" 
-           fill="var(--highlight-color)" 
-           aria-hidden="true" 
+      <svg class="shortcut-icon"
+           viewBox="0 -960 960 960"
+           height="24px"
+           width="24px"
+           fill="var(--highlight-color)"
+           aria-hidden="true"
            focusable="false">
         <path d="M400-280h160v-80H400v80Zm0-160h280v-80H400v80ZM280-600h400v-80H280v80Zm200 120ZM265-80q-79 0-134.5-55.5T75-270q0-57 29.5-102t77.5-68H80v-80h240v240h-80v-97q-37 8-61 38t-24 69q0 46 32.5 78t77.5 32v80Zm135-40v-80h360v-560H200v160h-80v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H400Z"/>
       </svg>
     </div>`;
- 
+
   introSongs.forEach(({ title, file }) => {
     const rec = window.INDEX[file];
     if (rec) {
-      const item = gen_listItem(title, () => showSongViewUI(file, null));
-      
+      const item = gen_listItem(
+        title,
+        () => showSongViewUI(file, null),
+        rec.author || ''
+      );
+
       // Inject the icon into the 'left' slot of the ons-list-item
       item.insertAdjacentHTML('afterbegin', svgIcon);
-      
+     
       introList.appendChild(item);
     } else {
       console.warn(`File not found in index: ${file}`);
     }
   });
- 
+
   shortcutsContainer.appendChild(introList);
- 
+
   /* ================================================================
      2. SONGS ARRANGED BY TATTVA  (expandable, glassy content)
      ================================================================ */
   tattvaContainer.innerHTML = '';
- 
+
   tattvaLists.forEach((tattva) => {
     const item = ons.createElement(`
       <ons-list-item expandable>
@@ -626,9 +630,9 @@ function render_tattvaLists(page) {
         <div class="expandable-content glassy"></div>
       </ons-list-item>
     `);
- 
+
     const expandableContent = item.querySelector('.expandable-content');
-   
+  
     tattva.files.forEach(({ title, file }) => {
       // window.INDEX is keyed by file_name — look it up to confirm the
       // song still exists (files can be renamed/removed independently
@@ -636,7 +640,7 @@ function render_tattvaLists(page) {
       // display since that's what keeps this list human-readable/
       // greppable in source.
       const rec = window.INDEX[file];
- 
+
       if (rec) {
         expandableContent.appendChild(gen_listItem(title, () => {
           // Build the flat list of files for this tattva/arati group so the footer nav wraps it
@@ -644,20 +648,20 @@ function render_tattvaLists(page) {
           document.getElementById('navigator').pushPage('tmpl-songview', {
             data: { songId: file, songList: groupList }
           });
-        }));
+        }, rec.author || ''));
       } else {
         console.warn(`File not found in index: ${file}`);
       }
     });
- 
+
     tattvaContainer.appendChild(item);
   });
- 
+
   /* ================================================================
      3. ĀRATI & PŪJĀ  (expandable, moved out of the old tattva list)
      ================================================================ */
   aratiContainer.innerHTML = '';
- 
+
   aratiLists.forEach((tattva) => {
     const item = ons.createElement(`
       <ons-list-item expandable>
@@ -666,9 +670,9 @@ function render_tattvaLists(page) {
         <div class="expandable-content glassy"></div>
       </ons-list-item>
     `);
- 
+
     const expandableContent = item.querySelector('.expandable-content');
- 
+
     tattva.files.forEach(({ title, file }) => {
       const rec = window.INDEX[file];
       if (rec) {
@@ -678,22 +682,28 @@ function render_tattvaLists(page) {
           document.getElementById('navigator').pushPage('tmpl-songview', {
             data: { songId: file, songList: groupList }
           });
-        }));
+        }, rec.author || ''));
       } else {
         console.warn(`File not found in index: ${file}`);
       }
     });
- 
+
     aratiContainer.appendChild(item);
   });
- 
+
   /* ================================================================
      4. GALLERY
      ================================================================ */
+  // Reuse the existing slideshow element if this page instance already
+  // built one — we still want a fresh shuffle + restarted timer on every
+  // visit to the Lists tab, but initSlideshow() already handles both of
+  // those internally, so calling it again on the same element is enough.
+  // Only the rest of the gallery section (which doesn't need to reshuffle)
+  // gets cleared and rebuilt.
+  const existingSlideshow = galleryContainer.querySelector('.ken-burns-frame');
   galleryContainer.innerHTML = '';
- 
-  // ── Ken Burns slideshow — appended once, after all tattva groups ──
-  const slideshow = ons.createElement(`
+
+  const slideshow = existingSlideshow || ons.createElement(`
     <div class="intro-thumb ken-burns-frame" data-progressive-load>
       <div class="slide-layer slide-a">
         <img class="slideshow ken-burns" alt="" style="--kb-scale:1.25;" draggable="false">
@@ -713,34 +723,34 @@ function render_tattvaLists(page) {
   `);
   galleryContainer.appendChild(slideshow);
   initSlideshow(slideshow);
- 
+
   const warned = document.createElement('div');
   warned.className = 'list-header--material';
   warned.style.cssText =
     'text-align:center; opacity:.6; font-size:16px; font-weight:700; width:100%; margin-top:8px; color:var(--highlight-color);';
   warned.textContent = 'About this section';
- 
+
   // Append to the actual container that exists in render_tattvaLists()
   galleryContainer.appendChild(warned);
- 
- 
+
+
   const listsFooter = document.createElement('div');
   listsFooter.className = 'glassy list-item__subtitle';
- 
+
   /* touch-action: manipulation prevents the browser from zooming on double-tap */
   listsFooter.style.cssText =
     'text-align:left; font-size:16px; padding:16px; margin:12px 6px; touch-action:manipulation;';
- 
+
   const footerMsg =
     '✦ The <highlight>Quick Shortcuts</highlight> section contains songs that are used repeatedly throughout the day, regardless of the particular time, occasion, or type of devotional activity. These have been placed at the top of this section for quick and convenient access. <br/>✦ The songs in the <highlight>Lists by Tattva</highlight> have been selected and arranged according to their principal devotional subject, with the aim of making the songbook easier to navigate and use at home or in any <i>Maṭha</i>. The selections are based primarily on <i>Śrī Gauḍīya Gīti-guccha</i>, together with songs found in the traditional repertoire of <i>Gauḍīya Maṭha</i> temples and songs associated with particular times of the day. The categories are intended as a <b>practical devotional arrangement</b> rather than as a rigid classification. Some songs naturally express more than one <i>tattva</i>, and in such cases they have been placed according to how they are sung in <i>Gauḍīya Maṭha</i>. <br/>✦ The <highlight>Ārati & Pūjā</highlight> section is arranged separately according to the three traditional times of worship, while the <i>Tattva</i> sections gather songs according to the mood or personality. The resulting selection is therefore <b>curated rather than exhaustive</b>: it represents a practical collection of songs suitable for meditation, personal <i>bhajana</i>, and congregational chanting, while preserving the devotional character of the traditional <i>Gauḍīya Vaiṣṇava</i> repertoire.<br/>✦ The <highlight>Gauḍīya Gallery</highlight> section contains some photographs and paintings to serve as windows to the spiritual world.';
- 
+
   listsFooter.innerHTML = `
     <p text-align:left; font-size:16; padding:16px; margin:12px 6px; touch-action: manipulation;>${footerMsg}</p>
   `;
- 
+
   galleryContainer.appendChild(listsFooter);
 }
- 
+
 // ---------------------------------------------------------------------
 // Ken Burns slideshow — cycles through a fixed list of photos.
 //
@@ -766,15 +776,15 @@ const SLIDESHOW_ITEMS = [
   { file: '009.jpg', position: 'top center', caption: 'Old Ratha-yātrā photo | Lord Jagannātha is coming out of the Mandir accompanied by His servants.' },
   { file: '010.jpg', position: 'top center', caption: 'Yugācārya Bhaktivedānta Nārāyaṇa Gosvāmī | Awarded the title of Yugācārya in Varṣānā (2003) for his profound global contribution to pure bhakti.' }
 ];
- 
+
 // Single source of truth for how long each photo stays on screen. The
 // Ken Burns pan/zoom (--kb-duration) is derived from this in JS below,
 // so the animation always finishes exactly as the crossfade begins —
 // change this one value only; never hardcode a duration anywhere else.
 const SLIDESHOW_DURATION_MS = 10000; // was 9000 — slower now
- 
+
 let _slideshowIntervalId = null;
- 
+
 // small shuffle helper
 function shuffleArray(arr) {
   const a = arr.slice(); // copy so we don't mutate the original
@@ -784,41 +794,41 @@ function shuffleArray(arr) {
   }
   return a;
 }
- 
+
 // Parses "Heading | Body text" into { heading, body }. If there's no
 // "|", the whole string is treated as heading-only. Empty/whitespace-only
 // caption means no overlay at all for that photo.
 function parseSlideCaption(captionText) {
   const raw = (captionText || '').trim();
   if (!raw) return null;
- 
+
   const parts = raw.split('|');
   const heading = (parts[0] || '').trim();
   const body = parts.slice(1).join('|').trim(); // rejoin in case body itself contains "|"
- 
+
   if (!heading && !body) return null;
   return { heading, body };
 }
- 
+
 function initSlideshow(wrapper) {
   const layerA = wrapper.querySelector('.slide-a');
   const layerB = wrapper.querySelector('.slide-b');
- 
+
   if (!layerA || !layerB || SLIDESHOW_ITEMS.length === 0) {
     console.warn('[slideshow] missing layers or no images', {
       layerA, layerB, count: SLIDESHOW_ITEMS.length
     });
     return;
   }
- 
+
   // Random order every time the page opens
   const items = shuffleArray(SLIDESHOW_ITEMS);
- 
+
   if (_slideshowIntervalId !== null) {
     clearInterval(_slideshowIntervalId);
     _slideshowIntervalId = null;
   }
- 
+
   // All photos pan straight up — set directly on each layer's <img>
   // (custom properties would inherit from the parent .slide-layer too,
   // but setting them on the actual img being animated is clearer).
@@ -828,11 +838,11 @@ function initSlideshow(wrapper) {
     img.style.setProperty('--kb-pan-y', '-2%');  // slightly to the bottom
     img.style.setProperty('--kb-duration', (SLIDESHOW_DURATION_MS / 1000) + 's');
   });
- 
+
   let i = 0;
   let front = layerA;
   let back = layerB;
- 
+
   // `layer` here is a .slide-layer wrapper div (containing both the
   // <img> and its .slide-caption) — NOT the <img> itself, so every
   // element we touch is looked up as a child of `layer`.
@@ -841,11 +851,11 @@ function initSlideshow(wrapper) {
     const captionEl = layer.querySelector('.slide-caption');
     const headingEl = layer.querySelector('.slide-caption-heading');
     const bodyEl = layer.querySelector('.slide-caption-body');
- 
+
     img.src = `img/slideshow/${item.file}`;
     img.alt = item.caption || '';
     img.style.objectPosition = item.position || 'center';
- 
+
     // Anchor the zoom to the same point as the static crop above. Without
     // this, --kb-origin falls back to its CSS default of "center", so the
     // zoom crops inward from the middle of the frame regardless of where
@@ -857,14 +867,14 @@ function initSlideshow(wrapper) {
     // the face stays in frame throughout the animation instead of
     // sliding out as it zooms.
     img.style.setProperty('--kb-origin', item.position || 'center');
- 
+
     // Restart the Ken Burns pan/zoom animation cleanly on this layer's
     // image (fixed offsetWidth typo — offsetWith isn't a real property
     // and silently did nothing, so the animation never actually reset).
     img.style.animation = 'none';
     void img.offsetWidth; // force reflow
     img.style.animation = '';
- 
+
     const parsed = parseSlideCaption(item.caption);
     if (parsed) {
       headingEl.textContent = parsed.heading;
@@ -876,20 +886,20 @@ function initSlideshow(wrapper) {
       captionEl.classList.add('slide-caption-empty');
     }
   };
- 
+
   // Preload the next photo so it's ready before we fade to it
   const preloadNext = (idx) => {
     const nextItem = items[(idx + 1) % items.length];
     new Image().src = `img/slideshow/${nextItem.file}`;
   };
- 
+
   let isHovering = false;
- 
+
   // Show first slide immediately
   setSlide(front, items[i]);
   front.classList.add('slide-visible');
   preloadNext(i);
- 
+
   const showNext = () => {
     if (isHovering) return;
     i = (i + 1) % items.length;
@@ -899,30 +909,30 @@ function initSlideshow(wrapper) {
     [front, back] = [back, front];
     preloadNext(i);
   };
- 
+
   const startInterval = () => {
     if (_slideshowIntervalId !== null) clearInterval(_slideshowIntervalId);
     _slideshowIntervalId = setInterval(showNext, SLIDESHOW_DURATION_MS);
   };
- 
+
   const stopInterval = () => {
     if (_slideshowIntervalId !== null) {
       clearInterval(_slideshowIntervalId);
       _slideshowIntervalId = null;
     }
   };
- 
+
   if (items.length > 1) {
     startInterval();
   }
- 
+
   wrapper.addEventListener('mouseenter', () => {
     isHovering = true;
     stopInterval();
     const visibleImg = wrapper.querySelector('.slide-visible .slideshow');
     if (visibleImg) visibleImg.style.animationIterationCount = 'infinite';
   });
- 
+
   wrapper.addEventListener('mouseleave', () => {
     isHovering = false;
     const visibleImg = wrapper.querySelector('.slide-visible .slideshow');

@@ -10,10 +10,17 @@
 // Basic list-item construction
 // ---------------------------------------------------------------------
  
-function gen_listItem(text, onClick) {
+function gen_listItem(text, onClick, author = '') {
   const item = document.createElement('ons-list-item');
   item.setAttribute('tappable', '');
-  item.innerHTML = `<div class="center">${text}</div>`;
+
+  item.innerHTML = `
+    <div class="center">
+      <div class="list-item-title">${escapeHtml(text)}</div>
+      ${author ? `<div class="list-item-author">${escapeHtml(author)}</div>` : ''}
+    </div>
+  `;
+
   if (onClick) item.onclick = onClick;
   return item;
 }

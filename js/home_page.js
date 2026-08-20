@@ -205,14 +205,26 @@ function gen_swipeableRecentItem(text, onClick, onDelete) {
     openSwipe();
   });
  
-  /* Tap elsewhere on the page to close this swipe */
-  document.addEventListener('click', (e) => {
-    if (isOpen && !item.contains(e.target)) closeSwipe();
-  });
- 
+  /* Tap elsewhere on the page to close this swipe — delegated to a single
+     document-level listener (below) instead of one per item, so listeners
+     don't accumulate across re-renders. */
+  item._closeSwipe = closeSwipe;
+
   return item;
 }
- 
+
+// Single delegated listener for all swipeable recent-items, installed once.
+if (!window._recentSwipeOutsideListenerInstalled) {
+  window._recentSwipeOutsideListenerInstalled = true;
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll('#recents-items .recent-swipe-item.swiped').forEach((el) => {
+      if (!el.contains(e.target) && typeof el._closeSwipe === 'function') {
+        el._closeSwipe();
+      }
+    });
+  });
+}
+
 function render_recentListItems(page) {
   const scope = page || document;
   const container = scope.querySelector('#recents-items');

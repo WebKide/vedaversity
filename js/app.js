@@ -222,3 +222,9 @@ async function boot() {
 }
  
 document.addEventListener('DOMContentLoaded', boot);
+
+document.addEventListener('contextmenu', (e) => {
+  if (e.target instanceof Element && e.target.closest('img')) {
+    e.preventDefault();
+  }
+});
