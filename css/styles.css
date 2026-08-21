@@ -23,9 +23,9 @@
  * plus safe-area insets.
  */
 :root {
-  font-family: 'Ubuntu Sans', sans-serif; /* 1. Base property */
-  --font-family: 'Charis SIL', serif; /* 3. Material components */
+  --font-family: 'Charis SIL', serif; /* 1. Material components */
   --material-font-family: 'Nunito', sans-serif; /* 2. Standard components */
+  font-family: var(--font-family); /* 3. Base property */
   /* ---- App theme palette (dark) ---- */
   --background-color: black;
   --text-color: #e0e0e0;
@@ -288,7 +288,16 @@ body {
 #app {
   position: relative;
   height: 100dvh;
-  background: var(--kirtan-page-surround, #0d0d0d);
+
+  /* DARK THEME */
+  background-color: #0d0d0d;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%23242424' fill-opacity='0.5'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* LIGHT THEME */
+:root.theme-light #app {
+background-color: #ffd6c3;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%23e2ac95' fill-opacity='0.4'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* .page is position: fixed (see base rule) — so safe areas must be
@@ -302,8 +311,8 @@ body {
 
   /* soft raised-panel halo */
   box-shadow:
-    -6px 0 6px rgba(255, 255, 255, 0.03),
-     6px 0 6px rgba(255, 255, 255, 0.03);
+    -6px 0 6px rgb(27 27 27 / 85%),
+     6px 0 6px #000;
 
   transition: transform 0.22s ease, opacity 0.22s ease;
 
@@ -313,6 +322,13 @@ body {
   padding-right: env(safe-area-inset-right);
 
   box-sizing: border-box;
+}
+
+/* LIGHT THEME */
+:root.theme-light .page {
+  box-shadow:
+    -6px 0 6px rgb(224 186 170),
+     6px 0 6px rgb(233 184 169);
 }
 
 @media (min-width: 721px) {
@@ -1701,6 +1717,7 @@ footnote {
   font-size: 85%;
   font-weight: 400;
   opacity: 0.5;
+  padding-left: 6px;
   text-transform: capitalize;
   font-style: italic;
   line-height: 1.2;

@@ -553,27 +553,27 @@ function render_tattvaLists(page) {
   // so there's nothing to tap open to reach them.
   const introSongs = [
     {
-      title: 'maṅgalācaraṇa [auspicious invocation]',
+      title: 'maṅgalācaraṇa',
       firstline: 'mangalacarana auspicious invocation',
       file: '00.json'
     },
     {
-      title: 'svasti-vācana [extended prayers]',
-      firstline: 'svasti vacana prayer for auspiciousness',
-      file: '0a.json'
-    },
-    {
-      title: 'jaya-dhvani [victory roar]',
+      title: 'victory roar',
       firstline: 'jaya śrī śrī guru gaurāṅga',
       file: '0b.json'
     },
     {
-      title: 'selected stava-stutis [prayers]',
+      title: 'svasti-vācana',
+      firstline: 'svasti vacana prayer for auspiciousness',
+      file: '0a.json'
+    },
+    {
+      title: 'rādhā-kṛṣṇa-gaura-tattva',
       firstline: 'yat kiṅkarīṣu bahuśaḥ khalu kāku vāṇī',
       file: 'ai.json'
     },
     {
-      title: 'mahā-mantra [hare kṛṣṇa]',
+      title: 'mahā-mantra',
       firstline: 'hare kṛṣṇa hare kṛṣṇa kṛṣṇa kṛṣṇa hare hare',
       file: 'dp.json'
     }

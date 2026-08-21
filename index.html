@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.44</title>
+  <title>Kīrtan App v1.45</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -91,6 +91,17 @@
               <div id="recents" class="glassy">
                 <!-- Add this above <div id="recents-items"> -->
                 <div id="recents-actions" style="display: flex; align-items: center; justify-content: center; position: relative; padding: 10px; border-bottom: 1px solid rgba(128,128,128,0.2);">
+                  <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center;">
+                    <svg class="recents-icon"
+                         viewBox="0 0 24 24"
+                         height="24px"
+                         width="24px"
+                         fill="var(--highlight-color)"
+                         aria-hidden="true"
+                         focusable="false">
+                      <path d="M6 10h9V6H6zm11-7H5c-.5 0-1 .2-1.4.6S3 4.5 3 5v14c0 .5.2 1 .6 1.4s.9.6 1.4.6h14c.5 0 1-.2 1.4-.6s.6-.9.6-1.4V7zm2 16H5V5h11.2L19 7.8zm-7-7c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3"/>
+                    </svg>
+                  </div>
                   <div style="font-size: 12px; font-weight: bold; letter-spacing: 1px; opacity: 0.6;">RECENT SONGS</div>
                   <ons-toolbar-button id="recentsMenuBtn" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="var(--highlight-color)">
@@ -170,7 +181,7 @@
                 <img src="img/home_default.png" alt="Home">
                 <div class="home-image-caption">
                   <span class="home-image-heading" 
-                        id="appVersionCaption">Kīrtan App v1.44</span>
+                        id="appVersionCaption">Kīrtan App v1.45</span>
                   <span class="home-image-subtitle">forked by WebKide</span>
                 </div>
               </div>

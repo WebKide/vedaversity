@@ -79,11 +79,11 @@ function settings_page_init(page) {
  
   const fonts = [
     { value: "'Ubuntu Sans', sans-serif", label: 'Ubuntu Sans (Modern)' },
-    { value: "'Charis SIL', serif", label: 'Charis SIL (Beautiful)' },
+    { value: "'Charis SIL', serif", label: 'Charis SIL (Elegant)' },
     { value: "'Noto Serif', serif", label: 'Noto Serif (Traditional)' },
-    { value: "'Gentium Plus', serif", label: 'Gentium Plus (Classic IAST)' },
-    { value: "'Nunito Sans', sans-serif", label: 'Nunito Sans (Rounded)' },
-    { value: "'Tiro Devanagari Sanskrit', sans-serif", label: 'Tiro Devanagari (Elegant)' }
+    { value: "'Gentium Plus', serif", label: 'Gentium Plus (Classic)' },
+    { value: "'Nunito', sans-serif", label: 'Nunito (Rounded)' },
+    { value: "'Baloo Da', sans-serif", label: 'Baloo Da (Sans)' }
   ];
  
   let activeFontSwitch = null;

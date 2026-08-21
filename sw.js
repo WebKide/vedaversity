@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.44';
+const VERSION = 'v1.45';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -21,26 +21,12 @@ const ASSETS = [
   BASE + '/css/fonts.css',
   BASE + '/css/styles.css',
   BASE + '/css/dependencies/ios-safe-area-fix-v2.css',
-  BASE + '/fonts/gentium-plus-v2-latin-ext-700.woff2',
-  BASE + '/fonts/gentium-plus-v2-latin-ext-700italic.woff2',
-  BASE + '/fonts/gentium-plus-v2-latin-ext-italic.woff2',
-  BASE + '/fonts/gentium-plus-v2-latin-ext-regular.woff2',
-  BASE + '/fonts/nunito-v32-latin-ext-700.woff2',
-  BASE + '/fonts/nunito-v32-latin-ext-700italic.woff2',
-  BASE + '/fonts/nunito-v32-latin-ext-italic.woff2',
-  BASE + '/fonts/nunito-v32-latin-ext-regular.woff2',
-  BASE + '/fonts/noto-serif-v33-latin-ext-regular.woff2',
-  BASE + '/fonts/noto-serif-v33-latin-ext-italic.woff2',
-  BASE + '/fonts/noto-serif-v33-latin-ext-700.woff2',
-  BASE + '/fonts/noto-serif-v33-latin-ext-700italic.woff2',
-  BASE + '/fonts/ubuntu-sans-v4-latin-ext-600.woff2',
-  BASE + '/fonts/ubuntu-sans-v4-latin-ext-600italic.woff2',
-  BASE + '/fonts/ubuntu-sans-v4-latin-ext-italic.woff2',
-  BASE + '/fonts/ubuntu-sans-v4-latin-ext-regular.woff2',
-  BASE + '/fonts/charis-sil-v2-latin-ext-italic.woff2',
-  BASE + '/fonts/charis-sil-v2-latin-ext-regular.woff2',
-  BASE + '/fonts/tiro-devanagari-sanskrit-v7-latin-ext-italic.woff2',
-  BASE + '/fonts/tiro-devanagari-sanskrit-v7-latin-ext-regular.woff2',
+  BASE + '/fonts/balooda-v21-latin-ext.woff2',
+  BASE + '/fonts/charis-sil-v2-latin-ext.woff2',
+  BASE + '/fonts/gentium-plus-v2-latin-ext.woff2',
+  BASE + '/fonts/noto-serif-v33-latin-ext.woff2',
+  BASE + '/fonts/nunito-v32-latin-ext.woff2',
+  BASE + '/fonts/ubuntusans-v4-latin-ext.woff2',
   BASE + '/img/icons/apple-touch-icon.png',
   BASE + '/img/icons/earati.png',
   BASE + '/img/icons/marati.png',
