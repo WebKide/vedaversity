@@ -1762,6 +1762,17 @@ ons-list-item .center.search-result {
   max-height: 600px; /* adjust to your content length */
 }
 
+.home-logotype {
+  display: block;
+  width: min(25%, 512px);
+  height: auto;
+  margin: 0 auto;
+}
+
+@media (max-width: 520px) {
+  .home-logotype { width: min(40%, 512px); }
+}
+
 /* Home Version Wrapper becomes the positioning context */
 .home-image-wrap img,
 .default_img_container img {

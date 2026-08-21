@@ -1,53 +1,239 @@
-/* ─── Ubuntu Sans (UI Components) ───────────────────────────────────────── */
-@font-face {
-  font-display: swap;
-  font-family: 'Ubuntu Sans';
-  font-style: normal;
-  font-weight: 100 800;
-  src: url('../fonts/ubuntusans-v4-latin-ext.woff2') format('woff2');
-}
+/* ================================================================
+   BALOO DA
+   Regular only
+   ================================================================ */
 
-/* nunito-sans - latin-ext */
 @font-face {
-  font-display: swap;
-  font-family: 'Nunito';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/nunito-v32-latin-ext.woff2') format('woff2');
-}
-
-/* gentium-plus - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Gentium Plus';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/gentium-plus-v2-latin-ext.woff2') format('woff2');
-}
-
-/* noto-serif - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Noto Serif';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/noto-serif-v33-latin-ext.woff2') format('woff2');
-}
-
-/* charis-sil - latin-ext */
-@font-face {
-  font-display: swap;
-  font-family: 'Charis SIL';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/charis-sil-v2-latin-ext.woff2') format('woff2');
-}
-
-/* baloo-da - latin-ext */
-@font-face {
-  font-display: swap;
   font-family: 'Baloo Da';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/balooda-v21-latin-ext.woff2') format('woff2');
+  font-display: swap;
+  src: url('../fonts/balooda-v21-latin-ext.woff') format('woff');
+}
+
+/* ================================================================
+   CHARIS SIL
+   Regular + Italic + Bold + Bold Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Charis SIL';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/CharisSIL-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Charis SIL';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/CharisSIL-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Charis SIL';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/CharisSIL-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Charis SIL';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/CharisSIL-BoldItalic.woff2') format('woff2');
+}
+
+/* ================================================================
+   GENTIUM BOOK
+   Regular + Italic + Bold + Bold Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Gentium Book';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/GentiumBook-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gentium Book';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/GentiumBook-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gentium Book';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/GentiumBook-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gentium Book';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/GentiumBook-BoldItalic.woff2') format('woff2');
+}
+
+/* ================================================================
+   KELVINCH
+   Regular + Italic + Bold + Bold Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Kelvinch';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Kelvinch-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Kelvinch';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Kelvinch-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Kelvinch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Kelvinch-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Kelvinch';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Kelvinch-BoldItalic.woff2') format('woff2');
+}
+
+/* ================================================================
+   NUNITO SANS
+   Regular + Italic + Bold + Bold Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/NunitoSans-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/NunitoSans-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/NunitoSans-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/NunitoSans-BoldItalic.woff2') format('woff2');
+}
+
+/* ================================================================
+   SANSITA
+   Regular + Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Sansita';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Sansita-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Sansita';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Sansita-Italic.woff2') format('woff2');
+}
+
+/* ================================================================
+   SASSOON
+   Regular + Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Sassoon';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Sassoon-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Sassoon';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Sassoon-Italic.woff2') format('woff2');
+}
+
+/* ================================================================
+   UBUNTU
+   Regular + Italic + Bold + Bold Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Ubuntu-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Ubuntu-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Ubuntu-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Ubuntu-BoldItalic.woff2') format('woff2');
 }

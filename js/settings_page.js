@@ -78,12 +78,14 @@ function settings_page_init(page) {
   `);
  
   const fonts = [
-    { value: "'Ubuntu Sans', sans-serif", label: 'Ubuntu Sans (Modern)' },
-    { value: "'Charis SIL', serif", label: 'Charis SIL (Elegant)' },
-    { value: "'Noto Serif', serif", label: 'Noto Serif (Traditional)' },
-    { value: "'Gentium Plus', serif", label: 'Gentium Plus (Classic)' },
-    { value: "'Nunito', sans-serif", label: 'Nunito (Rounded)' },
-    { value: "'Baloo Da', sans-serif", label: 'Baloo Da (Sans)' }
+    { value: "'Kelvinch', serif",          label: 'Kelvinch (Traditional)' },
+    { value: "'Ubuntu', sans-serif",       label: 'Ubuntu (Modern)' },
+    { value: "'Charis SIL', serif",        label: 'Charis SIL (Elegant)' },
+    { value: "'Nunito Sans', sans-serif",  label: 'Nunito Sans (Material)' },
+    { value: "'Gentium Book', serif",      label: 'Gentium Book (Classic)' },
+    { value: "'Sassoon', sans-serif",      label: 'Sassoon (Readable)' },
+    { value: "'Baloo Da', sans-serif",     label: 'Baloo Da (Effective)' },
+    { value: "'Sansita', sans-serif",      label: 'Sansita (Friendly)' }
   ];
  
   let activeFontSwitch = null;

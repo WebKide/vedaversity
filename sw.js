@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.45';
+const VERSION = 'v1.46';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -22,11 +22,30 @@ const ASSETS = [
   BASE + '/css/styles.css',
   BASE + '/css/dependencies/ios-safe-area-fix-v2.css',
   BASE + '/fonts/balooda-v21-latin-ext.woff2',
-  BASE + '/fonts/charis-sil-v2-latin-ext.woff2',
-  BASE + '/fonts/gentium-plus-v2-latin-ext.woff2',
-  BASE + '/fonts/noto-serif-v33-latin-ext.woff2',
-  BASE + '/fonts/nunito-v32-latin-ext.woff2',
-  BASE + '/fonts/ubuntusans-v4-latin-ext.woff2',
+  BASE + '/fonts/CharisSIL-Bold.woff2',
+  BASE + '/fonts/CharisSIL-BoldItalic.woff2',
+  BASE + '/fonts/CharisSIL-Italic.woff2',
+  BASE + '/fonts/CharisSIL-Regular.woff2',
+  BASE + '/fonts/GentiumBook-Bold.woff2',
+  BASE + '/fonts/GentiumBook-BoldItalic.woff2',
+  BASE + '/fonts/GentiumBook-Italic.woff2',
+  BASE + '/fonts/GentiumBook-Regular.woff2',
+  BASE + '/fonts/Kelvinch-Bold.woff2',
+  BASE + '/fonts/Kelvinch-BoldItalic.woff2',
+  BASE + '/fonts/Kelvinch-Italic.woff2',
+  BASE + '/fonts/Kelvinch-Regular.woff2',
+  BASE + '/fonts/NunitoSans-Bold.woff2',
+  BASE + '/fonts/NunitoSans-BoldItalic.woff2',
+  BASE + '/fonts/NunitoSans-Italic.woff2',
+  BASE + '/fonts/NunitoSans-Regular.woff2',
+  BASE + '/fonts/Sansita-Italic.woff2',
+  BASE + '/fonts/Sansita-Regular.woff2',
+  BASE + '/fonts/Sassoon-Italic.woff2',
+  BASE + '/fonts/Sassoon-Regular.woff2',
+  BASE + '/fonts/Ubuntu-Bold.woff2',
+  BASE + '/fonts/Ubuntu-BoldItalic.woff2',
+  BASE + '/fonts/Ubuntu-Italic.woff2',
+  BASE + '/fonts/Ubuntu-Regular.woff2',
   BASE + '/img/icons/apple-touch-icon.png',
   BASE + '/img/icons/earati.png',
   BASE + '/img/icons/marati.png',
