@@ -10,6 +10,63 @@ function author_page_init(page) {
   if (!container) return;
   container.innerHTML = '';
 
+  const authorIntro = document.createElement('div');
+  authorIntro.className = 'glassy list-item__subtitle';
+  /* touch-action: manipulation prevents the browser from zooming on double-tap */
+  authorIntro.style.cssText = 'text-align:left; font-size:16px; padding:16px; margin:12px 6px; touch-action: manipulation;';
+
+  const teaser = 'An unprecedented collection of Sanskrit, Bengali, Hindi, and Brajbhasa devotional poems, prayers and songs written by the <i>Gauḍīya Vaiṣṇava ācāryas</i>.';
+
+  const rest = 'Compiled under the direction of our most worshipful <i>Gurudeva</i>, <i>oṁ viṣṇupāda paramahaṁsa parivrājakācārya aṣṭottara-śata Śrī Śrīmad Bhaktivedānta Nārāyaṇa Mahārāja</i>. <br/><br/>The devotional songs of the <i>Gauḍīya Vaiṣṇava</i> tradition were first brought to the Western world through the preaching of <i>Śrī Śrīmad A. C. Bhaktivedānta Swami Prabhupāda</i>, founder-ācārya of the International Society for Kṛṣṇa Consciousness. He carried the teachings and mission of <i>Śrī Caitanya Mahāprabhu</i> beyond India. The preaching of <i>Śrīla Prabhupāda</i> was subsequently continued by <i>Śrīla Bhaktivedānta Nārāyaṇa Mahārāja</i>, who travelled extensively throughout the West and helped introduce many more traditional devotional songs. <br/><br/><b>Śrī Gauḍīya Gīti-guccha</b>, first published by <i>Śrīla Bhakti Prajñāna Keśava Gosvāmī</i>, is a collection of devotional poems, prayers and songs expressing the pure devotion found in the hearts of the great <i>Vaiṣṇava ācāryas</i>, including <i>Śrīla Rūpa Gosvāmī</i>, <i>Śrīla Raghunātha dāsa Gosvāmī</i>, <i>Śrīla Kṛṣṇadāsa Kavirāja Gosvāmī</i>, <i>Śrīla Narottama Ṭhākura</i>, <i>Śrīla Locanadāsa Ṭhākura</i>, <i>Śrīla Bhaktivinoda Ṭhākura</i>, and <i>Śrīla Bhakti Prajñāna Keśava Mahārāja</i>. <br/><br/>By learning and regularly reciting these prayers under the guidance of an accomplished <i>Vaiṣṇava</i>, one not only meditates upon the divine qualities of <i>Śrī Guru</i>, <i>Śrī Gaurāṅga-deva</i> and <i>Śrī Śrī Rādhā-Kṛṣṇa</i>, but may also begin to appreciate the particular devotional moods expressed by their exalted authors. <br/><br/><i>Kīrtana</i>, being <i>bhagavat-priya</i>—especially dear to <i>Śrī Kṛṣṇa</i>—is one of the most important forms of devotional service and should not be neglected.';
+
+  authorIntro.innerHTML = `
+    <p style="margin:0 0 0.5em 0; color: var(--text-color);">${teaser}</p>
+
+    <div class="guide-rest"
+         style="max-height:0; overflow:hidden; transition:max-height 0.4s ease; padding-top:1em;">
+      <p style="margin:0; color:var(--text-color);">${rest}</p>
+    </div>
+
+    <p class="guide-prompt"
+       style="margin:0.8em 0 0; opacity:.8; font-style:normal; font-size:0.85em; text-align:center; user-select:none; -webkit-user-select:none; color:var(--highlight-color);">
+      [DOUBLETAP TO READ MORE]
+    </p>
+  `;
+
+  const restWrapper = authorIntro.querySelector('.guide-rest');
+  const promptEl    = authorIntro.querySelector('.guide-prompt');
+  let isExpanded   = false;
+
+  const toggleGuide = () => {
+    isExpanded = !isExpanded;
+    if (isExpanded) {
+      restWrapper.style.maxHeight = restWrapper.scrollHeight + 'px';
+      promptEl.textContent = '[DOUBLETAP TO CLOSE]';
+    } else {
+      restWrapper.style.maxHeight = '0px';
+      promptEl.textContent = '[DOUBLETAP TO READ MORE]';
+    }
+  };
+
+  /* Mobile double-tap: track timestamps on touchend */
+  let lastTap = 0;
+  authorIntro.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTap < 350) {
+      e.preventDefault(); /* stop zoom and synthetic click */
+      toggleGuide();
+    }
+    lastTap = now;
+  });
+
+  /* Desktop double-click */
+  authorIntro.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    toggleGuide();
+  });
+
+  container.appendChild(authorIntro);
+
   const idx = window.INDEX || {};
   const authorMap = {};
 
@@ -58,8 +115,8 @@ function author_page_init(page) {
           <div class="author-marquee-viewport">
             <span class="author-marquee-text">
               ${escapeHtml(author)}
-              <span class="total-songs-num">[${songs.length}]</span>
             </span>
+            <span class="total-songs-num">[${songs.length}]</span>
           </div>
         </div>
 
@@ -89,12 +146,33 @@ function author_page_init(page) {
       }
     });
 
-    // Make author groups behave like an accordion.
+    // Make author groups behave like a fixed accordion.
     item.addEventListener('expand', () => {
+      // Remember where the tapped item was before the expansion.
+      const topBefore = item.getBoundingClientRect().top;
+
+      // Close any other expanded author.
       container.querySelectorAll('ons-list-item[expandable]').forEach((otherItem) => {
         if (otherItem !== item && otherItem.hasAttribute('expanded')) {
           otherItem.removeAttribute('expanded');
         }
+      });
+
+      // Onsen updates the expandable layout asynchronously.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const topAfter = item.getBoundingClientRect().top;
+          const difference = topAfter - topBefore;
+
+          // Compensate for the layout shift so the tapped author
+          // remains at the same vertical position on screen.
+          if (Math.abs(difference) > 1) {
+            window.scrollBy({
+              top: difference,
+              behavior: 'instant'
+            });
+          }
+        });
       });
     });
 
@@ -124,6 +202,21 @@ function author_page_init(page) {
       }
     });
   }
+
+  const authorFooter = document.createElement('div');
+  authorFooter.className = 'glassy list-item__subtitle';
+
+  authorFooter.style.cssText =
+    'text-align:left; font-size:16px; padding:16px; margin:12px 6px; touch-action:manipulation;';
+
+  const footerMsg =
+    '✦ The <highlight>Quick Shortcuts</highlight> section contains songs that are used repeatedly throughout the day, regardless of the particular time, occasion, or type of devotional activity. These have been placed at the top of this section for quick and convenient access. <br/>✦ The songs in the <highlight>Lists by Tattva</highlight> have been selected and arranged according to their principal devotional subject, with the aim of making the songbook easier to navigate and use at home or in any <i>Maṭha</i>. The selections are based primarily on <i>Śrī Gauḍīya Gīti-guccha</i>, together with songs found in the traditional repertoire of <i>Gauḍīya Maṭha</i> temples and songs associated with particular times of the day. The categories are intended as a <b>practical devotional arrangement</b> rather than as a rigid classification. Some songs naturally express more than one <i>tattva</i>, and in such cases they have been placed according to how they are sung in <i>Gauḍīya Maṭha</i>. <br/>✦ The <highlight>Ārati & Pūjā</highlight> section is arranged separately according to the three traditional times of worship, while the <i>Tattva</i> sections gather songs according to the mood or personality. The resulting selection is therefore <b>curated rather than exhaustive</b>: it represents a practical collection of songs suitable for meditation, personal <i>bhajana</i>, and congregational chanting, while preserving the devotional character of the traditional <i>Gauḍīya Vaiṣṇava</i> repertoire.<br/>✦ The <highlight>Gauḍīya Gallery</highlight> section contains some photographs and paintings to serve as windows to the spiritual world.';
+
+  authorFooter.innerHTML = `
+    <p text-align:left; font-size:16; padding:16px; margin:12px 6px; touch-action: manipulation;>${footerMsg}</p>
+  `;
+
+  container.appendChild(authorFooter);
 }
 
 function capitalizeAuthorName(name) {

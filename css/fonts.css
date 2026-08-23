@@ -1,17 +1,4 @@
 /* ================================================================
-   BALOO DA
-   Regular only
-   ================================================================ */
-
-@font-face {
-  font-family: 'Baloo Da';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/balooda-v21-latin-ext.woff') format('woff');
-}
-
-/* ================================================================
    CHARIS SIL
    Regular + Italic + Bold + Bold Italic
    ================================================================ */

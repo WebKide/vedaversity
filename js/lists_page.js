@@ -631,6 +631,36 @@ function render_tattvaLists(page) {
       </ons-list-item>
     `);
 
+    // When this item expands, close every other expanded item
+    item.addEventListener('expand', () => {
+      // Remember where the tapped item is relative to the viewport.
+      const topBefore = item.getBoundingClientRect().top;
+
+      // Close every other expanded item.
+      document.querySelectorAll(
+        '#tattva-songs ons-list-item[expandable], #arati-lists ons-list-item[expandable]'
+      ).forEach(other => {
+        if (other !== item && other.expanded) {
+          other.expanded = false;
+        }
+      });
+
+      // Onsen expands asynchronously, so wait until the layout has updated.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const topAfter = item.getBoundingClientRect().top;
+          const difference = topAfter - topBefore;
+
+          if (Math.abs(difference) > 1) {
+            window.scrollBy({
+              top: difference,
+              behavior: 'instant'
+            });
+          }
+        });
+      });
+    });
+
     const expandableContent = item.querySelector('.expandable-content');
   
     tattva.files.forEach(({ title, file }) => {
@@ -670,6 +700,36 @@ function render_tattvaLists(page) {
         <div class="expandable-content glassy"></div>
       </ons-list-item>
     `);
+
+    // When this item expands, close every other expanded item
+    item.addEventListener('expand', () => {
+      // Remember where the tapped item is relative to the viewport.
+      const topBefore = item.getBoundingClientRect().top;
+
+      // Close every other expanded item.
+      document.querySelectorAll(
+        '#tattva-songs ons-list-item[expandable], #arati-lists ons-list-item[expandable]'
+      ).forEach(other => {
+        if (other !== item && other.expanded) {
+          other.expanded = false;
+        }
+      });
+
+      // Onsen expands asynchronously, so wait until the layout has updated.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const topAfter = item.getBoundingClientRect().top;
+          const difference = topAfter - topBefore;
+
+          if (Math.abs(difference) > 1) {
+            window.scrollBy({
+              top: difference,
+              behavior: 'instant'
+            });
+          }
+        });
+      });
+    });
 
     const expandableContent = item.querySelector('.expandable-content');
 

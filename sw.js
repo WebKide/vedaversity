@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.46';
+const VERSION = 'v1.47';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -21,7 +21,6 @@ const ASSETS = [
   BASE + '/css/fonts.css',
   BASE + '/css/styles.css',
   BASE + '/css/dependencies/ios-safe-area-fix-v2.css',
-  BASE + '/fonts/balooda-v21-latin-ext.woff2',
   BASE + '/fonts/CharisSIL-Bold.woff2',
   BASE + '/fonts/CharisSIL-BoldItalic.woff2',
   BASE + '/fonts/CharisSIL-Italic.woff2',
