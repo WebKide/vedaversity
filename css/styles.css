@@ -364,7 +364,7 @@ body {
 }
 
 ons-list {
-  animation: fade-up 2.55s ease forwards;
+  animation: fade-up 0.65s ease forwards;
   opacity: 0; /* Ensures the element starts invisible before animation plays */
 }
 
