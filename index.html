@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.47</title>
+  <title>Kīrtan App v1.49</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -55,9 +55,7 @@
   <!-- Each root node needs class="page" so the router can show/hide it.    -->
   <!-- ======================================================== -->
 
-  <!-- Root shell: Home + Lists tabs live here permanently; everything else
-       (search, all-songs, settings, pronounce, list detail, song view) is
-       pushed on top of it as a modal-style page. -->
+  <!-- Root shell: Home + Lists tabs live here permanently; everything else (search, all-songs, settings, pronounce, list detail, song view) is pushed on top of it as a modal-style page. -->
   <template id="tmpl-shell" class="main">
     <ons-page class="page" id="shell_page" data-init-fn="shell_page_init">
       <div class="page__content shell__content">
@@ -67,7 +65,8 @@
           <div class="gutter">
 
             <div id="search-trigger" class="search-bar">
-              <svg class="search-icon" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+              <svg class="search-icon" viewBox="0 -960 960 960" 
+                   aria-hidden="true" focusable="false">
                 <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
               </svg>
               <span class="search-placeholder">Search</span>
@@ -194,7 +193,7 @@
                 <img src="img/home_default.png" alt="Home">
                 <div class="home-image-caption">
                   <span class="home-image-heading" 
-                        id="appVersionCaption">Kīrtan App v1.47</span>
+                        id="appVersionCaption">Kīrtan App v1.49</span>
                   <span class="home-image-subtitle">forked by WebKide</span>
                 </div>
               </div>

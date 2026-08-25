@@ -62,10 +62,10 @@ const PRONOUNCE_GUIDE = [
   ['ঢ় — ढ़', 'ṛha', '“ṚH” as in “bi<highlight>r</highlight>d”'],
   ['য় — य़', 'ẏa', '“Ẏ” as in “<highlight>y</highlight>ard”'],
 
-  ['क्ष — ক্ষ', 'kṣa', '“KṢA” as in “boo<highlight>k-sh</highlight>elf”'],
-  ['त्र — ত্র', 'tra', '“TRA” as in “<highlight>tr</highlight>affic”'],
-  ['ज्ञ — জ্ঞ', 'jña', '“JÑA” as in “<highlight>gya</highlight>”'],
-  ['श्र — শ্র', 'śra', '“ŚRA” as in “ca<highlight>sh-r</highlight>ing”'],
+  ['क्ष — ক্ষ', 'kṣa', '“KṢ” as in “boo<highlight>k-sh</highlight>elf”'],
+  ['त्र — ত্র', 'tra', '“TR” as in “<highlight>tr</highlight>affic”'],
+  ['ज्ञ — জ্ঞ', 'jña', '“JÑ” as in “<highlight>gya</highlight>”'],
+  ['श्र — শ্র', 'śra', '“ŚR” as in “ca<highlight>sh-r</highlight>ing”'],
 
   ['ঃ — ः', 'ḥ (visarga)', 'aspirate “aḥ” as in “<highlight>aha</highlight>”'],
   ['ঃ — ः', 'ḥ (visarga)', 'aspirate “iḥ” as in “<highlight>ihi</highlight>”'],

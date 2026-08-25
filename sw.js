@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.47';
+const VERSION = 'v1.49';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -33,6 +33,10 @@ const ASSETS = [
   BASE + '/fonts/Kelvinch-BoldItalic.woff2',
   BASE + '/fonts/Kelvinch-Italic.woff2',
   BASE + '/fonts/Kelvinch-Regular.woff2',
+  BASE + '/fonts/MetropolitanParliament-Bold.woff2',
+  BASE + '/fonts/MetropolitanParliament-BoldItalic.woff2',
+  BASE + '/fonts/MetropolitanParliament-Italic.woff2',
+  BASE + '/fonts/MetropolitanParliament-Regular.woff2',
   BASE + '/fonts/NunitoSans-Bold.woff2',
   BASE + '/fonts/NunitoSans-BoldItalic.woff2',
   BASE + '/fonts/NunitoSans-Italic.woff2',

@@ -224,3 +224,40 @@
   font-display: swap;
   src: url('../fonts/Ubuntu-BoldItalic.woff2') format('woff2');
 }
+
+/* ================================================================
+   MetropolitanParliament
+   Regular + Italic + Bold + Bold Italic
+   ================================================================ */
+
+@font-face {
+  font-family: 'MetropolitanParliament';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/MetropolitanParliament-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'MetropolitanParliament';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/MetropolitanParliament-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'MetropolitanParliament';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/MetropolitanParliament-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'MetropolitanParliament';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/MetropolitanParliament-BoldItalic.woff2') format('woff2');
+}

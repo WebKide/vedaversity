@@ -84,6 +84,7 @@ function settings_page_init(page) {
     { value: "'Nunito Sans', sans-serif",  label: 'Nunito Sans (Material)' },
     { value: "'Gentium Book', serif",      label: 'Gentium Book (Classic)' },
     { value: "'Sassoon', sans-serif",      label: 'Sassoon (Readable)' },
+    { value: "'MetropolitanParliament', serif", label: 'Metropolitan (Book)' },
     { value: "'Sansita', sans-serif",      label: 'Sansita (Friendly)' }
   ];
  

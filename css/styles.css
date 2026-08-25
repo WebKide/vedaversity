@@ -1,43 +1,17 @@
 /**
- * styles.css
+ * styles.css ========== NEW STYLES ============
  * Single consolidated stylesheet for Kirtan SPA (index.html).
- *
- * Replaces the previous custom sheet stack:
- *   capacitor.css (app-specific overrides only),
- *   theme.css, dark-theme.css,
- *   app.css, home_content_page.css,
- *   songView_page.css, all_songs_page.css
- *
- * Base Onsen UI framework styles remain on CDN:
- *   https://unpkg.com/onsenui/css/onsenui.css
- *   https://unpkg.com/onsenui/css/dark-onsen-css-components.css
  */
-
-/*
- * CONSOLIDATION NOTE
- * -------------------
- * The stylesheet below preserves the proven cascade order of the
- * first consolidation attempt while restoring functional rules that
- * were dropped from the older stylesheet. Theme variables remain at
- * the top; the light-theme variable overrides remain at the end of
- * the design-token block.
- */
-
-
 
 /* ============================================================
    CSS CUSTOM PROPERTIES (var(--x))
-   ============================================================ */
-
-/*
- * Default dark theme palette (from theme.css)
- * plus Onsen UI component variable overrides (from capacitor.css)
- * plus safe-area insets.
+   ============================================================
  */
+
 :root {
   font-family: 'Ubuntu Sans', sans-serif; /* 1. Base property */
-  --font-family: 'Charis SIL', serif; /* 3. Material components */
-  --material-font-family: 'Nunito', sans-serif; /* 2. Standard components */
+  --font-family: 'Charis SIL', serif; /* 2. Material components */
+  --material-font-family: 'Nunito', sans-serif; /* 3. Standard components */
   /* ---- App theme palette (dark) ---- */
   --background-color: black;
   --text-color: #e0e0e0;
@@ -86,10 +60,10 @@
   user-select:           none;
 
   /* ---- Safe-area insets ---- */
-  --inset-top: env(safe-area-inset-top, 0px);
-  --inset-bottom: env(safe-area-inset-bottom, 0px);
-  --inset-left: env(safe-area-inset-left, 0px);
-  --inset-right: env(safe-area-inset-right, 0px);
+  --inset-top: env(safe-area-inset-top, 0px) !important;
+  --inset-bottom: env(safe-area-inset-bottom, 0px) !important;
+  --inset-left: env(safe-area-inset-left, 0px) !important;
+  --inset-right: env(safe-area-inset-right, 0px) !important;
 
   /* ---- Onsen UI component overrides ---- */
   --button-background-color: transparent;
@@ -294,7 +268,16 @@ body {
 #app {
   position: relative;
   height: 100dvh;
-  background: var(--kirtan-page-surround, #0d0d0d);
+
+  /* DARK THEME */
+  background-color: #0d0d0d;
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23383833' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* LIGHT THEME */
+:root.theme-light #app {
+background-color: #ffd6c3;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%23e2ac95' fill-opacity='0.4'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* .page is position: fixed (see base rule) — so safe areas must be
@@ -308,8 +291,8 @@ body {
 
   /* soft raised-panel halo */
   box-shadow:
-    -6px 0 6px rgba(255, 255, 255, 0.03),
-     6px 0 6px rgba(255, 255, 255, 0.03);
+    -6px 0 6px rgb(27 27 27 / 85%),
+     6px 0 6px #000;
 
   transition: transform 0.22s ease, opacity 0.22s ease;
 
@@ -346,27 +329,175 @@ body {
   }
 }
 
-/* .page--enter */
+/* ========== Page enter animation ========== */
+@keyframes page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .page--enter {
-  transform: translateX(16px);
+  animation: page-enter 0.25s ease-out forwards;
+}
+
+/* ============================================
+   Standalone Fade & Slide Animation System
+   ============================================
+
+   Usage:
+   <ons-list class="fade-in-from-right">
+     <ons-list-item>...</ons-list-item>
+     <ons-list-item>...</ons-list-item>
+   </ons-list>
+
+   Available classes:
+   .fade-in            → children fade in place
+   .fade-in-from-right → children slide in from right (30px)
+   .fade-in-from-left  → children slide in from left (-30px)
+   .fade-in-slide      → alias for .fade-in-from-right
+*/
+
+/* ---- Keyframes ---- */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-in-from-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fade-in-from-left {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- Parent container classes ---- */
+/* Add to the wrapper (e.g. ons-list, a div, etc.) */
+.fade-in > *,
+.fade-in-from-right > *,
+.fade-in-from-left > *,
+.fade-in-slide > * {
   opacity: 0;
+  animation-duration: 0.55s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
 }
 
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.fade-in > * {
+  animation-name: fade-in;
 }
 
-ons-list {
-  animation: fade-up 0.65s ease forwards;
-  opacity: 0; /* Ensures the element starts invisible before animation plays */
+.fade-in-from-right > *,
+.fade-in-slide > * {
+  animation-name: fade-in-from-right;
 }
+
+.fade-in-from-left > * {
+  animation-name: fade-in-from-left;
+}
+
+/* ---- Staggered delays (up to 20 children) ---- */
+.fade-in > *:nth-child(1),
+.fade-in-from-right > *:nth-child(1),
+.fade-in-from-left > *:nth-child(1),
+.fade-in-slide > *:nth-child(1) { animation-delay: 0.00s; }
+
+.fade-in > *:nth-child(2),
+.fade-in-from-right > *:nth-child(2),
+.fade-in-from-left > *:nth-child(2),
+.fade-in-slide > *:nth-child(2) { animation-delay: 0.05s; }
+
+.fade-in > *:nth-child(3),
+.fade-in-from-right > *:nth-child(3),
+.fade-in-from-left > *:nth-child(3),
+.fade-in-slide > *:nth-child(3) { animation-delay: 0.10s; }
+
+.fade-in > *:nth-child(4),
+.fade-in-from-right > *:nth-child(4),
+.fade-in-from-left > *:nth-child(4),
+.fade-in-slide > *:nth-child(4) { animation-delay: 0.15s; }
+
+.fade-in > *:nth-child(5),
+.fade-in-from-right > *:nth-child(5),
+.fade-in-from-left > *:nth-child(5),
+.fade-in-slide > *:nth-child(5) { animation-delay: 0.20s; }
+
+.fade-in > *:nth-child(6),
+.fade-in-from-right > *:nth-child(6),
+.fade-in-from-left > *:nth-child(6),
+.fade-in-slide > *:nth-child(6) { animation-delay: 0.25s; }
+
+.fade-in > *:nth-child(7),
+.fade-in-from-right > *:nth-child(7),
+.fade-in-from-left > *:nth-child(7),
+.fade-in-slide > *:nth-child(7) { animation-delay: 0.30s; }
+
+.fade-in > *:nth-child(8),
+.fade-in-from-right > *:nth-child(8),
+.fade-in-from-left > *:nth-child(8),
+.fade-in-slide > *:nth-child(8) { animation-delay: 0.35s; }
+
+.fade-in > *:nth-child(9),
+.fade-in-from-right > *:nth-child(9),
+.fade-in-from-left > *:nth-child(9),
+.fade-in-slide > *:nth-child(9) { animation-delay: 0.40s; }
+
+.fade-in > *:nth-child(10),
+.fade-in-from-right > *:nth-child(10),
+.fade-in-from-left > *:nth-child(10),
+.fade-in-slide > *:nth-child(10) { animation-delay: 0.45s; }
+
+.fade-in > *:nth-child(11),
+.fade-in-from-right > *:nth-child(11),
+.fade-in-from-left > *:nth-child(11),
+.fade-in-slide > *:nth-child(11) { animation-delay: 0.50s; }
+
+.fade-in > *:nth-child(12),
+.fade-in-from-right > *:nth-child(12),
+.fade-in-from-left > *:nth-child(12),
+.fade-in-slide > *:nth-child(12) { animation-delay: 0.55s; }
+
+.fade-in > *:nth-child(13),
+.fade-in-from-right > *:nth-child(13),
+.fade-in-from-left > *:nth-child(13),
+.fade-in-slide > *:nth-child(13) { animation-delay: 0.60s; }
+
+.fade-in > *:nth-child(14),
+.fade-in-from-right > *:nth-child(14),
+.fade-in-from-left > *:nth-child(14),
+.fade-in-slide > *:nth-child(14) { animation-delay: 0.65s; }
+
+.fade-in > *:nth-child(15),
+.fade-in-from-right > *:nth-child(15),
+.fade-in-from-left > *:nth-child(15),
+.fade-in-slide > *:nth-child(15) { animation-delay: 0.70s; }
+
+.fade-in > *:nth-child(16),
+.fade-in-from-right > *:nth-child(16),
+.fade-in-from-left > *:nth-child(16),
+.fade-in-slide > *:nth-child(16) { animation-delay: 0.75s; }
+
+.fade-in > *:nth-child(17),
+.fade-in-from-right > *:nth-child(17),
+.fade-in-from-left > *:nth-child(17),
+.fade-in-slide > *:nth-child(17) { animation-delay: 0.80s; }
+
+.fade-in > *:nth-child(18),
+.fade-in-from-right > *:nth-child(18),
+.fade-in-from-left > *:nth-child(18),
+.fade-in-slide > *:nth-child(18) { animation-delay: 0.85s; }
+
+.fade-in > *:nth-child(19),
+.fade-in-from-right > *:nth-child(19),
+.fade-in-from-left > *:nth-child(19),
+.fade-in-slide > *:nth-child(19) { animation-delay: 0.90s; }
+
+.fade-in > *:nth-child(20),
+.fade-in-from-right > *:nth-child(20),
+.fade-in-from-left > *:nth-child(20),
+.fade-in-slide > *:nth-child(20) { animation-delay: 0.95s; }
+/* ...etc, or use a SCSS loop if you have a preprocessor */
 
 /* .page__content */
 .page .page__content {
@@ -1766,7 +1897,12 @@ ons-list-item .center.search-result {
   max-height: 600px; /* adjust to your content length */
 }
 
-.home-logotype,
+.home-logotype {
+  opacity: 0;
+  transform: translateX(14px); /* Starts slightly to the right. */
+  animation: fade-in-from-right 0.55s ease forwards;
+}
+
 .home-image-wrap img {
   opacity: 0;
   transform: translateY(14px);
@@ -2108,7 +2244,7 @@ ons-toolbar .right .lb-icon-btn {
 
 .song-footer-nav {
   position: relative;
-  margin: 12px 6px 24px 6px;
+  margin: 0 6px 24px 6px;
   padding: 0;
   background: transparent !important;
   border: none !important;
@@ -2126,7 +2262,7 @@ ons-toolbar .right .lb-icon-btn {
   backdrop-filter: blur(15px) saturate(180%);
   -webkit-backdrop-filter: blur(15px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px 20px 0 0;
+  border-radius: 0 0 20px 20px;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -2235,8 +2371,12 @@ ons-toolbar .right .lb-icon-btn {
 }
 
 .total-songs-num {
+  position: absolute;
+  right: 12px;
+  top: 20px;
   font-family: 'Ubuntu Sans', sans-serif;
   color: var(--sub-text-color);
+  opacity: 45%;
   font-size: .85rem;
   vertical-align: .25em;
   margin-left: 6px;
