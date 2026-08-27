@@ -1,15 +1,6 @@
 /* ================================================================
-   CHARIS SIL
-   Regular + Italic + Bold + Bold Italic
+   Charis SIL — IAST full support
    ================================================================ */
-
-@font-face {
-  font-family: 'Charis SIL';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/CharisSIL-Regular.woff2') format('woff2');
-}
 
 @font-face {
   font-family: 'Charis SIL';
@@ -22,9 +13,9 @@
 @font-face {
   font-family: 'Charis SIL';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   font-display: swap;
-  src: url('../fonts/CharisSIL-Bold.woff2') format('woff2');
+  src: url('../fonts/CharisSIL-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -35,55 +26,55 @@
   src: url('../fonts/CharisSIL-BoldItalic.woff2') format('woff2');
 }
 
-/* ================================================================
-   GENTIUM BOOK
-   Regular + Italic + Bold + Bold Italic
-   ================================================================ */
-
 @font-face {
-  font-family: 'Gentium Book';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/GentiumBook-Regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Gentium Book';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/GentiumBook-Italic.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Gentium Book';
+  font-family: 'Charis SIL';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/GentiumBook-Bold.woff2') format('woff2');
+  src: url('../fonts/CharisSIL-Bold.woff2') format('woff2');
 }
 
-@font-face {
-  font-family: 'Gentium Book';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../fonts/GentiumBook-BoldItalic.woff2') format('woff2');
-}
 
 /* ================================================================
-   KELVINCH
-   Regular + Italic + Bold + Bold Italic
+   Gentium Book Basic — IAST full support
    ================================================================ */
 
 @font-face {
-  font-family: 'Kelvinch';
+  font-family: 'Gentium Book Basic';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/GentiumBookBasic-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gentium Book Basic';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Kelvinch-Regular.woff2') format('woff2');
+  src: url('../fonts/GentiumBookBasic-Regular.woff2') format('woff2');
 }
+
+@font-face {
+  font-family: 'Gentium Book Basic';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/GentiumBookBasic-BoldItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Gentium Book Basic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/GentiumBookBasic-Bold.woff2') format('woff2');
+}
+
+
+/* ================================================================
+   Kelvinch — IAST full support
+   ================================================================ */
 
 @font-face {
   font-family: 'Kelvinch';
@@ -96,9 +87,9 @@
 @font-face {
   font-family: 'Kelvinch';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Kelvinch-Bold.woff2') format('woff2');
+  src: url('../fonts/Kelvinch-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -109,18 +100,55 @@
   src: url('../fonts/Kelvinch-BoldItalic.woff2') format('woff2');
 }
 
+@font-face {
+  font-family: 'Kelvinch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Kelvinch-Bold.woff2') format('woff2');
+}
+
+
 /* ================================================================
-   NUNITO SANS
-   Regular + Italic + Bold + Bold Italic
+   Libre Baskerville — IAST full support
    ================================================================ */
 
 @font-face {
-  font-family: 'Nunito Sans';
+  font-family: 'Libre Baskerville';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/LibreBaskerville-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Libre Baskerville';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/NunitoSans-Regular.woff2') format('woff2');
+  src: url('../fonts/LibreBaskerville-Regular.woff2') format('woff2');
 }
+
+@font-face {
+  font-family: 'Libre Baskerville';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/LibreBaskerville-BoldItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Libre Baskerville';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/LibreBaskerville-Bold.woff2') format('woff2');
+}
+
+
+/* ================================================================
+   Nunito Sans — IAST full support
+   ================================================================ */
 
 @font-face {
   font-family: 'Nunito Sans';
@@ -133,9 +161,9 @@
 @font-face {
   font-family: 'Nunito Sans';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   font-display: swap;
-  src: url('../fonts/NunitoSans-Bold.woff2') format('woff2');
+  src: url('../fonts/NunitoSans-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -146,18 +174,18 @@
   src: url('../fonts/NunitoSans-BoldItalic.woff2') format('woff2');
 }
 
-/* ================================================================
-   SANSITA
-   Regular + Italic
-   ================================================================ */
-
 @font-face {
-  font-family: 'Sansita';
+  font-family: 'Nunito Sans';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 700;
   font-display: swap;
-  src: url('../fonts/Sansita-Regular.woff2') format('woff2');
+  src: url('../fonts/NunitoSans-Bold.woff2') format('woff2');
 }
+
+
+/* ================================================================
+   Sansita — IAST full support
+   ================================================================ */
 
 @font-face {
   font-family: 'Sansita';
@@ -167,39 +195,39 @@
   src: url('../fonts/Sansita-Italic.woff2') format('woff2');
 }
 
-/* ================================================================
-   SASSOON
-   Regular + Italic
-   ================================================================ */
-
 @font-face {
-  font-family: 'Sassoon';
+  font-family: 'Sansita';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Sassoon-Regular.woff2') format('woff2');
+  src: url('../fonts/Sansita-Regular.woff2') format('woff2');
 }
 
+
+/* ================================================================
+   Sassoon Book — IAST full support
+   ================================================================ */
+
 @font-face {
-  font-family: 'Sassoon';
+  font-family: 'Sassoon Book';
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Sassoon-Italic.woff2') format('woff2');
+  src: url('../fonts/SassoonBook-Italic.woff2') format('woff2');
 }
 
-/* ================================================================
-   UBUNTU
-   Regular + Italic + Bold + Bold Italic
-   ================================================================ */
-
 @font-face {
-  font-family: 'Ubuntu';
+  font-family: 'Sassoon Book';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Ubuntu-Regular.woff2') format('woff2');
+  src: url('../fonts/SassoonBook-Regular.woff2') format('woff2');
 }
+
+
+/* ================================================================
+   Ubuntu — IAST full support
+   ================================================================ */
 
 @font-face {
   font-family: 'Ubuntu';
@@ -212,9 +240,9 @@
 @font-face {
   font-family: 'Ubuntu';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   font-display: swap;
-  src: url('../fonts/Ubuntu-Bold.woff2') format('woff2');
+  src: url('../fonts/Ubuntu-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -225,39 +253,10 @@
   src: url('../fonts/Ubuntu-BoldItalic.woff2') format('woff2');
 }
 
-/* ================================================================
-   MetropolitanParliament
-   Regular + Italic + Bold + Bold Italic
-   ================================================================ */
-
 @font-face {
-  font-family: 'MetropolitanParliament';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/MetropolitanParliament-Regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'MetropolitanParliament';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/MetropolitanParliament-Italic.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'MetropolitanParliament';
+  font-family: 'Ubuntu';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/MetropolitanParliament-Bold.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'MetropolitanParliament';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../fonts/MetropolitanParliament-BoldItalic.woff2') format('woff2');
+  src: url('../fonts/Ubuntu-Bold.woff2') format('woff2');
 }

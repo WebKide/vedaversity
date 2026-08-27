@@ -587,13 +587,13 @@ function render_tattvaLists(page) {
   const svgIcon = `
     <div class="left">
       <svg class="shortcut-icon"
-           viewBox="0 -960 960 960"
+           viewBox="0 0 24 24"
            height="24px"
            width="24px"
            fill="var(--highlight-color)"
            aria-hidden="true"
            focusable="false">
-        <path d="M400-280h160v-80H400v80Zm0-160h280v-80H400v80ZM280-600h400v-80H280v80Zm200 120ZM265-80q-79 0-134.5-55.5T75-270q0-57 29.5-102t77.5-68H80v-80h240v240h-80v-97q-37 8-61 38t-24 69q0 46 32.5 78t77.5 32v80Zm135-40v-80h360v-560H200v160h-80v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H400Z"/>
+        <path d="M17 11h-7v2h7zM2 13h2.6c-1.6.8-2.7 2.4-2.7 4.3C1.9 19.9 4 22 6.6 22v-2c-1.5 0-2.8-1.2-2.8-2.8 0-1.3.9-2.4 2.2-2.7V17h2v-6H2zm18.5-9.4Q19.9 3 19 3H5c-.5 0-1 .2-1.4.6S3 4.5 3 5v4h2V5h14v14h-9v2h9c.6 0 1-.2 1.4-.6s.6-.8.6-1.4V5c0-.5-.2-1-.5-1.4M17 7H7v2h10zm-7 10h4v-2h-4z"/>
       </svg>
     </div>`;
 

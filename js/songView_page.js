@@ -331,8 +331,8 @@ function setupFooterNav(page, songId, listName, songList) {
     <div class="bottom-tabbar__row">
       <button class="footer-nav-prev tabbar-btn" data-song-id="${escapeHtml(prevId)}" ${prevDisabled}>
         <div class="left">
-          <svg class="footer-nav-icon" viewBox="0 -960 960 960" height="20px" width="20px" fill="currentColor" aria-hidden="true" focusable="false">
-            <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/>
+          <svg class="footer-nav-icon" viewBox="0 0 24 24" height="20px" width="20px" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M6.3,12l10-10l1.8,1.8L9.9,12l8.2,8.2L16.3,22L6.3,12z"/>
           </svg>
         </div>
         <span class="footer-nav-title">${escapeHtml(prevRec ? (prevRec.first_line || prevRec.title) : 'Unknown')}</span>
@@ -341,8 +341,8 @@ function setupFooterNav(page, songId, listName, songList) {
       <button class="footer-nav-next tabbar-btn" data-song-id="${escapeHtml(nextId)}" ${nextDisabled}>
         <span class="footer-nav-title">${escapeHtml(nextRec ? (nextRec.first_line || nextRec.title) : 'Unknown')}</span>
         <div class="left">
-          <svg class="footer-nav-icon" viewBox="0 -960 960 960" height="20px" width="20px" fill="currentColor" aria-hidden="true" focusable="false">
-            <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
+          <svg class="footer-nav-icon" viewBox="0 0 24 24" height="20px" width="20px" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="m8.1 22-1.8-1.8 8.2-8.2-8.2-8.2L8.1 2l10 10z"/>
           </svg>
         </div>
       </button>

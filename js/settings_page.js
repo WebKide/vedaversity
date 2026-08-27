@@ -80,12 +80,12 @@ function settings_page_init(page) {
   const fonts = [
     { value: "'Kelvinch', serif",          label: 'Kelvinch (Traditional)' },
     { value: "'Ubuntu', sans-serif",       label: 'Ubuntu (Modern)' },
-    { value: "'Charis SIL', serif",        label: 'Charis SIL (Elegant)' },
-    { value: "'Nunito Sans', sans-serif",  label: 'Nunito Sans (Material)' },
-    { value: "'Gentium Book', serif",      label: 'Gentium Book (Classic)' },
+    { value: "'Charis SIL', serif",        label: 'Charis SIL (Literary)' },
+    { value: "'Nunito Sans', sans-serif",  label: 'Nunito Sans (Clean)' },
+    { value: "'Gentium Book', serif",      label: 'Gentium Book (Classical)' },
     { value: "'Sassoon', sans-serif",      label: 'Sassoon (Readable)' },
-    { value: "'MetropolitanParliament', serif", label: 'Metropolitan (Book)' },
-    { value: "'Sansita', sans-serif",      label: 'Sansita (Friendly)' }
+    { value: "'Libre Baskerville', serif", label: 'Baskerville (Formal)' },
+    { value: "'Sansita', sans-serif",      label: 'Sansita (Expressive)' }
   ];
  
   let activeFontSwitch = null;

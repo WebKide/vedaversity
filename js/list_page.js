@@ -122,8 +122,8 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
  
   item.innerHTML = `
     <div class="left drag-handle" style="display:flex;align-items:center;justify-content:center;padding:0 8px;z-index:3;cursor:grab;touch-action:none;">
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--sub-text-color)">
-        <path d="M360-160q-33 0-56.5-23.5T280-240q0-33 23.5-56.5T360-320q33 0 56.5 23.5T440-240q0 33-23.5 56.5T360-160Zm240 0q-33 0-56.5-23.5T520-240q0-33 23.5-56.5T600-320q33 0 56.5 23.5T680-240q0 33-23.5 56.5T600-160ZM360-400q-33 0-56.5-23.5T280-480q0-33 23.5-56.5T360-560q33 0 56.5 23.5T440-480q0 33-23.5 56.5T360-400Zm240 0q-33 0-56.5-23.5T520-480q0-33 23.5-56.5T600-560q33 0 56.5 23.5T680-480q0 33-23.5 56.5T600-400ZM360-640q-33 0-56.5-23.5T280-720q0-33 23.5-56.5T360-800q33 0 56.5 23.5T440-720q0 33-23.5 56.5T360-640Zm240 0q-33 0-56.5-23.5T520-720q0-33 23.5-56.5T600-800q33 0 56.5 23.5T680-720q0 33-23.5 56.5T600-640Z"/>
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="var(--sub-text-color)">
+        <path d="M9 3.9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2M15 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2M9 9.9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m-6 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"/>
       </svg>
     </div>
     <div class="center" style="position:relative; z-index:2; background:inherit; transition:margin-right .25s ease; padding-right:16px;">${text}</div>
@@ -144,8 +144,8 @@ function gen_swipeableListItem(text, songId, onClick, onDelete) {
            color:#fff;
            font-weight:400;
            font-size:.65rem;">
-      <svg viewBox="0 -960 960 960" width="32" height="32" fill="#fff" aria-hidden="true" focusable="false">
-        <path d="M600-240v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120-640H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440-200H200q-33 0-56.5-23.5T120-280v-360Zm80 0v360h240v-360H200Zm0 0v360-360Z"/>
+      <svg viewBox="0 0 24 24" width="32" height="32" fill="#fff" aria-hidden="true" focusable="false">
+        <path d="M15 18v-2h4v2zm0-8V8h7v2zm0 4v-2h6v2zM3 8H2V6h4V4.5h4V6h4v2h-1v9c0 .6-.2 1-.6 1.4s-.8.6-1.4.6H5c-.6 0-1-.2-1.4-.6S3 17.6 3 17zm2 0v9h6V8zm0 0v9z"/>
       </svg>
       <span>DEL</span>
     </div>

@@ -1,17 +1,31 @@
 /**
- * styles.css ========== NEW STYLES ============
+ * styles.css
  * Single consolidated stylesheet for Kirtan SPA (index.html).
+ *
+ * Replaces the previous custom sheet stack:
+ *   capacitor.css (app-specific overrides only),
+ *   theme.css, dark-theme.css,
+ *   app.css, home_content_page.css,
+ *   songView_page.css, all_songs_page.css
+ *
+ * Base Onsen UI framework styles remain on CDN:
+ *   https://unpkg.com/onsenui/css/onsenui.css
+ *   https://unpkg.com/onsenui/css/dark-onsen-css-components.css
  */
 
 /* ============================================================
    CSS CUSTOM PROPERTIES (var(--x))
-   ============================================================
- */
+   ============================================================ */
 
+/*
+ * Default dark theme palette (from theme.css)
+ * plus Onsen UI component variable overrides (from capacitor.css)
+ * plus safe-area insets.
+ */
 :root {
-  font-family: 'Ubuntu Sans', sans-serif; /* 1. Base property */
-  --font-family: 'Charis SIL', serif; /* 2. Material components */
-  --material-font-family: 'Nunito', sans-serif; /* 3. Standard components */
+  --font-family: 'Charis SIL', serif; /* 1. Material components */
+  --material-font-family: 'Nunito', sans-serif; /* 2. Standard components */
+  font-family: var(--font-family); /* 3. Base property */
   /* ---- App theme palette (dark) ---- */
   --background-color: black;
   --text-color: #e0e0e0;
@@ -60,10 +74,10 @@
   user-select:           none;
 
   /* ---- Safe-area insets ---- */
-  --inset-top: env(safe-area-inset-top, 0px) !important;
-  --inset-bottom: env(safe-area-inset-bottom, 0px) !important;
-  --inset-left: env(safe-area-inset-left, 0px) !important;
-  --inset-right: env(safe-area-inset-right, 0px) !important;
+  --inset-top: env(safe-area-inset-top, 0px);
+  --inset-bottom: env(safe-area-inset-bottom, 0px);
+  --inset-left: env(safe-area-inset-left, 0px);
+  --inset-right: env(safe-area-inset-right, 0px);
 
   /* ---- Onsen UI component overrides ---- */
   --button-background-color: transparent;
@@ -254,6 +268,12 @@
 }
 
 /* ============================================================
+   CLASSES (.class-name)
+   ============================================================
+* { outline: 1px solid red !important; } */
+
+
+/* ============================================================
    SAFE-AREA HANDLING (single source of truth)
    ============================================================ */
 
@@ -271,7 +291,7 @@ body {
 
   /* DARK THEME */
   background-color: #0d0d0d;
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23383833' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%23242424' fill-opacity='0.5'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* LIGHT THEME */
@@ -304,6 +324,13 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   box-sizing: border-box;
 }
 
+/* LIGHT THEME */
+:root.theme-light .page {
+  box-shadow:
+    -6px 0 6px rgb(224 186 170),
+     6px 0 6px rgb(233 184 169);
+}
+
 @media (min-width: 721px) {
   .page {
     width: 720px;
@@ -329,175 +356,11 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   }
 }
 
-/* ========== Page enter animation ========== */
-@keyframes page-enter {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
+/* .page--enter */
 .page--enter {
-  animation: page-enter 0.25s ease-out forwards;
-}
-
-/* ============================================
-   Standalone Fade & Slide Animation System
-   ============================================
-
-   Usage:
-   <ons-list class="fade-in-from-right">
-     <ons-list-item>...</ons-list-item>
-     <ons-list-item>...</ons-list-item>
-   </ons-list>
-
-   Available classes:
-   .fade-in            → children fade in place
-   .fade-in-from-right → children slide in from right (30px)
-   .fade-in-from-left  → children slide in from left (-30px)
-   .fade-in-slide      → alias for .fade-in-from-right
-*/
-
-/* ---- Keyframes ---- */
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes fade-in-from-right {
-  from { opacity: 0; transform: translateX(30px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fade-in-from-left {
-  from { opacity: 0; transform: translateX(-30px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-/* ---- Parent container classes ---- */
-/* Add to the wrapper (e.g. ons-list, a div, etc.) */
-.fade-in > *,
-.fade-in-from-right > *,
-.fade-in-from-left > *,
-.fade-in-slide > * {
+  transform: translateX(16px);
   opacity: 0;
-  animation-duration: 0.55s;
-  animation-timing-function: ease;
-  animation-fill-mode: forwards;
 }
-
-.fade-in > * {
-  animation-name: fade-in;
-}
-
-.fade-in-from-right > *,
-.fade-in-slide > * {
-  animation-name: fade-in-from-right;
-}
-
-.fade-in-from-left > * {
-  animation-name: fade-in-from-left;
-}
-
-/* ---- Staggered delays (up to 20 children) ---- */
-.fade-in > *:nth-child(1),
-.fade-in-from-right > *:nth-child(1),
-.fade-in-from-left > *:nth-child(1),
-.fade-in-slide > *:nth-child(1) { animation-delay: 0.00s; }
-
-.fade-in > *:nth-child(2),
-.fade-in-from-right > *:nth-child(2),
-.fade-in-from-left > *:nth-child(2),
-.fade-in-slide > *:nth-child(2) { animation-delay: 0.05s; }
-
-.fade-in > *:nth-child(3),
-.fade-in-from-right > *:nth-child(3),
-.fade-in-from-left > *:nth-child(3),
-.fade-in-slide > *:nth-child(3) { animation-delay: 0.10s; }
-
-.fade-in > *:nth-child(4),
-.fade-in-from-right > *:nth-child(4),
-.fade-in-from-left > *:nth-child(4),
-.fade-in-slide > *:nth-child(4) { animation-delay: 0.15s; }
-
-.fade-in > *:nth-child(5),
-.fade-in-from-right > *:nth-child(5),
-.fade-in-from-left > *:nth-child(5),
-.fade-in-slide > *:nth-child(5) { animation-delay: 0.20s; }
-
-.fade-in > *:nth-child(6),
-.fade-in-from-right > *:nth-child(6),
-.fade-in-from-left > *:nth-child(6),
-.fade-in-slide > *:nth-child(6) { animation-delay: 0.25s; }
-
-.fade-in > *:nth-child(7),
-.fade-in-from-right > *:nth-child(7),
-.fade-in-from-left > *:nth-child(7),
-.fade-in-slide > *:nth-child(7) { animation-delay: 0.30s; }
-
-.fade-in > *:nth-child(8),
-.fade-in-from-right > *:nth-child(8),
-.fade-in-from-left > *:nth-child(8),
-.fade-in-slide > *:nth-child(8) { animation-delay: 0.35s; }
-
-.fade-in > *:nth-child(9),
-.fade-in-from-right > *:nth-child(9),
-.fade-in-from-left > *:nth-child(9),
-.fade-in-slide > *:nth-child(9) { animation-delay: 0.40s; }
-
-.fade-in > *:nth-child(10),
-.fade-in-from-right > *:nth-child(10),
-.fade-in-from-left > *:nth-child(10),
-.fade-in-slide > *:nth-child(10) { animation-delay: 0.45s; }
-
-.fade-in > *:nth-child(11),
-.fade-in-from-right > *:nth-child(11),
-.fade-in-from-left > *:nth-child(11),
-.fade-in-slide > *:nth-child(11) { animation-delay: 0.50s; }
-
-.fade-in > *:nth-child(12),
-.fade-in-from-right > *:nth-child(12),
-.fade-in-from-left > *:nth-child(12),
-.fade-in-slide > *:nth-child(12) { animation-delay: 0.55s; }
-
-.fade-in > *:nth-child(13),
-.fade-in-from-right > *:nth-child(13),
-.fade-in-from-left > *:nth-child(13),
-.fade-in-slide > *:nth-child(13) { animation-delay: 0.60s; }
-
-.fade-in > *:nth-child(14),
-.fade-in-from-right > *:nth-child(14),
-.fade-in-from-left > *:nth-child(14),
-.fade-in-slide > *:nth-child(14) { animation-delay: 0.65s; }
-
-.fade-in > *:nth-child(15),
-.fade-in-from-right > *:nth-child(15),
-.fade-in-from-left > *:nth-child(15),
-.fade-in-slide > *:nth-child(15) { animation-delay: 0.70s; }
-
-.fade-in > *:nth-child(16),
-.fade-in-from-right > *:nth-child(16),
-.fade-in-from-left > *:nth-child(16),
-.fade-in-slide > *:nth-child(16) { animation-delay: 0.75s; }
-
-.fade-in > *:nth-child(17),
-.fade-in-from-right > *:nth-child(17),
-.fade-in-from-left > *:nth-child(17),
-.fade-in-slide > *:nth-child(17) { animation-delay: 0.80s; }
-
-.fade-in > *:nth-child(18),
-.fade-in-from-right > *:nth-child(18),
-.fade-in-from-left > *:nth-child(18),
-.fade-in-slide > *:nth-child(18) { animation-delay: 0.85s; }
-
-.fade-in > *:nth-child(19),
-.fade-in-from-right > *:nth-child(19),
-.fade-in-from-left > *:nth-child(19),
-.fade-in-slide > *:nth-child(19) { animation-delay: 0.90s; }
-
-.fade-in > *:nth-child(20),
-.fade-in-from-right > *:nth-child(20),
-.fade-in-from-left > *:nth-child(20),
-.fade-in-slide > *:nth-child(20) { animation-delay: 0.95s; }
-/* ...etc, or use a SCSS loop if you have a preprocessor */
 
 /* .page__content */
 .page .page__content {
@@ -622,6 +485,8 @@ ons-toolbar .center.author-container {
   width: 100%;
   text-align: center;
   position: relative;
+  line-height: 1.3;
+  padding-bottom: 2px;
 }
 
 .author-container .title-line span,
@@ -639,7 +504,9 @@ ons-toolbar .center.author-container {
 
 .author-container .title-line span.marquee,
 .author-container .author-line span.marquee {
-  }
+  animation: marquee-scroll var(--marquee-duration, 8s) linear infinite alternate;
+  padding-right: 16px;
+}
 
 /* .author-text */
 .author-line .author-text {
@@ -647,6 +514,7 @@ ons-toolbar .center.author-container {
   color: var(--sub-text-color);
   text-transform: lowercase;
   font-weight: 400;
+  line-height: 1.3;
 }
 
 .author-line { padding-bottom: 8px; }
@@ -656,15 +524,8 @@ ons-toolbar .center.author-container {
   color: var(--highlight-color);
   text-transform: capitalize;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.3;
   font-size: 1rem;
-}
-
-@keyframes fade-up {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @keyframes marquee-scroll {
@@ -952,7 +813,11 @@ ons-list-item .list-item__subtitle span.no_right {
   text-overflow: ellipsis;
 }
 
+/* .nextSongBtn  — no static rules; applied dynamically in JS */
+
 /* .no-drag  — no static rules; applied dynamically in JS */
+
+/* .prevSongBtn  — no static rules; applied dynamically in JS */
 
 /* .recents-scroll */
 .recents-scroll {
@@ -1280,8 +1145,7 @@ ons-list-item .list-item__subtitle span.no_right {
 /* #listBtn  — no direct styles; styled via parent ons-list-item */
 
 /* #listMenuBtn  — no direct styles; styled via ons-toolbar */
-
-.listMenuDelBtn {
+.listMenuDelBtn { 
   position: relative;
   margin: 6px 16px;
 }
@@ -1336,6 +1200,8 @@ ons-list-item .list-item__subtitle span.no_right {
   overflow-y: auto;
   scrollbar-width: thin;
 }
+
+#songView_page .toolbar { height: 56px; }
 
 /* #songViewMenuBtn  — no direct styles; styled via ons-toolbar */
 
@@ -1733,6 +1599,7 @@ ons-toolbar .center.author-container {
   mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8M9.6 8.9l3.1 3.1-3.1 3.1 1.4 1.4 4.5-4.5L11 7.5z"/></svg>');
 }
 
+/* The container for the buttons */
 .bottom-tabbar__row {
   display: flex;
   width: 95%;           /* Slight margin from sides to look like a floating dock */
@@ -1898,26 +1765,6 @@ ons-list-item .center.search-result {
 }
 
 .home-logotype {
-  opacity: 0;
-  transform: translateX(14px); /* Starts slightly to the right. */
-  animation: fade-in-from-right 0.55s ease forwards;
-}
-
-.home-image-wrap img {
-  opacity: 0;
-  transform: translateY(14px);
-  animation: fade-up 0.55s ease forwards;
-}
-
-.home-logotype {
-  animation-delay: 0.05s;
-}
-
-.home-image-wrap img {
-  animation-delay: 0.15s;
-}
-
-.home-logotype {
   display: block;
   width: min(25%, 512px);
   height: auto;
@@ -1964,7 +1811,9 @@ ons-list-item .center.search-result {
   height: auto;
   min-height: 25%;
   background: rgba(0, 0, 0, 0.85);
-  border-top: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
   margin-bottom: -2px;
   color: #ffffff;
   display: flex;
@@ -2277,6 +2126,8 @@ ons-toolbar .right .lb-icon-btn {
   gap: 8px;
   background: transparent;
   border: none;
+  text-transform: capitalize;
+  font-style: italic;
   color: var(--text-color);
   cursor: pointer;
   touch-action: manipulation;
@@ -2311,7 +2162,7 @@ ons-toolbar .right .lb-icon-btn {
   opacity: 0.8;
 }
 
-/* Song titles — single line, marquee if overflow */
+/* Song titles — single line, marquee if overflow
 .song-footer-nav .footer-nav-title {
   white-space: nowrap;
   overflow: visible;
@@ -2320,11 +2171,26 @@ ons-toolbar .right .lb-icon-btn {
   display: inline-block;
   will-change: transform;
   min-width: 0;
+} */
+/* Song titles — allow up to two lines instead of marquee scrolling */
+.song-footer-nav .footer-nav-title {
+  white-space: normal;
+  overflow: hidden;
+  font-size: 0.85rem;
+  color: var(--text-color);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  min-width: 0;
+  line-height: 1.2;
 }
 
-/* Marquee animation */
+/* Marquee animation
 .song-footer-nav .footer-nav-title.marquee {
-  }
+  animation: marquee-scroll var(--marquee-duration, 8s) linear infinite alternate;
+  padding-right: 16px;
+} */
 
 /* Center divider */
 .song-footer-nav .footer-nav-divider {
@@ -2351,7 +2217,7 @@ ons-toolbar .right .lb-icon-btn {
     margin: 8px 4px 16px 4px;
   }
   .song-footer-nav .bottom-tabbar__row {
-    height: 56px;
+    height: 64px;
   }
   .song-footer-nav .footer-nav-title {
     font-size: 0.8rem;
@@ -2393,7 +2259,7 @@ ons-toolbar .right .lb-icon-btn {
 /* This is the fixed viewport between icon and chevron. */
 .author-marquee-viewport {
   min-width: 0;
-  width: 100%;
+  width: 95%;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -2408,7 +2274,9 @@ ons-toolbar .right .lb-icon-btn {
 
 /* Reuse the same marquee animation as song footer titles. */
 .author-marquee-text.marquee {
-  }
+  animation: marquee-scroll var(--marquee-duration, 8s) linear infinite alternate;
+  padding-right: 16px;
+}
 
 /* Keep the chevron fixed on the right. */
 .author-chevron {
@@ -2460,3 +2328,6 @@ ons-toolbar .right .lb-icon-btn {
 
   letter-spacing: 3px;
 }
+
+/* ── DevToolz outline lines
+* { border: .3px solid darkcyan;} ── */
