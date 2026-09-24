@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.50';
+const VERSION = 'v1.55';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -161,9 +161,22 @@ self.addEventListener('fetch', event => {
 
     // SPA routing.
     if (request.mode === 'navigate') {
-      // return await cache.match(`${BASE}/index.html`);
       const page = await cache.match(`${BASE}/index.html`);
-      return page || fetch(request);
+
+      if (page)
+        return page;
+
+      try {
+        return await fetch(request);
+      } catch {
+        return new Response(
+          'The application is not available offline yet.',
+          {
+            status: 503,
+            statusText: 'Offline'
+          }
+        );
+      }
     }
 
     // Cache-first for everything else.
@@ -174,8 +187,7 @@ self.addEventListener('fetch', event => {
     if (cached)
       return cached;
 
-    // Should almost never happen, but supports
-    // future assets that weren't precached.
+    // Online fallback for resources that were not precached.
     try {
       const response = await fetch(request);
 
@@ -186,7 +198,11 @@ self.addEventListener('fetch', event => {
       return response;
 
     } catch {
-      return Response.error();
+      // Nothing is available offline.
+      return new Response('', {
+        status: 503,
+        statusText: 'Offline and resource not cached'
+      });
     }
 
   })());

@@ -89,7 +89,9 @@ if (window.indexPromise && typeof window.indexPromise.then === 'function') {
 }
  
 // ----------------------------------------------------------------------
- 
+
+let last_query = '';
+
 function search_page_init(page) {
   let clickHandler;
   const listName = page.data && page.data.listName;

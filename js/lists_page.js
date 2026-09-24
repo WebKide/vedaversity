@@ -554,7 +554,7 @@ function render_tattvaLists(page) {
   const introSongs = [
     {
       title: 'maṅgalācaraṇa',
-      firstline: 'mangalacarana auspicious invocation',
+      firstline: 'auspicious invocation',
       file: '00.json'
     },
     {
@@ -564,7 +564,7 @@ function render_tattvaLists(page) {
     },
     {
       title: 'svasti-vācana',
-      firstline: 'svasti vacana prayer for auspiciousness',
+      firstline: 'prayer for auspiciousness',
       file: '0a.json'
     },
     {
@@ -802,11 +802,12 @@ function render_tattvaLists(page) {
     'text-align:left; font-size:16px; padding:16px; margin:12px 6px; touch-action:manipulation;';
 
   const footerMsg =
-    '✦ The <highlight>Quick Shortcuts</highlight> section contains songs that are used repeatedly throughout the day, regardless of the particular time, occasion, or type of devotional activity. These have been placed at the top of this section for quick and convenient access. <br/>✦ The songs in the <highlight>Lists by Tattva</highlight> have been selected and arranged according to their principal devotional subject, with the aim of making the songbook easier to navigate and use at home or in any <i>Maṭha</i>. The selections are based primarily on <i>Śrī Gauḍīya Gīti-guccha</i>, together with songs found in the traditional repertoire of <i>Gauḍīya Maṭha</i> temples and songs associated with particular times of the day. The categories are intended as a <b>practical devotional arrangement</b> rather than as a rigid classification. Some songs naturally express more than one <i>tattva</i>, and in such cases they have been placed according to how they are sung in <i>Gauḍīya Maṭha</i>. <br/>✦ The <highlight>Ārati & Pūjā</highlight> section is arranged separately according to the three traditional times of worship, while the <i>Tattva</i> sections gather songs according to the mood or personality. The resulting selection is therefore <b>curated rather than exhaustive</b>: it represents a practical collection of songs suitable for meditation, personal <i>bhajana</i>, and congregational chanting, while preserving the devotional character of the traditional <i>Gauḍīya Vaiṣṇava</i> repertoire.<br/>✦ The <highlight>Gauḍīya Gallery</highlight> section contains some photographs and paintings to serve as windows to the spiritual world.';
+    '✦ The <highlight>Create a new list</highlight> section is stored locally and lets you create and save custom lists for Vratas and other events. Once a song is opened from a list, you can cycle through the other songs in that list without having to search for them again. You can also re-order, add, or remove songs at any time. <br/>✦ The <highlight>Quick Shortcuts</highlight> section contains songs that are used repeatedly throughout the day, regardless of the particular time, occasion, or type of devotional activity. These have been placed at the top of this section for quick and convenient access. <br/>✦ The songs in the <highlight>Lists by Tattva</highlight> have been selected and arranged according to their principal devotional subject, with the aim of making the songbook easier to navigate and use at home or in any <i>Maṭha</i>. The selections are based primarily on <i>Śrī Gauḍīya Gīti-guccha</i>, together with songs found in the traditional repertoire of <i>Gauḍīya Maṭha</i> temples and songs associated with particular times of the day. The categories are intended as a <b>practical devotional arrangement</b> rather than as a rigid classification. Some songs naturally express more than one <i>tattva</i>, and in such cases they have been placed according to how they are sung in <i>Gauḍīya Maṭha</i>. <br/>✦ The <highlight>Ārati & Pūjā</highlight> section is arranged separately according to the three traditional times of worship, while the <i>Tattva</i> sections gather songs according to the mood or personality. The resulting selection is therefore <b>curated rather than exhaustive</b>: it represents a practical collection of songs suitable for meditation, personal <i>bhajana</i>, and congregational chanting, while preserving the devotional character of the traditional <i>Gauḍīya Vaiṣṇava</i> repertoire.<br/>✦ The <highlight>Gauḍīya Gallery</highlight> section contains some photographs and paintings to serve as windows to the spiritual world.';
 
   listsFooter.innerHTML = `
     <p text-align:left; font-size:16; padding:16px; margin:12px 6px; touch-action: manipulation;>${footerMsg}</p>
   `;
+
 
   galleryContainer.appendChild(listsFooter);
 }
