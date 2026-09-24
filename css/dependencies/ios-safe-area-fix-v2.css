@@ -61,9 +61,19 @@
       position: absolute !important;
     }
 
-    /* Cover-content: content needs padding to clear toolbar + safe area */
-    .page .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content,
-    ons-page .toolbar.toolbar--transparent.toolbar--cover-content + .page__background + .page__content {
+    /* Cover-content: content needs padding to clear toolbar + safe area.
+       Targeted by page id instead of the toolbar+background+content
+       sibling chain — that chain silently fails to match whenever
+       something (e.g. an <ons-fab>) sits between the toolbar and
+       .page__content, or Onsen's generated markup doesn't place
+       .page__background as the literal next sibling. */
+    #all_songs_page .page__content,
+    #group_detail_page .page__content,
+    #settings_page .page__content,
+    #authors_page .page__content,
+    #pronounce_page .page__content,
+    #list_page .page__content,
+    #songView_page .page__content {
       top: 0 !important;
       padding-top: calc(env(safe-area-inset-top) + 44px) !important;
     }

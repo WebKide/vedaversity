@@ -288,18 +288,6 @@ function render_songsInList(page, listName) {
   }
 }
  
-function showListSongContextMenu(page, element, songId, listName, index) {
-  const { popover, shareButton, deleteButton } = setupPopover(element, index);
-  shareButton.style.display = 'none';
- 
-  deleteButton.onclick = () => {
-    popover.hide();
-    deleteSongFromList(songId, listName, page);
-  };
- 
-  popover.show(element);
-}
- 
 function deleteSongFromList(songId, listName, page) {
   const list = appState.lists[listName];
   if (list) appState.lists[listName] = list.filter((id) => id !== songId);

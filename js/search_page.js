@@ -93,6 +93,7 @@ if (window.indexPromise && typeof window.indexPromise.then === 'function') {
 let last_query = '';
 
 function search_page_init(page) {
+  last_query = ''; // reset per page instance, not just per app lifetime
   let clickHandler;
   const listName = page.data && page.data.listName;
  
@@ -277,8 +278,7 @@ function search(query) {
     };
   });
 }
- 
-let last_query = '';
+
  
 function gen_searchResultItem(item, onClick) {
   const el = document.createElement('ons-list-item');

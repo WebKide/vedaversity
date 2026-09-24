@@ -380,10 +380,11 @@ ons-toolbar {
   position: relative;
 }
 
-/* Bottom tabbar is its own fixed element (see .bottom-tabbar), so it
-   needs its own bottom-inset padding rather than inheriting .page's. */
+/* Bottom safe-area for the dock is applied once, on .bottom-tabbar__row
+   in ios-safe-area-fix-v2.css — applying it here too was stacking the
+   inset twice (dock height + 2x safe area). */
 .bottom-tabbar {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: 0;
 }
 
 .page__content {
@@ -952,7 +953,7 @@ ons-list-item .list-item__subtitle span.no_right {
 
 /* .shell__content */
 .shell__content {
-  padding-bottom: 56px;
+  padding-bottom: calc(65px + env(safe-area-inset-bottom));
 }
 
 /* .tabbar-btn */

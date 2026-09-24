@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="img/icons/apple-touch-icon.png"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <title>Kīrtan App v1.55</title>
+  <title>Kīrtan App v1.56</title>
   <meta name="author" content="Keshto@gmail.com" />
 
   <!-- Offline onsen UI (components — we drive navigation ourselves, see js/router.js but these imports are here for production) -->
@@ -26,6 +26,13 @@
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       // Reload once when a service worker takes control.
       window.location.reload();
+    });
+
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'SW_INSTALL_FAILED') {
+        console.error('SW install failed:', event.data.error);
+        alert('This app could not fully install for offline use (' + event.data.error + '). Some content may not be available offline. Please check your connection and reload.');
+      }
     });
 
     window.addEventListener('load', async () => {
@@ -192,7 +199,7 @@
                 <img src="img/home_default.png" alt="Home">
                 <div class="home-image-caption">
                   <span class="home-image-heading" 
-                        id="appVersionCaption">Kīrtan App v1.55</span>
+                        id="appVersionCaption">Kīrtan App v1.56</span>
                   <span class="home-image-subtitle">forked by WebKide</span>
                 </div>
               </div>

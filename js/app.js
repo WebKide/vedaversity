@@ -39,23 +39,6 @@ async function dbSetItem(key, value) {
   }
 }
  
-/* to add to history */
-window.addRecent = async function(songId, filename) {
-  // Remove if already exists to move it to the top/front
-  appState.recents = appState.recents.filter(item => item.id !== songId);
- 
-  // Add to the beginning of the array
-  appState.recents.unshift({ id: songId, time: Date.now() });
- 
-  // Limit to most recent 50 items
-  if (appState.recents.length > 50) {
-    appState.recents = appState.recents.slice(0, 50);
-  }
- 
-  // Persist to localStorage
-  await dbSetItem('recents', appState.recents);
-};
- 
 // Clear all recent items
 window.clearRecents = async function() {
   const confirmed = await ons.notification.confirm({
@@ -117,7 +100,7 @@ window.appState = {
   lists: {},
   recents: [],
   langCode: 'EN',
-  themeMode: 'dark',
+  themeMode: 'system',
   zoomSize: 22,
   fontFamily: "'Charis SIL', serif",
   trans: false,
@@ -138,7 +121,7 @@ async function loadPersistedState() {
   if (lists) appState.lists = lists;
   if (recents) appState.recents = recents;
   if (langCode) appState.langCode = langCode;
-  if (themeMode !== null && themeMode !== undefined) appState.themeMode = themeMode;
+  if (themeMode) appState.themeMode = themeMode;  // if (themeMode !== null && themeMode !== undefined) appState.themeMode = themeMode;
   if (zoomSize) appState.zoomSize = zoomSize;
   if (trans !== null && trans !== undefined) appState.trans = trans;
   if (fontFamily) appState.fontFamily = fontFamily;
@@ -179,19 +162,14 @@ window.getSongTitle = function (id) {
   // Access the named property 'first_line' from the object
   return rec ? (rec.first_line || '') : '';
 };
- 
-function apply_font() {
-  const font = appState.fontFamily;
-  document.documentElement.style.setProperty('--font-family', font);
-}
- 
+
 // ---------------------------------------------------------------------
 // Theme
 // ---------------------------------------------------------------------
  
 function apply_theme() {
-  const mode = appState.themeMode; // 'dark' | 'light' | null (system)
-  let effective = mode;
+  const mode = appState.themeMode; // 'dark' | 'light' | 'system'
+  let effective = mode === 'system' ? null : mode;
   if (!effective) {
     effective = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   }
@@ -204,7 +182,7 @@ function apply_theme() {
  
 if (window.matchMedia) {
   const mq = window.matchMedia('(prefers-color-scheme: light)');
-  const onChange = () => { if (!appState.themeMode) apply_theme(); };
+  const onChange = () => { if (appState.themeMode === 'system') apply_theme(); };
   if (mq.addEventListener) mq.addEventListener('change', onChange);
   else if (mq.addListener) mq.addListener(onChange); // older Safari
 }

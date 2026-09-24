@@ -5,7 +5,7 @@
 
 'use strict';
 
-const VERSION = 'v1.55';
+const VERSION = 'v1.56';
 const CACHE = `vedaversity-${VERSION}`;
 
 const BASE = self.location.pathname.substring(
@@ -50,6 +50,9 @@ const ASSETS = [
   BASE + '/fonts/Ubuntu-BoldItalic.woff2',
   BASE + '/fonts/Ubuntu-Bold.woff2',
   BASE + '/img/icons/apple-touch-icon.png',
+  BASE + '/img/icons/android-chrome-192x192.png',
+  BASE + '/img/icons/android-chrome-512x512.png',
+  BASE + '/img/icons/icon-maskable-512.png',
   BASE + '/img/icons/earati.png',
   BASE + '/img/icons/marati.png',
   BASE + '/img/icons/narati.png',
@@ -96,15 +99,25 @@ self.addEventListener('install', event => {
     const cache = await caches.open(CACHE);
 
     // Install succeeds ONLY if every asset is cached.
-    // await cache.addAll(ASSETS);
-    for (const url of ASSETS) {
-        const response = await fetch(url, {
-            cache: 'reload'
+    try {
+      for (const url of ASSETS) {
+          const response = await fetch(url, {
+              cache: 'reload'
+          });
+          if (!response.ok) {
+              throw new Error(`Failed to cache ${url}`);
+          }
+          await cache.put(url, response);
+      }
+    } catch (err) {
+      const clients = await self.clients.matchAll();
+      for (const client of clients) {
+        client.postMessage({
+          type: 'SW_INSTALL_FAILED',
+          error: err.message
         });
-        if (!response.ok) {
-            throw new Error(`Failed to cache ${url}`);
-        }
-        await cache.put(url, response);
+      }
+      throw err; // keep the install failed — do not activate a half-cached app
     }
 
     // Activate immediately.
@@ -161,22 +174,9 @@ self.addEventListener('fetch', event => {
 
     // SPA routing.
     if (request.mode === 'navigate') {
+      // return await cache.match(`${BASE}/index.html`);
       const page = await cache.match(`${BASE}/index.html`);
-
-      if (page)
-        return page;
-
-      try {
-        return await fetch(request);
-      } catch {
-        return new Response(
-          'The application is not available offline yet.',
-          {
-            status: 503,
-            statusText: 'Offline'
-          }
-        );
-      }
+      return page || fetch(request);
     }
 
     // Cache-first for everything else.

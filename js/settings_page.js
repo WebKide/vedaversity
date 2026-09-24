@@ -15,7 +15,7 @@ function settings_page_init(page) {
   `);
  
   const themes = [
-    { mode: null, label: 'System Default' },
+    { mode: 'system', label: 'System Default' },
     { mode: 'light', label: 'Aruṇa (Light)' },
     { mode: 'dark', label: 'Śyāma (Dark)' }
   ];
@@ -23,7 +23,7 @@ function settings_page_init(page) {
   let activeThemeSwitch = null;
  
   themes.forEach((theme) => {
-    const isChecked = appState.themeMode === theme.mode;
+    const isChecked = (appState.themeMode || 'system') === theme.mode;
  
     const item = ons.createElement(`
       <ons-list-item tappable>

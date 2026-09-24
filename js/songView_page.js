@@ -153,7 +153,7 @@ async function songView_page_init(page) {
   });
 
   // 7. Lifecycle & Analytics
-  if (typeof addRecent === 'function' && !data.skipRecent) addRecent(songId);
+  // (recents are already recorded by showSongViewUI -> addToRecents)
 
   page.onShow = (typeof keepAwake === 'function') ? keepAwake : null;
 
